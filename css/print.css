@@ -1,14 +1,28 @@
-/* Druckansicht – Grundgerüst, Ausbau in M4 */
+/* Druckansicht: nur Kopfzeile mit Klasse/Datum und die Teamkarten, nach Teams sortiert */
 @page { size: A4; margin: 14mm; }
 
-.topbar, .stepper, .step-actions, .skip-link, .no-print { display: none !important; }
-body { font-size: 11pt; }
+.topbar, .stepper, .step-actions, .skip-link, .toolbar, .notices, .pick-hint, .move-here,
+.toast-host, .shuffle-layer, .screen-head, dialog, .beamer { display: none !important; }
+
+body { font-size: 11pt; background: #fff; }
 .page { padding: 0; max-width: none; }
-.team-grid { grid-template-columns: repeat(3, 1fr); gap: 6mm; }
+
+.print-head {
+  display: flex !important; justify-content: space-between; align-items: baseline;
+  margin-bottom: 6mm; padding-bottom: 3mm; border-bottom: 1pt solid #c9cfd8;
+  font-size: 12pt;
+}
+.print-head strong { font-size: 16pt; letter-spacing: -0.02em; }
+
+.team-grid, .team-grid.cols-1 { grid-template-columns: repeat(3, 1fr) !important; gap: 5mm; }
 .team-card {
   background: #fff !important;
   border: 1.5pt solid var(--c) !important;
+  border-radius: 4mm;
   break-inside: avoid;
+  animation: none !important;
   -webkit-print-color-adjust: exact; print-color-adjust: exact;
 }
-.team-members li { font-size: 12pt; }
+.team-num { font-size: 22pt; }
+.member { font-size: 12pt !important; padding: 1pt 0 !important; margin: 0 !important; }
+.team-members li { visibility: visible !important; }

@@ -1,7 +1,7 @@
 // Mixup – Service Worker: App-Hülle vorab cachen, danach offline lauffähig.
 // Der Block zwischen den Marken wird von tools/precache.mjs geschrieben – nicht von Hand ändern.
 // >>> precache
-const VERSION = '690cd6dfbc';
+const VERSION = '467b59e0c6';
 const ASSETS = [
   './',
   './css/base.css',
@@ -17,19 +17,32 @@ const ASSETS = [
   './icons/icon-maskable-512.png',
   './icons/icon.svg',
   './index.html',
+  './js/actions.js',
   './js/app.js',
+  './js/backup.js',
+  './js/import.js',
+  './js/model.js',
+  './js/store.js',
   './js/teams/algorithm.js',
   './js/teams/blocks.js',
   './js/teams/colors.js',
   './js/teams/cost.js',
   './js/teams/random.js',
   './js/teams/sizes.js',
+  './js/ui/banners.js',
+  './js/ui/beamer.js',
+  './js/ui/dialogs.js',
   './js/ui/dom.js',
+  './js/ui/draw.js',
+  './js/ui/icons.js',
+  './js/ui/session.js',
   './js/ui/settings.js',
   './js/ui/start.js',
   './js/ui/step1-klasse.js',
   './js/ui/step2-einstellen.js',
   './js/ui/step3-ergebnis.js',
+  './js/ui/team-card.js',
+  './js/version.js',
   './manifest.webmanifest',
 ];
 // <<< precache
