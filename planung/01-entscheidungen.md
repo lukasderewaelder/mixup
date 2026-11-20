@@ -15,6 +15,10 @@ Wird nach jeder Fragenrunde fortgeschrieben.
 | 9 | Technik | **Mehrere Dateien, reines JavaScript (ES-Module) + CSS, ohne Build**, ohne Framework/Bibliotheken/CDN; Algorithmus mit Node-Tests | 3 |
 | 10 | Teamnamen/-farben | Standard **„Team 1…n“ mit automatischen Farben** (Kontrast geprüft); eigene Namen nur optional | 3 |
 | 11 | Regeln & Teamanzahl | **Zusammen = fest**, **Getrennt = bestmöglich**, Verstöße namentlich als Hinweis; **1–20 Teams**, Wahl nach Anzahl oder Größe mit **Live-Vorschau** („5 Teams à 5–6“) | 3 |
+| 12 | Zufallsperson | **Umschaltbar**: „ohne Zurücklegen“ (Zähler „noch x übrig“, Zurücksetzen) oder „immer aus allen“; aktuelle Teams bleiben erhalten | 4 |
+| 13 | Ausgabe | Nur **Vollbild-/Beamer-Ansicht** und **Drucken/PDF** (nach Teams sortiert). **Entfällt:** Text kopieren, CSV, Teilen-Menü | 4 |
+| 14 | Losen-Animation | **Kurz und elegant (~1,5 s)**: Namen mischen sich und gleiten in Teamkarten; „Reduzierte Bewegung“ wird respektiert | 4 |
+| 15 | Wiederholungen vermeiden | **Letzte 3 Einteilungen je Liste**, neuere zählen stärker, abschaltbar; Zusammen-Regeln haben Vorrang | 4 |
 
 ## Folgen
 
