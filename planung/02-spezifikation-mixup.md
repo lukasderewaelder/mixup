@@ -147,6 +147,7 @@ tests/    *.test.mjs (node --test, Algorithmus + Speicher + Import)
 .claude/launch.json  (statischer Server, Port 4250)
 ```
 - Keine Bibliotheken, kein CDN, kein Build. Service Worker cacht die App-Shell, Versionsnummer für Updates, „Neue Version verfügbar – neu laden“-Hinweis.
+- **Umgesetzt (M6):** Netz zuerst mit 2,5 s Wartezeit, sonst Offline-Speicher; Vorab-Cache mit `cache: 'reload'`. Grund: Das CDN von GitHub Pages liefert neue Dateien teils Minuten nach dem neuen `sw.js` aus – reines „Cache zuerst“ hätte alte Seiten bis zum nächsten Deploy festgehalten.
 - Auslieferung über **GitHub Pages** aus `main` (E8). iOS-Installationshinweis („Teilen → Zum Home-Bildschirm“).
 
 ## 9. Meilensteine
@@ -192,6 +193,6 @@ Nach jedem Meilenstein: Tests, Browser-Prüfung, Commit und Push auf `main`.
 | M3 | fertig | „Teams losen“ sitzt fest in der unteren Leiste (war unter dem sichtbaren Bereich); „Neu losen“ ersetzt das angezeigte Ergebnis (verworfene Versuche füllen weder Verlauf noch Gedächtnis) und lässt sich rückgängig machen |
 | M4 | fertig | Beamer: Namen brechen nie um, Spaltenzahl und Schriftgröße werden gemeinsam optimiert |
 | M5 | fertig | Erste Sicherungs-Erinnerung erst drei Tage nach Anlegen der ersten Klasse |
-| M6 | fertig bis auf iPad-Echttest | Offline-Cache und Update-Hinweis auf GitHub Pages geprüft |
+| M6 | fertig bis auf iPad-Echttest | Offline-Cache und Update-Hinweis auf GitHub Pages geprüft; Service Worker auf „Netz zuerst“ umgestellt (siehe 8) |
 
 **Abnahmekriterien:** 2–8 automatisch getestet (58 Tests) bzw. im Browser geprüft. Kriterium 1 (Installation und Offline-Betrieb auf iPad) ist noch auf einem echten Gerät zu prüfen.

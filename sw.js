@@ -49,8 +49,10 @@ const ASSETS = [
 
 const CACHE = `mixup-${VERSION}`;
 
+// cache: 'reload' umgeht den HTTP-Cache des Browsers (GitHub Pages: 10 Minuten), damit keine
+// alten Dateien in den neuen Offline-Speicher geraten.
 self.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(ASSETS)));
+  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(ASSETS.map((url) => new Request(url, { cache: 'reload' })))));
 });
 
 self.addEventListener('activate', (event) => {
@@ -66,18 +68,29 @@ self.addEventListener('message', (event) => {
   if (event.data === 'skip-waiting') self.skipWaiting();
 });
 
+// Netz zuerst (mit kurzer Wartezeit), sonst Offline-Speicher. So kommen neue Dateien sofort an,
+// auch wenn das CDN von GitHub Pages sie erst nach dem neuen sw.js ausliefert. Ohne Netz oder bei
+// sehr langsamem WLAN im Klassenraum antwortet der Offline-Speicher.
+const NETWORK_TIMEOUT = 2500;
+
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   if (request.method !== 'GET' || new URL(request.url).origin !== self.location.origin) return;
   event.respondWith((async () => {
-    const cached = await caches.match(request, { ignoreSearch: true });
-    if (cached) return cached;
+    const cache = await caches.open(CACHE);
+    const fromNetwork = fetch(request, { cache: 'no-cache' }).then((res) => {
+      if (res.ok && res.type === 'basic') cache.put(request, res.clone());
+      return res;
+    });
+    event.waitUntil(fromNetwork.catch(() => {}));
+    const timeout = new Promise((resolve) => setTimeout(resolve, NETWORK_TIMEOUT, null));
     try {
-      return await fetch(request);
-    } catch {
-      // Navigation offline: App-Hülle liefern
-      if (request.mode === 'navigate') return (await caches.match('./')) || Response.error();
-      return Response.error();
-    }
+      const res = await Promise.race([fromNetwork, timeout]);
+      if (res) return res;
+    } catch { /* offline */ }
+    const cached = (await cache.match(request, { ignoreSearch: true }))
+      || (request.mode === 'navigate' ? await cache.match('./') : null);
+    if (cached) return cached;
+    try { return await fromNetwork; } catch { return Response.error(); }
   })());
 });
