@@ -179,3 +179,19 @@ Nach jedem Meilenstein: Tests, Browser-Prüfung, Commit und Push auf `main`.
 - ~~**O1 Größe-Modus**~~ → entschieden (E25): lieber eine Person mehr, k = abrunden(n / Größe), mindestens 1.
 - ~~**O2 Repo-Name**~~ → entschieden (E26): `mixup`, Adresse `https://lukasderewaelder.github.io/mixup/`.
 - **O3 Markenprüfung:** „Mixup“ ist ein verbreitetes Wort; für eine nicht kommerzielle Schul-App unkritisch, vor einer Veröffentlichung im App Store aber prüfen.
+
+---
+
+## 12. Umsetzungsstand (20.11.2026, Version 1.0.0)
+
+| M | Stand | Abweichungen und Ergänzungen gegenüber dem Plan |
+|---|---|---|
+| M0 | fertig | – |
+| M1 | fertig | Gewichte nach Messung geändert (siehe 5.3); Größe-Modus verfeinert |
+| M2 | fertig | Regeln heißen in der Liste A, B, C … (Chips an den Namen); Beispielklasse zum Ausprobieren |
+| M3 | fertig | „Teams losen“ sitzt fest in der unteren Leiste (war unter dem sichtbaren Bereich); „Neu losen“ ersetzt das angezeigte Ergebnis (verworfene Versuche füllen weder Verlauf noch Gedächtnis) und lässt sich rückgängig machen |
+| M4 | fertig | Beamer: Namen brechen nie um, Spaltenzahl und Schriftgröße werden gemeinsam optimiert |
+| M5 | fertig | Erste Sicherungs-Erinnerung erst drei Tage nach Anlegen der ersten Klasse |
+| M6 | fertig bis auf iPad-Echttest | Offline-Cache und Update-Hinweis auf GitHub Pages geprüft |
+
+**Abnahmekriterien:** 2–8 automatisch getestet (58 Tests) bzw. im Browser geprüft. Kriterium 1 (Installation und Offline-Betrieb auf iPad) ist noch auf einem echten Gerät zu prüfen.
