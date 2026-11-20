@@ -8,6 +8,13 @@ import { APP_VERSION } from '../version.js';
 
 export const title = 'Einstellungen';
 
+const THEME_CHOICES = [
+  { value: 'klar', label: 'Klar', hint: 'ruhig und hell (Standard)' },
+  { value: 'poster', label: 'Poster', hint: 'dicke Linien, harte Schatten, Sticker' },
+  { value: 'heft', label: 'Heft', hint: 'Karopapier, Klebezettel, Textmarker' },
+  { value: 'akzent', label: 'Akzent', hint: 'hell mit kräftigen Farbköpfen' },
+];
+
 let root;
 
 export function render() {
@@ -23,6 +30,16 @@ function paint() {
   const scroll = scrollY;
   replaceKeepFocus(root, [
     screenHead('Einstellungen', null, h('a', { class: 'btn btn-quiet', href: '#/' }, 'Zu den Klassen')),
+
+    section('Design', 'theme',
+      h('p', { class: 'muted' }, 'Gilt für dieses Gerät. Teamfarben, Namen und Regeln bleiben gleich – nur das Aussehen ändert sich.'),
+      h('div', { class: 'theme-picks', role: 'radiogroup', 'aria-label': 'Design' }, THEME_CHOICES.map((t) => h('label', { class: `theme-pick tp-${t.value}` },
+        h('input', { type: 'radio', name: 'theme', value: t.value, checked: (s.theme || 'klar') === t.value, onChange: () => set({ theme: t.value }) }),
+        h('span', { class: 'tp-frame', 'aria-hidden': 'true' },
+          h('span', { class: 'tp-card' }, t.value === 'akzent' ? [h('b', {}, '1 Füchse'), h('span', {}, 'Aylin, Ben, Kübra')] : [h('b', {}, t.value === 'poster' ? 'A Füchse' : '1 Füchse'), 'Aylin, Ben, Kübra']),
+          h('span', { class: 'tp-btn' }, 'Teams losen')),
+        h('span', { class: 'tp-name' }, t.label, h('span', { class: 'muted' }, ` – ${t.hint}`))))),
+    ),
 
     section('Anzeige', 'display',
       toggle('Niveau in der Namensliste zeigen', s.showLevel, (v) => set({ showLevel: v }), { id: 's-level', hint: 'Zeigt das Niveau (−5 bis +5) an den Namen. In der Klassenansicht, auf den Teamkarten und im Druck erscheint es nie.' }),
@@ -55,7 +72,7 @@ function paint() {
 
     section('Über Mixup', 'about',
       h('p', {}, `Version ${APP_VERSION}. Funktionsprinzip angelehnt an die iOS-App „Team Shake“; Name, Gestaltung, Texte und Algorithmus sind eigenständig.`),
-      h('p', { class: 'muted' }, 'Schrift: Inter © The Inter Project Authors, SIL Open Font License 1.1.'),
+      h('p', { class: 'muted' }, 'Schriften: Inter, Bricolage Grotesque, Schibsted Grotesk, Familjen Grotesk, Caveat – jeweils © ihre Autorinnen und Autoren, SIL Open Font License 1.1.'),
     ),
 
     section('Alle Daten löschen', 'danger',

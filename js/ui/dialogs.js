@@ -71,7 +71,7 @@ export function promptDialog({ title, label, value = '', confirmLabel = 'Speiche
   return new Promise((resolve) => {
     let result = null;
     const error = h('p', { class: 'field-error', role: 'alert' });
-    const input = h('input', { class: 'input', type: 'text', value, maxlength: maxLength, autofocus: true, autocomplete: 'off', enterkeyhint: 'done' });
+    const input = h('input', { class: 'input', type: 'text', name: 'eingabe', value, maxlength: maxLength, autofocus: true, autocomplete: 'off', spellcheck: 'false', enterkeyhint: 'done' });
     const submit = () => {
       const msg = validate(input.value);
       if (msg) { error.textContent = msg; input.focus(); return false; }

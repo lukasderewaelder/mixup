@@ -2,7 +2,7 @@
 import * as start from './ui/start.js';
 import * as main from './ui/main.js';
 import * as settings from './ui/settings.js';
-import { activeClass, subscribe, isStorageOk } from './store.js';
+import { activeClass, subscribe, isStorageOk, getState } from './store.js';
 import { toast } from './ui/dialogs.js';
 
 const ROUTES = {
@@ -53,6 +53,17 @@ document.addEventListener('keydown', (e) => {
   if ((e.key === ' ' || e.key === 'Enter') && t instanceof HTMLElement && ['BUTTON', 'A', 'SUMMARY'].includes(t.tagName)) return; // Taste gehört der fokussierten Schaltfläche
   currentScreen?.onKey?.(e);
 });
+
+// ---------- Design (gilt für das ganze Gerät) ----------
+const THEME_BG = { klar: '#ffffff', poster: '#fbf6ec', heft: '#ffffff', akzent: '#ffffff' };
+function applyTheme() {
+  const theme = getState().settings.theme || 'klar';
+  if (theme === 'klar') delete document.documentElement.dataset.theme;
+  else document.documentElement.dataset.theme = theme;
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', THEME_BG[theme] || '#ffffff');
+}
+applyTheme();
+subscribe(applyTheme);
 
 // ---------- Speicherprobleme melden (einmal) ----------
 let warned = false;

@@ -41,6 +41,14 @@ Wird nach jeder Fragenrunde fortgeschrieben.
 | 35 | Schmale Bildschirme | Umschalter **„Namen | Teams“**, nach dem Losen automatisch „Teams“ | 8 |
 | 36 | Weitere Optionen | Geschlechter, Regeln, Wiederholungen **eingeklappt** unter „Weitere Optionen“ mit Kurzzeile | 8 |
 | 37 | Neu losen | Innerhalb von 10 Minuten nach einem unveränderten Ergebnis ersetzt „Neu losen“ den letzten Versuch (mit Rückgängig), sonst neuer Verlaufseintrag | 8 |
+| 38 | Designs | **Klar** (bisher, Standard) + umschaltbar **Poster**, **Heft**, **Akzent**; gilt für das ganze Gerät | 9 |
+| 39 | Schrift je Design | Klar: Inter · Poster: Bricolage Grotesque · Heft: Schibsted Grotesk + Caveat (nur Gruppenzeichen/-titel) · Akzent: Familjen Grotesk | 9 |
+| 40 | Asymmetrie | In Tasten, Feldern, Karten: Poster harter versetzter Schatten, Heft diagonale Rundung, Akzent eine große Ecke + dicke Unterkante | 9 |
+| 41 | Teamkarten je Design | Poster: weiß, Tintenrand, Schatten in Teamfarbe, schräger Sticker · Heft: Klebezettel, leicht gedreht · Akzent: vollfarbiger Kopf | 9 |
+| 42 | Rest-Regel | Bei „Personen pro Team“: Automatisch · eine Person mehr · Rest als eigenes Team · eine Person weniger | 9 |
+| 43 | Rest-Regel Ort | Unter „Weitere Optionen“, je Klasse gemerkt; nur bei „Personen pro Team“ | 9 |
+| 44 | Klassenansicht | Gruppentitel brechen um statt abgeschnitten zu werden; Zeilen nie kleiner als ihr Inhalt | 9 |
+| 45 | Prüfung | Web Interface Guidelines angewendet, Ergebnis in `04-pruefung-1.2.md` | 9 |
 
 ## Folgen
 

@@ -1,0 +1,276 @@
+/* Mixup – umschaltbare Designs. „Klar“ ist das Grunddesign (tokens.css, components.css, screens.css)
+   und braucht hier keine Regeln. Die anderen Designs hängen an <html data-theme="…">.
+   Grundsatz: Asymmetrie steckt in Tasten, Feldern und Karten (ungleiche Ecken, versetzte Schatten,
+   einseitige Kanten) – Namen bleiben immer gerade und gut lesbar. */
+
+/* ---------- Schriften (werden nur geladen, wenn das Design sie benutzt) ---------- */
+@font-face { font-family: 'Bricolage Grotesque'; font-style: normal; font-weight: 200 800; font-display: swap;
+  src: url('../fonts/bricolage-grotesque-latin-opsz-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Bricolage Grotesque'; font-style: normal; font-weight: 200 800; font-display: swap;
+  src: url('../fonts/bricolage-grotesque-latin-ext-opsz-normal.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Schibsted Grotesk'; font-style: normal; font-weight: 400 900; font-display: swap;
+  src: url('../fonts/schibsted-grotesk-latin-wght-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Schibsted Grotesk'; font-style: normal; font-weight: 400 900; font-display: swap;
+  src: url('../fonts/schibsted-grotesk-latin-ext-wght-normal.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Caveat'; font-style: normal; font-weight: 400 700; font-display: swap;
+  src: url('../fonts/caveat-latin-wght-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Caveat'; font-style: normal; font-weight: 400 700; font-display: swap;
+  src: url('../fonts/caveat-latin-ext-wght-normal.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Familjen Grotesk'; font-style: normal; font-weight: 400 700; font-display: swap;
+  src: url('../fonts/familjen-grotesk-latin-wght-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Familjen Grotesk'; font-style: normal; font-weight: 400 700; font-display: swap;
+  src: url('../fonts/familjen-grotesk-latin-ext-wght-normal.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+
+/* =====================================================================
+   POSTER & STICKER – Siebdruck-Plakat: dicke Tintenlinien, harte versetzte
+   Schatten, eine große Ecke, schräge gelbe Sticker.
+   ===================================================================== */
+:root[data-theme='poster'] {
+  --paper: #fbf6ec;
+  --mist: #f2e9d6;
+  --line: #161b26;
+  --line-strong: #161b26;
+  --muted: #4f5566;
+  --font: 'Bricolage Grotesque', system-ui, sans-serif;
+  --sticker: #ffd84a;
+  --hit: #c44f23; /* Druckfarbe für Schatten der Haupttaste */
+}
+[data-theme='poster'] body { font-feature-settings: normal; }
+[data-theme='poster'] h1 { font-weight: 800; letter-spacing: -0.03em; }
+[data-theme='poster'] .topbar { background: rgb(251 246 236 / .94); border-bottom: 3px solid var(--ink); }
+[data-theme='poster'] .main-title h1,
+[data-theme='poster'] .screen-head h1 { background: linear-gradient(transparent 64%, var(--sticker) 64%, var(--sticker) 92%, transparent 92%); padding-right: .12em; }
+
+/* Tasten: harter Schatten, Druck-Effekt */
+[data-theme='poster'] .btn {
+  border: 2px solid var(--ink); border-radius: 8px;
+  background: #fff; box-shadow: 3px 3px 0 var(--ink);
+  transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), background var(--dur) var(--ease);
+}
+[data-theme='poster'] .btn:hover { background: #fff; transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--ink); }
+[data-theme='poster'] .btn:active { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--ink); }
+[data-theme='poster'] .btn-primary { background: var(--ink); color: #fff; box-shadow: 3px 3px 0 var(--hit); }
+[data-theme='poster'] .btn-primary:hover { background: var(--ink); box-shadow: 4px 4px 0 var(--hit); }
+[data-theme='poster'] .btn.btn-draw { box-shadow: 6px 6px 0 var(--hit); border-radius: 10px 26px 10px 10px; }
+[data-theme='poster'] .btn-quiet { border-color: transparent; background: transparent; box-shadow: none; }
+[data-theme='poster'] .btn-quiet:hover { background: var(--mist); box-shadow: none; transform: none; }
+[data-theme='poster'] .btn-danger { color: #8a1f28; box-shadow: 3px 3px 0 #8a1f28; border-color: #8a1f28; }
+[data-theme='poster'] .icon-btn { border-radius: 6px; }
+
+/* Segmente, Schalter, Felder */
+[data-theme='poster'] .segmented { background: #fff; border: 2px solid var(--ink); border-radius: 8px 16px 8px 8px; padding: 3px; }
+[data-theme='poster'] .segment input:checked + span { background: var(--ink); color: #fff; box-shadow: none; }
+[data-theme='poster'] .switch { background: #fff; border: 2px solid var(--ink); }
+[data-theme='poster'] .switch::after { top: 2px; left: 2px; background: var(--ink); box-shadow: none; }
+[data-theme='poster'] .toggle input:checked ~ .switch { background: var(--sticker); }
+[data-theme='poster'] .input { border: 2px solid var(--ink); border-radius: 6px 14px 6px 6px; background: #fff; }
+[data-theme='poster'] .input:focus { box-shadow: 3px 3px 0 var(--focus); }
+[data-theme='poster'] .step-btn { border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink); }
+
+/* Flächen */
+[data-theme='poster'] :is(.options-panel, .panel, .class-card, .add-way, .banner) {
+  background: #fff; border: 2px solid var(--ink); border-radius: 6px 22px 6px 6px; box-shadow: 5px 5px 0 var(--ink);
+}
+[data-theme='poster'] .results-empty { background: #fff; border: 2px dashed var(--ink); border-radius: 6px 22px 6px 6px; }
+[data-theme='poster'] .count-pill { background: var(--sticker); color: var(--ink); border: 2px solid var(--ink); border-radius: 4px; transform: rotate(-3deg); }
+[data-theme='poster'] .view-tabs { background: #fff; border: 2px solid var(--ink); border-radius: 8px 16px 8px 8px; }
+[data-theme='poster'] .view-tab[aria-selected='true'] { background: var(--ink); color: #fff; box-shadow: none; }
+[data-theme='poster'] .modal { border: 3px solid var(--ink); border-radius: 6px 24px 6px 6px; box-shadow: 8px 8px 0 var(--ink); }
+[data-theme='poster'] .toast { border-radius: 6px; box-shadow: 4px 4px 0 var(--hit); }
+[data-theme='poster'] .select-bar { border: 2px solid var(--ink); box-shadow: 5px 5px 0 var(--ink); border-radius: 6px 22px 6px 6px; }
+
+/* Namenskacheln */
+[data-theme='poster'] .name-tile { background: #fff; border: 2px solid var(--ink); border-radius: 4px 14px 4px 4px; box-shadow: 2px 2px 0 var(--ink); }
+[data-theme='poster'] .name-tile.is-absent { background: transparent; border-style: dashed; box-shadow: none; }
+[data-theme='poster'] .name-tile.is-selected { background: var(--sticker); }
+
+/* Teamkarten: weiße Fläche, Tintenrand, Schatten in Teamfarbe, schräger Sticker */
+[data-theme='poster'] .team-card {
+  background: #fff; color: var(--ink);
+  border: 3px solid var(--ink); border-radius: 6px 22px 6px 6px;
+  box-shadow: 7px 7px 0 var(--c);
+}
+[data-theme='poster'] .team-name { color: var(--ink); }
+[data-theme='poster'] .team-num { color: var(--c); }
+[data-theme='poster'] .team-dot { border: 2px solid var(--ink); }
+[data-theme='poster'] .team-count {
+  position: absolute; top: -13px; right: 16px;
+  padding: 1px 9px; border: 2px solid var(--ink); border-radius: 4px;
+  background: var(--sticker); color: var(--ink); font-weight: 800; font-size: var(--fs-xs);
+  transform: rotate(4deg);
+}
+[data-theme='poster'] .team-head { padding-top: var(--s2); }
+[data-theme='poster'] button.member:hover { background: color-mix(in srgb, var(--c) 14%, transparent); }
+[data-theme='poster'] .cv-grid .team-card { border-width: .12em; box-shadow: .28em .28em 0 var(--c); }
+[data-theme='poster'] .team-grid.cv-grid { padding: .7em .35em .35em 0; } /* Platz für Schatten und Sticker */
+
+/* =====================================================================
+   HEFT & MARKER – Karo-Papier, Teamkarten als Klebezettel, Handschrift
+   für Gruppenzeichen, Textmarker, diagonal gerundete Tasten.
+   ===================================================================== */
+:root[data-theme='heft'] {
+  --paper: #ffffff;
+  --mist: #f1f5fb;
+  --line: #d3dcea;
+  --line-strong: #9aa7bb;
+  --font: 'Schibsted Grotesk', system-ui, sans-serif;
+  --hand: 'Caveat', 'Segoe Print', cursive;
+  --grid: #e5edf8;
+  --marker: #ffe36e;
+}
+[data-theme='heft'] body {
+  background-color: #fff;
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+[data-theme='heft'] .topbar { background: rgb(255 255 255 / .92); border-bottom: 2px solid var(--ink); }
+[data-theme='heft'] .brand-word { font-family: var(--hand); font-size: 1.9rem; font-weight: 700; letter-spacing: 0; }
+[data-theme='heft'] .main-title h1,
+[data-theme='heft'] .screen-head h1 { background: linear-gradient(transparent 58%, var(--marker) 58%, var(--marker) 90%, transparent 90%); padding: 0 .1em; margin-left: -.1em; }
+
+[data-theme='heft'] .btn { border: 1.5px solid var(--ink); border-radius: 4px 18px 4px 18px; background: #fff; }
+[data-theme='heft'] .btn-primary { background: var(--ink); color: #fff; }
+[data-theme='heft'] .btn.btn-draw { border-radius: 6px 28px 6px 28px; }
+[data-theme='heft'] .btn-quiet { border-color: transparent; background: transparent; }
+[data-theme='heft'] .btn-quiet:hover { background: var(--marker); }
+[data-theme='heft'] .icon-btn { border-radius: 4px 14px 4px 14px; }
+[data-theme='heft'] .segmented { border-radius: 4px 16px 4px 16px; background: var(--mist); }
+[data-theme='heft'] .segment span { border-radius: 3px 13px 3px 13px; }
+[data-theme='heft'] .input { border: 1.5px solid var(--line-strong); border-radius: 2px 14px 2px 14px; }
+[data-theme='heft'] .step-btn { border-radius: 6px 20px 6px 20px; }
+
+[data-theme='heft'] :is(.options-panel, .panel, .class-card, .add-way, .banner) {
+  background: #fff; border: 1px solid var(--line); border-radius: 2px 2px 22px 2px;
+  box-shadow: 0 1px 0 var(--line), 0 10px 22px rgb(22 27 38 / .06);
+}
+[data-theme='heft'] .count-pill { font-family: var(--hand); font-size: 1.3rem; font-weight: 700; background: var(--marker); border-radius: 2px 10px 2px 10px; }
+[data-theme='heft'] .view-tabs { border-radius: 4px 16px 4px 16px; }
+[data-theme='heft'] .modal { border-radius: 4px 4px 26px 4px; }
+[data-theme='heft'] .toast { border-radius: 4px 16px 4px 16px; }
+
+[data-theme='heft'] .name-tile { background: #fff; border: 1px solid var(--line); border-radius: 2px 2px 14px 2px; box-shadow: 0 2px 0 var(--line); }
+[data-theme='heft'] .name-tile.is-absent { background: transparent; box-shadow: none; }
+[data-theme='heft'] .name-tile.is-selected { background: var(--marker); border-color: var(--ink); }
+
+/* Klebezettel: aufgehellte Teamfarbe, leicht gedreht, Papierschatten */
+[data-theme='heft'] .team-card {
+  background: color-mix(in srgb, var(--c) 22%, #ffffff);
+  color: var(--c-ink);
+  border: 0; border-radius: 2px 2px 20px 2px;
+  box-shadow: 0 1px 2px rgb(22 27 38 / .12), 0 12px 20px rgb(22 27 38 / .1);
+  transform: rotate(-1.1deg);
+}
+[data-theme='heft'] .team-card:nth-child(even) { transform: rotate(1deg); }
+[data-theme='heft'] .team-card:nth-child(3n) { transform: rotate(-.4deg); }
+[data-theme='heft'] .team-num { font-family: var(--hand); font-size: 3.2rem; font-weight: 700; line-height: .8; color: var(--c); letter-spacing: 0; }
+[data-theme='heft'] .team-title {
+  font-family: var(--hand); font-size: 1.55rem; font-weight: 700; color: var(--c-ink);
+  padding-right: .3em; /* Handschrift neigt sich nach rechts – nicht abschneiden */
+  background: linear-gradient(transparent 55%, color-mix(in srgb, var(--c) 32%, transparent) 55%, color-mix(in srgb, var(--c) 32%, transparent) 88%, transparent 88%);
+}
+[data-theme='heft'] .cv-grid .team-num { font-size: 2.6em; }
+[data-theme='heft'] .cv-grid .team-title { font-size: 1.3em; }
+[data-theme='heft'] .cv-grid .team-name { font-size: 1em; }
+@media (prefers-reduced-motion: reduce) { [data-theme='heft'] .team-card { transform: none !important; } }
+
+/* =====================================================================
+   AKZENT – ruhig, aber mit kräftigen Farbköpfen; eine große runde Ecke
+   und dicke Unterkante bei Tasten und Feldern.
+   ===================================================================== */
+:root[data-theme='akzent'] {
+  --font: 'Familjen Grotesk', system-ui, sans-serif;
+  --mist: #f3f5f9;
+  --accent: #3f71d3;
+}
+[data-theme='akzent'] .main-title h1,
+[data-theme='akzent'] .screen-head h1 {
+  padding-bottom: .12em;
+  background: linear-gradient(var(--accent), var(--accent)) no-repeat .35em 100% / 46% .16em;
+}
+[data-theme='akzent'] .btn { border: 1.5px solid var(--line-strong); border-bottom: 4px solid var(--ink); border-radius: 4px 20px 4px 4px; }
+[data-theme='akzent'] .btn:active { transform: translateY(2px); border-bottom-width: 2px; }
+[data-theme='akzent'] .btn-primary { background: var(--ink); border-color: var(--ink); border-bottom-color: var(--accent); color: #fff; }
+[data-theme='akzent'] .btn.btn-draw { border-radius: 6px 30px 6px 6px; border-bottom-width: 6px; }
+[data-theme='akzent'] .btn-quiet { border-color: transparent; border-bottom-color: transparent; }
+[data-theme='akzent'] .btn-quiet:hover { border-bottom-color: var(--line-strong); }
+[data-theme='akzent'] .icon-btn { border-radius: 4px 16px 4px 4px; }
+[data-theme='akzent'] .segmented { border-radius: 4px 18px 4px 4px; }
+[data-theme='akzent'] .segment span { border-radius: 3px 15px 3px 3px; }
+[data-theme='akzent'] .segment input:checked + span { box-shadow: inset 0 -3px 0 var(--accent), 0 1px 2px rgb(22 27 38 / .12); }
+[data-theme='akzent'] .input { border-radius: 4px 16px 4px 4px; border-bottom: 3px solid var(--ink); }
+[data-theme='akzent'] .step-btn { border-bottom: 4px solid var(--ink); }
+
+[data-theme='akzent'] :is(.options-panel, .panel, .class-card, .add-way, .banner) { border-radius: 24px 6px 24px 24px; }
+[data-theme='akzent'] .count-pill { background: color-mix(in srgb, var(--accent) 14%, #fff); color: #1c3a7a; border-radius: 4px 12px 4px 4px; }
+[data-theme='akzent'] .view-tabs { border-radius: 4px 18px 4px 4px; }
+[data-theme='akzent'] .view-tab[aria-selected='true'] { box-shadow: inset 0 -3px 0 var(--accent); }
+[data-theme='akzent'] .modal { border-radius: 26px 6px 26px 26px; }
+[data-theme='akzent'] .toast { border-radius: 4px 18px 4px 4px; border-bottom: 4px solid var(--accent); }
+
+[data-theme='akzent'] .name-tile { border-radius: 4px 16px 4px 4px; border-bottom: 3px solid var(--line-strong); }
+[data-theme='akzent'] .name-tile.is-absent { border-bottom-style: dashed; }
+[data-theme='akzent'] .name-tile.is-selected { border-bottom-color: var(--accent); }
+
+/* Teamkarten: vollfarbiger Kopf mit weißer Schrift, helle Fläche */
+[data-theme='akzent'] .team-card {
+  padding: 0; overflow: hidden;
+  background: #fff; color: var(--ink);
+  border: 1.5px solid color-mix(in srgb, var(--c) 35%, #fff); border-radius: 22px 6px 22px 22px;
+}
+[data-theme='akzent'] .team-head { margin: 0; padding: var(--s3) var(--s4) var(--s2) var(--s5); background: var(--c); }
+[data-theme='akzent'] .team-name, [data-theme='akzent'] .team-num { color: #fff; }
+[data-theme='akzent'] .team-count { color: rgb(255 255 255 / .9); }
+[data-theme='akzent'] .team-dot { background: #fff; box-shadow: inset 0 0 0 5px var(--c), 0 0 0 2px #fff; }
+[data-theme='akzent'] .team-mark-btn:hover, [data-theme='akzent'] .team-title-btn:hover { background: rgb(255 255 255 / .18); }
+[data-theme='akzent'] .team-members { padding: var(--s3) var(--s4) var(--s4) var(--s5); }
+[data-theme='akzent'] .move-here { margin: 0 var(--s4) var(--s4); }
+[data-theme='akzent'] .cv-grid .team-card { padding: 0; border-radius: .9em .25em .9em .9em; }
+[data-theme='akzent'] .cv-grid .team-head { padding: .35em .7em .25em; }
+[data-theme='akzent'] .cv-grid .team-members { padding: .35em .7em .6em; }
+[data-theme='akzent'] .cv-grid .move-here { margin: 0 .7em .6em; }
+
+/* ---------- Vorschaukarten in den Einstellungen (unabhängig vom aktiven Design) ---------- */
+.theme-picks { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr)); gap: var(--s3); }
+.theme-pick { position: relative; display: grid; gap: var(--s2); cursor: pointer; }
+.theme-pick input { position: absolute; opacity: 0; }
+.tp-frame {
+  display: grid; gap: 10px; align-content: start;
+  height: 150px; padding: 14px; overflow: hidden;
+  border: 2px solid var(--line); border-radius: 14px;
+  transition: border-color var(--dur) var(--ease);
+}
+.theme-pick input:checked + .tp-frame { border-color: var(--ink); box-shadow: 0 0 0 2px var(--ink); }
+.theme-pick input:focus-visible + .tp-frame { outline: 3px solid var(--focus); outline-offset: 3px; }
+.tp-name { font-weight: 650; font-size: var(--fs-sm); }
+.tp-card { padding: 8px 10px; font-size: 13px; line-height: 1.3; }
+.tp-card b { display: block; font-size: 15px; }
+.tp-btn { justify-self: start; padding: 5px 12px; font-size: 12px; font-weight: 700; }
+
+.tp-klar .tp-frame { background: #fff; font-family: 'Inter', system-ui, sans-serif; }
+.tp-klar .tp-card { background: #e9f4ff; color: #1c263a; border: 1.5px solid #c9dbf5; border-radius: 14px; }
+.tp-klar .tp-card b { color: #3f71d3; }
+.tp-klar .tp-btn { background: #161b26; color: #fff; border-radius: 9px; }
+
+.tp-poster .tp-frame { background: #fbf6ec; font-family: 'Bricolage Grotesque', system-ui, sans-serif; }
+.tp-poster .tp-card { background: #fff; color: #161b26; border: 2.5px solid #161b26; border-radius: 4px 14px 4px 4px; box-shadow: 5px 5px 0 #c44f23; }
+.tp-poster .tp-card b { color: #c44f23; font-weight: 800; }
+.tp-poster .tp-btn { background: #161b26; color: #fff; border-radius: 6px; box-shadow: 3px 3px 0 #c44f23; }
+
+.tp-heft .tp-frame { background-color: #fff; background-image: linear-gradient(#e5edf8 1px, transparent 1px), linear-gradient(90deg, #e5edf8 1px, transparent 1px); background-size: 14px 14px; font-family: 'Schibsted Grotesk', system-ui, sans-serif; }
+.tp-heft .tp-card { background: #fff3a8; color: #2d260e; transform: rotate(-1.5deg); border-radius: 2px 2px 12px 2px; box-shadow: 0 6px 10px rgb(0 0 0 / .12); }
+.tp-heft .tp-card b { font-family: 'Caveat', cursive; font-size: 22px; color: #3f71d3; }
+.tp-heft .tp-btn { background: #161b26; color: #fff; border-radius: 3px 12px 3px 12px; }
+
+.tp-akzent .tp-frame { background: #fff; font-family: 'Familjen Grotesk', system-ui, sans-serif; }
+.tp-akzent .tp-card { padding: 0; border: 1.5px solid #c9d7f2; border-radius: 14px 4px 14px 14px; overflow: hidden; }
+.tp-akzent .tp-card b { background: #3f71d3; color: #fff; padding: 6px 10px; }
+.tp-akzent .tp-card span { display: block; padding: 6px 10px; }
+.tp-akzent .tp-btn { background: #161b26; color: #fff; border-radius: 3px 12px 3px 3px; border-bottom: 3px solid #3f71d3; }

@@ -60,7 +60,7 @@ function classCard(cls) {
     h('p', { class: 'class-meta' }, meta),
     h('p', { class: 'class-last' }, last ? `Zuletzt gelost ${relativeDay(last.at)}` : 'Noch nicht gelost'),
     h('div', { class: 'class-card-actions' },
-      button('Öffnen', { onClick: () => open(cls.id) }),
+      h('a', { class: 'btn', href: '#/klasse', onClick: () => prepareOpen(cls.id) }, 'Öffnen'), // Link: Navigation bleibt Navigation
       last && present
         ? button('Wie letztes Mal losen', { icon: 'bolt', variant: 'primary', onClick: () => quick(cls.id), title: 'Mit den zuletzt genutzten Einstellungen sofort losen' })
         : null,
@@ -68,9 +68,13 @@ function classCard(cls) {
   );
 }
 
-function open(id) {
+function prepareOpen(id) {
   update((s) => { s.activeClassId = id; }, { dataChange: false });
   enterClass(Boolean(getState().classes.find((c) => c.id === id)?.history.length));
+}
+
+function open(id) {
+  prepareOpen(id);
   location.hash = '#/klasse';
 }
 

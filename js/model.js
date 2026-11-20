@@ -1,6 +1,7 @@
 // Datenmodell von Mixup – reine Funktionen ohne DOM und ohne Speicherzugriff (testbar).
 import { DEFAULT_OPTIONS } from './teams/algorithm.js';
 import { cryptoRandom, randInt } from './teams/random.js';
+import { REMAINDERS } from './teams/sizes.js';
 
 export const SCHEMA_VERSION = 2;
 export const MAX_HISTORY = 10;
@@ -10,7 +11,11 @@ export const LEVELS = Array.from({ length: LEVEL_MAX - LEVEL_MIN + 1 }, (_, i) =
 export const GENDERS = ['m', 'w', 'd'];
 export const GENDER_LABEL = { m: 'männlich', w: 'weiblich', d: 'divers' };
 
+/** Designs der Oberfläche (gelten für das ganze Gerät). */
+export const THEMES = ['klar', 'poster', 'heft', 'akzent'];
+
 export const DEFAULT_SETTINGS = {
+  theme: 'klar',
   showLevel: true,        // Niveau in der Namensliste zeigen (in der Klassenansicht nie)
   showGender: false,      // Geschlecht in der Namensliste zeigen
   nameOrder: 'alpha',     // 'alpha' | 'draw' – Reihenfolge der Namen in den Teamkarten
@@ -279,6 +284,7 @@ export function validateState(raw) {
   const state = createState();
   const { teamNames: legacyNames = [], ...rawSettings } = isObj(raw.settings) ? raw.settings : {};
   state.settings = { ...DEFAULT_SETTINGS, ...rawSettings };
+  if (!THEMES.includes(state.settings.theme)) state.settings.theme = 'klar';
   if (legacy) state.settings.showLevel = true; // Klassenansicht blendet das Niveau ohnehin aus
   const levelOf = (l) => (legacy ? ([1, 2, 3, 4, 5].includes(Number(l)) ? (Number(l) - 3) * 2 : 0) : clampLevel(l));
 
@@ -291,6 +297,7 @@ export function validateState(raw) {
       updatedAt: c.updatedAt || cls.updatedAt,
       options: { ...DEFAULT_OPTIONS, ...(isObj(c.options) ? c.options : {}) },
     });
+    if (!REMAINDERS.includes(cls.options.remainder)) cls.options.remainder = 'auto';
     const seen = new Set();
     for (const p of Array.isArray(c.players) ? c.players : []) {
       const name = normalizeName(p?.name);

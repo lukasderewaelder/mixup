@@ -19,6 +19,19 @@ test('Teamfarben sind lesbar: Kopf ≥ 4,5 : 1 auf Weiß, Namen ≥ 7 : 1 auf de
   }
 });
 
+test('Design „Heft“: Namen auf den Klebezetteln (22 % Teamfarbe auf Weiß) gut lesbar, ≥ 7 : 1', () => {
+  const mix = (a, b, t) => '#' + [1, 3, 5].map((i) => Math.round(parseInt(a.slice(i, i + 2), 16) * t + parseInt(b.slice(i, i + 2), 16) * (1 - t)).toString(16).padStart(2, '0')).join('');
+  for (const [i, c] of TEAM_COLORS.entries()) {
+    const note = mix(c.strong, '#ffffff', 0.22);
+    assert.ok(contrast(c.ink, note) >= 7, `Team ${i + 1}: ${contrast(c.ink, note).toFixed(1)}`);
+    assert.ok(contrast(c.strong, note) >= 3, `Team ${i + 1}: Zeichen zu schwach`);
+  }
+});
+
+test('Design „Akzent“ und „Poster“: weiße Schrift auf Teamfarbe ≥ 4,5 : 1', () => {
+  for (const c of TEAM_COLORS) assert.ok(contrast('#ffffff', c.strong) >= 4.5);
+});
+
 test('Teamfarben in JS und CSS stimmen überein', () => {
   const css = read('css/tokens.css');
   for (const [i, c] of TEAM_COLORS.entries()) {

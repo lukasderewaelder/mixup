@@ -4,7 +4,7 @@ Teams per Zufall für den Unterricht: Klasse wählen, abhaken wer fehlt, „Team
 Läuft als PWA auf iPad und PC, komplett offline, komplett auf Deutsch, ohne Konten und ohne Cloud. Alle Namen bleiben auf dem Gerät.
 
 **App:** https://lukasderewaelder.github.io/mixup/
-**Stand:** Version 1.1.0 – Hauptbildschirm wie im Original, Niveau −5 bis +5, vier Arten, Gruppen je Klasse gestaltbar; 70 Tests. Offen: Test auf einem echten iPad.
+**Stand:** Version 1.2.0 – vier umschaltbare Designs (Klar, Poster, Heft, Akzent), Rest-Regel für nicht aufgehende Teams; Prüfung nach Web Interface Guidelines. Offen: Test auf einem echten iPad.
 
 ## Was Mixup kann
 
@@ -15,6 +15,8 @@ Läuft als PWA auf iPad und PC, komplett offline, komplett auf Deutsch, ohne Kon
 - **Regeln**: Personen markieren → „Zusammen“ (immer im selben Team) oder „Getrennt“ (möglichst verschiedene Teams); einzeln oder gesamt abschaltbar
 - **Arten**: Zufällig · **Gleich stark** (gleiche Niveau-Summe – wenn Teams gegeneinander antreten) · **Gemischt** (gleicher Durchschnitt – Gruppenarbeit) · Gleiches Niveau; dazu eingeklappt: Geschlechter mischen, Regeln beachten, Wiederholungen vermeiden
 - **Gruppen gestalten** je Klasse: Team, Gruppe, Tisch, Station, Mannschaft oder eigenes Wort; Zählung 1 2 3, A B C oder Farbnamen; Name und Farbe direkt auf der Karte antippen
+- **Vier Designs** (Einstellungen → Design): Klar, Poster (dicke Linien, harte Schatten, Sticker), Heft (Karopapier, Klebezettel, Textmarker), Akzent (kräftige Farbköpfe) – jeweils mit eigener Schrift und asymmetrischen Tasten
+- **Rest-Regel** bei „Personen pro Team“: automatisch, eine Person mehr, Rest als eigenes Team oder eine Person weniger
 - **Klassenansicht** nach dem Losen: nur die Teams, Schrift automatisch so groß wie möglich, Neu losen, Zufallsperson, Reihenfolge, Tauschen per Antippen – Niveau, Regeln und Optionen sind ausgeblendet
 - **Verlauf** der letzten 10 Einteilungen, **Drucken/PDF**, **Zufallsperson** (jede Person einmal oder immer aus allen), **Reihenfolge** auslosen, **Schnellstart** „Wie letztes Mal losen“
 - **Sicherung** als JSON-Datei (ersetzen oder zusammenführen) mit dezenter Erinnerung
@@ -53,5 +55,5 @@ css/        tokens (Farben, Teamfarben, Schrift), base, components, screens, pri
 
 ## Lizenzen
 
-Schrift Inter © The Inter Project Authors, SIL Open Font License 1.1 (`fonts/OFL.txt`).
+Schriften Inter, Bricolage Grotesque, Schibsted Grotesk, Familjen Grotesk und Caveat © ihre jeweiligen Autorinnen und Autoren, SIL Open Font License 1.1 (`fonts/OFL-*.txt`).
 Funktionsprinzip angelehnt an die iOS-App „Team Shake“; Name, Design, Texte und Algorithmus sind eigenständig.

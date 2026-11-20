@@ -1,14 +1,15 @@
 // Teambildung: gierige Startverteilung mit Zufall, danach lokale Verbesserung durch
 // Verschieben und Tauschen. Reines Modul ohne DOM – testbar mit node --test.
 import { cryptoRandom, randInt, shuffle } from './random.js';
-import { teamCount, sizeRange } from './sizes.js';
+import { teamSizes } from './sizes.js';
 import { buildBlocks } from './blocks.js';
 import { createCostModel } from './cost.js';
 
 export const DEFAULT_OPTIONS = {
   by: 'count',          // 'count' | 'size'
   value: 4,
-  mode: 'random',       // 'random' | 'balanced' | 'equal'
+  mode: 'random',       // 'random' | 'strength' | 'balanced' | 'equal'
+  remainder: 'auto',    // nur bei by = 'size': 'auto' | 'plus' | 'single' | 'minus' (siehe sizes.js)
   mixGender: false,
   rulesEnabled: true,
   avoidRepeats: true,
@@ -35,13 +36,14 @@ export function makeTeams({ players, groups = [], options = {}, history = [], rn
   const n = present.length;
   if (!n) return { teams: [], k: 0, warnings: [{ type: 'no-players', message: 'Niemand ist als anwesend markiert.' }], cost: 0 };
 
-  const k = teamCount(n, opts.by, opts.value);
+  const sizes = teamSizes(n, opts.by, opts.value, opts.remainder);
+  const k = sizes.length;
   const warnings = [];
   if (opts.by === 'count' && Math.round(opts.value) > k) {
     warnings.push({ type: 'fewer-teams', message: `Es werden ${k} statt ${Math.round(opts.value)} Teams gebildet (${n} Personen anwesend, höchstens 20 Teams).` });
   }
 
-  const { lo, hi, bigCount } = sizeRange(n, k);
+  const hi = sizes[0];
   const presentIds = new Set(present.map((p) => p.id));
   const rules = opts.rulesEnabled ? groups.filter((g) => g.enabled !== false) : [];
   const together = rules.filter((g) => g.type === 'together');
@@ -54,7 +56,7 @@ export function makeTeams({ players, groups = [], options = {}, history = [], rn
   warnings.push(...blockWarnings);
 
   const model = createCostModel({ players: present, apartGroups: apart, history, options: opts, k });
-  const ctx = { k, lo, hi, bigCount, model, rng, opts };
+  const ctx = { k, sizes, model, rng, opts };
 
   let best = null;
   const runs = model.active && k > 1 ? RESTARTS : 1;
@@ -85,23 +87,19 @@ export function makeTeams({ players, groups = [], options = {}, history = [], rn
 }
 
 /** Gierige Startverteilung: große Blöcke zuerst, jeweils ins Team mit dem geringsten Kostenzuwachs. */
-function distribute(blocks, { k, lo, hi, bigCount, model, rng, opts }) {
+function distribute(blocks, { k, sizes: targetSizes, model, rng, opts }) {
   const queue = shuffle(blocks.map((b) => [...b]), rng);
   const levelSum = (b) => b.reduce((s, id) => s + model.level.get(id), 0) / b.length;
   queue.sort((a, b) => b.length - a.length || (opts.mode !== 'random' ? levelSum(b) - levelSum(a) : 0));
 
+  // Jedes Team bekommt eine feste Zielgröße (zufällig zugeordnet); die lokale Suche darf sie später tauschen.
+  const target = shuffle([...targetSizes], rng);
   const teamBlocks = Array.from({ length: k }, () => []);
   const sizes = new Array(k).fill(0);
   const costs = new Array(k).fill(0);
-  let big = 0;
   const splitBlocks = [];
 
-  const fits = (t, b) => {
-    const s = sizes[t] + b;
-    if (s > hi) return false;
-    if (s <= lo || sizes[t] > lo) return true;
-    return big < bigCount;
-  };
+  const fits = (t, b) => sizes[t] + b <= target[t];
 
   while (queue.length) {
     const block = queue.shift();
@@ -120,7 +118,6 @@ function distribute(blocks, { k, lo, hi, bigCount, model, rng, opts }) {
       continue;
     }
     const t = choices[randInt(choices.length, rng)];
-    if (sizes[t] <= lo && sizes[t] + block.length > lo) big++;
     teamBlocks[t].push(block);
     sizes[t] += block.length;
     if (model.active) costs[t] += bestDelta;
@@ -148,9 +145,11 @@ function splitMessages(splitBlocks, together) {
 }
 
 /** Lokale Suche: Blöcke verschieben oder tauschen, solange die Kosten sinken. */
-function improve(state, { k, lo, hi, model, rng }) {
+function improve(state, { k, model, rng }) {
   const { teamBlocks, sizes, costs } = state;
-  const ok = (s) => s >= lo && s <= hi;
+  // Erlaubt, wenn die beiden Teams ihre Größen behalten oder untereinander tauschen –
+  // so bleibt die geplante Aufteilung (z. B. 6 × 4 und 1 × 1) immer erhalten.
+  const keepsSizes = (a, b, sa, sb) => (sa === sizes[a] && sb === sizes[b]) || (sa === sizes[b] && sb === sizes[a]);
   for (let i = 0, idle = 0; i < MAX_TRIES && idle < PATIENCE; i++) {
     idle++;
     const a = randInt(k, rng);
@@ -168,7 +167,7 @@ function improve(state, { k, lo, hi, model, rng }) {
     }
     const sa = sizes[a] - x.length + y.length;
     const sb = sizes[b] - y.length + x.length;
-    if (!ok(sa) || !ok(sb)) continue;
+    if (!keepsSizes(a, b, sa, sb)) continue;
 
     const newA = teamBlocks[a].filter((_, j) => j !== xi);
     const newB = teamBlocks[b].filter((_, j) => j !== yi);

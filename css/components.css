@@ -87,7 +87,7 @@
   padding: var(--s2) var(--s3);
   border: 1px solid var(--line-strong);
   border-radius: var(--r-field);
-  background: var(--paper);
+  background: var(--paper); color: var(--ink);
   font-size: var(--fs-md);
   transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
 }
@@ -274,7 +274,7 @@ button.member.is-picked { background: var(--c); color: #fff; }
 @keyframes modal-in { from { opacity: 0; transform: translateY(10px) scale(.985); } }
 .modal-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); padding: var(--s4) var(--s4) var(--s2) var(--s5); }
 .modal-head h2 { font-size: var(--fs-lg); }
-.modal-body { display: grid; gap: var(--s4); align-content: start; padding: var(--s2) var(--s5) var(--s5); overflow: auto; flex: 1; }
+.modal-body { display: grid; gap: var(--s4); align-content: start; padding: var(--s2) var(--s5) var(--s5); overflow: auto; overscroll-behavior: contain; flex: 1; }
 .modal-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--s2); padding: var(--s3) var(--s5) var(--s5); border-top: 1px solid var(--line); }
 
 .menu-list { display: grid; gap: var(--s1); }
@@ -341,7 +341,7 @@ button.member.is-picked { background: var(--c); color: #fff; }
 .toast-action:hover { background: rgb(255 255 255 / .24); }
 @media (prefers-reduced-motion: no-preference) {
   .toast { animation: toast-in 220ms var(--ease); }
-  .toast.is-leaving { opacity: 0; transform: translateY(6px); transition: all 180ms var(--ease); }
+  .toast.is-leaving { opacity: 0; transform: translateY(6px); transition: opacity 180ms var(--ease), transform 180ms var(--ease); }
 }
 @keyframes toast-in { from { opacity: 0; transform: translateY(10px); } }
 

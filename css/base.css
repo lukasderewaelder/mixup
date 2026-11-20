@@ -3,7 +3,12 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  scroll-padding-top: 84px;    /* Fokus nie unter der klebenden Kopfzeile */
+  scroll-padding-bottom: 96px; /* … und nie unter der Losen-Leiste */
 }
+
+/* Kein Doppeltipp-Zoom auf Bedienelementen (spürbar schnelleres Antippen auf dem iPad) */
+button, a, input, select, textarea, label, summary { touch-action: manipulation; }
 
 body {
   margin: 0;

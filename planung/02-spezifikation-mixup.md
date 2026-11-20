@@ -208,3 +208,14 @@ Rückmeldung nach dem ersten Ausprobieren, geklärt in 15 Rückfragen (Entscheid
 - **Gruppen gestalten je Klasse** (`js/labels.js`, `js/ui/group-style.js`): Wort + Zählung (Zahlen, Buchstaben, Farbnamen), Name und Farbe einzeln auf der Karte.
 - **Hauptbildschirm** (`js/ui/main.js` mit `names-panel`, `options-panel`, `results-panel`) ersetzt die drei Schritte und die Beamer-Ansicht. Nach dem Losen **Klassenansicht**: nur Teams, Schrift automatisch so groß wie möglich (`js/ui/fit.js`), Kopfzeile der App ausgeblendet.
 - Abnahme 5 gilt jetzt auf der neuen Skala: Gemischt ≤ 1,0; neu: Gleich stark ≤ 2 (Summen, auch bei ungleichen Größen).
+
+---
+
+## 14. Version 1.2 (20.11.2026)
+
+Ziel: modern und funktional, ansprechend für 10- bis 18-Jährige, asymmetrisch, ausdrücklich nicht nach „KI-Standard“ (Inter, zarte Tönung, überall gleiche Rundungen). 12 Rückfragen und Probenseite `planung/gestaltungsproben.html` (Entscheidungen E38–E45).
+
+- **Vier Designs** über `<html data-theme>` (`css/themes.css`): Klar (Standard, unverändert), Poster, Heft, Akzent. Auswahl in den Einstellungen mit Vorschaukarten; Design wird vor dem ersten Zeichnen gesetzt (kein Aufblitzen). Schriften lokal (OFL), nur das aktive Design lädt seine Schrift.
+- **Rest-Regel** (`teamSizes` in `js/teams/sizes.js`): Algorithmus arbeitet mit festen Zielgrößen je Team; die lokale Suche darf Größen nur zwischen zwei Teams tauschen, die geplante Aufteilung bleibt exakt.
+- Kontraste getestet: weiße Schrift auf allen Teamfarben ≥ 4,5 : 1; Heft-Zettel (22 % Teamfarbe auf Weiß) mit Namen ≥ 7 : 1.
+- Prüfung nach Web Interface Guidelines: `planung/04-pruefung-1.2.md`.

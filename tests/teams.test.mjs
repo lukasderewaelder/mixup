@@ -1,7 +1,7 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import { seededRandom, shuffle } from '../js/teams/random.js';
-import { teamCount, sizeRange, previewText } from '../js/teams/sizes.js';
+import { teamCount, sizeRange, previewText, teamSizes, REMAINDERS } from '../js/teams/sizes.js';
 import { buildBlocks } from '../js/teams/blocks.js';
 import { makeTeams, checkRules } from '../js/teams/algorithm.js';
 
@@ -66,6 +66,54 @@ describe('Teamanzahl und -größen', () => {
     assert.equal(previewText(5, 1), '1 Team mit 5 Personen');
     assert.equal(previewText(3, 3), '3 Teams mit je 1 Person');
     assert.equal(previewText(0, 0), 'Niemand ist als anwesend markiert');
+  });
+});
+
+// ---------- Rest-Regel ----------
+describe('Rest-Regel bei „Personen pro Team“', () => {
+  test('25 Personen à 4: alle vier Regeln', () => {
+    assert.deepEqual(teamSizes(25, 'size', 4, 'auto'), [5, 4, 4, 4, 4, 4]);
+    assert.deepEqual(teamSizes(25, 'size', 4, 'plus'), [5, 4, 4, 4, 4, 4]);
+    assert.deepEqual(teamSizes(25, 'size', 4, 'single'), [4, 4, 4, 4, 4, 4, 1]);
+    assert.deepEqual(teamSizes(25, 'size', 4, 'minus'), [4, 4, 4, 4, 3, 3, 3]);
+  });
+  test('Rest 3: plus verteilt auf drei Teams, single bildet ein 3er-Team', () => {
+    assert.deepEqual(teamSizes(27, 'size', 4, 'plus'), [5, 5, 5, 4, 4, 4]);
+    assert.deepEqual(teamSizes(27, 'size', 4, 'single'), [4, 4, 4, 4, 4, 4, 3]);
+    assert.deepEqual(teamSizes(27, 'size', 4, 'minus'), [4, 4, 4, 4, 4, 4, 3]);
+  });
+  test('geht auf: alle Regeln gleich', () => {
+    for (const r of REMAINDERS) assert.deepEqual(teamSizes(24, 'size', 4, r), [4, 4, 4, 4, 4, 4]);
+  });
+  test('Grenzfälle: weniger Personen als die Größe, mehr als 20 Teams, Anzahl-Modus', () => {
+    for (const r of REMAINDERS) assert.deepEqual(teamSizes(3, 'size', 4, r), [3]);
+    assert.equal(teamSizes(35, 'size', 1, 'single').length, 20);
+    assert.deepEqual(teamSizes(25, 'count', 4, 'single'), [7, 6, 6, 6], 'Regel gilt nicht bei Anzahl');
+    assert.deepEqual(teamSizes(0, 'size', 4, 'plus'), []);
+  });
+  test('Vorschau-Text für beliebige Größen', () => {
+    assert.equal(previewText(25, teamSizes(25, 'size', 4, 'single')), '7 Teams: 6 × 4 und 1 × 1 Person');
+    assert.equal(previewText(25, teamSizes(25, 'size', 4, 'minus')), '7 Teams: 4 × 4 und 3 × 3 Personen');
+  });
+  test('Teambildung hält die geplanten Größen exakt ein – auch mit Regeln und Ausgleich', () => {
+    const rng = seededRandom(31);
+    for (let run = 0; run < 200; run++) {
+      const n = 5 + Math.floor(rng() * 30);
+      const size = 2 + Math.floor(rng() * 5);
+      const remainder = REMAINDERS[run % 4];
+      const players = makePlayers(n, rng, (i, r) => ({ level: -5 + Math.floor(r() * 11), gender: i % 2 ? 'w' : 'm' }));
+      const groups = [
+        { id: 'a', name: 'A', type: 'together', playerIds: ['p1', 'p2'] },
+        { id: 'b', name: 'B', type: 'apart', playerIds: ['p3', 'p4', 'p5'] },
+      ];
+      const options = { by: 'size', value: size, remainder, mode: ['random', 'strength', 'balanced', 'equal'][run % 4], mixGender: run % 3 === 0 };
+      const r = makeTeams({ players, groups, options, rng });
+      assert.deepEqual(r.teams.flat().sort(), players.map((p) => p.id).sort(), `Lauf ${run}`);
+      const got = r.teams.map((t) => t.length).sort((a, b) => b - a);
+      const planned = teamSizes(n, 'size', size, remainder);
+      const split = r.warnings.some((w) => w.type === 'together-split' || w.type === 'together-too-big');
+      if (!split) assert.deepEqual(got, planned, `Lauf ${run}: ${n} à ${size} (${remainder})`);
+    }
   });
 });
 

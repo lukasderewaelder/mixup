@@ -5,7 +5,10 @@
 .screen-head, dialog, .main-head, .view-tabs, .col-names, .options-panel, .results-lead, .cv-bar,
 .results-empty { display: none !important; }
 
-body { font-size: 11pt; background: #fff; }
+body { font-size: 11pt; background: #fff !important; background-image: none !important; }
+/* Design-Effekte (Drehung, harte Schatten, Farbköpfe) im Druck neutral halten */
+.team-card { transform: none !important; box-shadow: none !important; }
+.team-count { position: static !important; transform: none !important; border: 0 !important; background: none !important; }
 .page, .page:has(.main-screen) { padding: 0 !important; max-width: none !important; }
 .main-grid, .main-grid.show-names { display: block !important; }
 .main-grid.show-names .col-teams { display: block !important; }

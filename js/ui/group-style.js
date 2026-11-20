@@ -22,7 +22,7 @@ export function openGroupStyle(k, onDone) {
     const style = activeClass().groupStyle;
     const isCustom = style.word === 'custom';
     const custom = h('input', {
-      class: 'input', type: 'text', value: style.customWord, maxlength: 30, placeholder: 'z. B. Crew, Labor, Insel',
+      class: 'input', type: 'text', name: 'eigenes-wort', autocomplete: 'off', spellcheck: 'false', value: style.customWord, maxlength: 30, placeholder: 'z. B. Crew, Labor, Insel …',
       'aria-label': 'Eigenes Wort', 'data-key': 'gs-custom',
       onInput: (e) => { update((s, cls) => { cls.groupStyle.customWord = normalizeName(e.target.value); }); preview.replaceWith(preview = previewRow()); onDone?.(); },
     });

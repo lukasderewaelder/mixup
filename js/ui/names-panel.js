@@ -166,7 +166,7 @@ function editRow(p, refresh) {
   });
   return h('li', { class: 'edit-row' },
     h('input', {
-      class: 'input edit-name', type: 'text', value: p.name, 'aria-label': `Name von ${p.name}`, 'data-key': `n-${p.id}`, maxlength: 60,
+      class: 'input edit-name', type: 'text', name: `name-${p.id}`, autocomplete: 'off', spellcheck: 'false', value: p.name, 'aria-label': `Name von ${p.name}`, 'data-key': `n-${p.id}`, maxlength: 60,
       onChange: (e) => {
         const res = update((s, c) => renamePlayer(c, p.id, e.target.value));
         if (!res.ok) { toast(res.reason, { tone: 'error' }); e.target.value = p.name; }
@@ -226,7 +226,7 @@ export function openAddNames(startTab = 'type', refresh = () => {}) {
 
   function typePanel() {
     const list = h('ul', { class: 'added-list', 'aria-live': 'polite' });
-    const input = h('input', { class: 'input', type: 'text', placeholder: 'Name', autocomplete: 'off', autocapitalize: 'words', enterkeyhint: 'next', maxlength: 60, 'aria-label': 'Name' });
+    const input = h('input', { class: 'input', type: 'text', name: 'neuer-name', placeholder: 'z. B. Aylin Demir …', autocomplete: 'off', spellcheck: 'false', autocapitalize: 'words', enterkeyhint: 'next', maxlength: 60, 'aria-label': 'Name' });
     const add = () => {
       const res = update((s, cls) => addPlayers(cls, [{ name: input.value }]));
       if (res.added.length) { list.prepend(h('li', {}, icon('check', { size: 16 }), res.added[0].name)); refresh(); }
@@ -240,7 +240,7 @@ export function openAddNames(startTab = 'type', refresh = () => {}) {
 
   function pastePanel() {
     const count = h('p', { class: 'muted', 'aria-live': 'polite' }, 'Ein Name pro Zeile. Nummern und Aufzählungszeichen werden entfernt.');
-    const area = h('textarea', { class: 'input textarea', rows: 10, placeholder: 'Aylin Demir\nBen Schulz\nClara Weber\n…', 'aria-label': 'Namen, einer pro Zeile' });
+    const area = h('textarea', { class: 'input textarea', name: 'namensliste', autocomplete: 'off', spellcheck: 'false', rows: 10, placeholder: 'Aylin Demir\nBen Schulz\nClara Weber\n…', 'aria-label': 'Namen, einer pro Zeile' });
     const addBtn = button('Hinzufügen', { variant: 'primary', icon: 'plus', disabled: true, onClick: () => {
       reportAdd(update((s, cls) => addPlayers(cls, parseNameList(area.value))));
       refresh();

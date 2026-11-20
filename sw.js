@@ -1,16 +1,25 @@
 // Mixup – Service Worker: App-Hülle vorab cachen, danach offline lauffähig.
 // Der Block zwischen den Marken wird von tools/precache.mjs geschrieben – nicht von Hand ändern.
 // >>> precache
-const VERSION = 'edac0c7fdb';
+const VERSION = '56c0406118';
 const ASSETS = [
   './',
   './css/base.css',
   './css/components.css',
   './css/print.css',
   './css/screens.css',
+  './css/themes.css',
   './css/tokens.css',
+  './fonts/bricolage-grotesque-latin-ext-opsz-normal.woff2',
+  './fonts/bricolage-grotesque-latin-opsz-normal.woff2',
+  './fonts/caveat-latin-ext-wght-normal.woff2',
+  './fonts/caveat-latin-wght-normal.woff2',
+  './fonts/familjen-grotesk-latin-ext-wght-normal.woff2',
+  './fonts/familjen-grotesk-latin-wght-normal.woff2',
   './fonts/inter-latin-ext-wght-normal.woff2',
   './fonts/inter-latin-wght-normal.woff2',
+  './fonts/schibsted-grotesk-latin-ext-wght-normal.woff2',
+  './fonts/schibsted-grotesk-latin-wght-normal.woff2',
   './icons/apple-touch-icon-180.png',
   './icons/icon-192.png',
   './icons/icon-512.png',

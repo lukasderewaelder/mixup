@@ -12,7 +12,7 @@ const swPath = join(root, 'sw.js');
 // Was zur laufenden App gehört (alles andere – Tests, Doku, Werkzeuge, Prompts – nicht).
 const ENTRY_FILES = ['index.html', 'manifest.webmanifest'];
 const ENTRY_DIRS = ['css', 'js', 'fonts', 'icons'];
-const SKIP_NAME = /^(LICENSE.*|README.*|OFL\.txt|\.DS_Store|Thumbs\.db|\.gitkeep)$/i;
+const SKIP_NAME = /^(LICENSE.*|README.*|OFL.*\.txt|\.DS_Store|Thumbs\.db|\.gitkeep)$/i;
 const TEXT_EXT = /\.(html|css|js|mjs|json|webmanifest|svg|txt|md)$/i;
 
 function walk(dir) {

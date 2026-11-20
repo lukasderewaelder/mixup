@@ -4,8 +4,9 @@ export function fitGrid(grid, k) {
   if (!grid?.isConnected || !k) return;
   const avail = grid.clientHeight;
   if (!avail) return;
-  // Nur die Namen der Personen begrenzen die Schrift; lange Gruppentitel werden mit „…“ gekürzt.
-  const lines = [...grid.querySelectorAll('.member')];
+  // Namen der Personen dürfen nie umbrechen; Gruppentitel dürfen zwischen Wörtern umbrechen,
+  // aber kein einzelnes Wort darf über den Rand ragen.
+  const lines = [...grid.querySelectorAll('.member, .team-title')];
   const fits = () => grid.scrollHeight <= avail + 1 && lines.every((el) => el.scrollWidth <= el.clientWidth + 1);
   let best = { cols: Math.min(k, 3), size: 12 };
   for (let cols = 1; cols <= Math.min(k, 6); cols++) {
