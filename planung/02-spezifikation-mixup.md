@@ -88,7 +88,7 @@ Die Lehrkraft wählt auf **iPad oder PC** eine Klasse, hakt ab, wer fehlt, stell
 2. **Abnahme „Unterschied der Stärkesummen ≤ höchste Einzelstärke“** ist bei ungleich großen Teams (z. B. 4 und 5) strukturell nicht erreichbar → Vergleich über den **Durchschnitt je Team**.
 3. **Geschlechter „geringster Anteil“** führt bei kleinen Teams zu Sprüngen → **Zielquoten** je Team (proportional zur Teamgröße) und Abweichung davon zählen.
 4. **„Gleiches Niveau pro Team“ per Sortieren und Schneiden** bricht Zusammen-Regeln → stattdessen eigene Kostenfunktion (Streuung **innerhalb** der Teams minimieren).
-5. **Größe-Modus**: k = aufrunden(n / Größe) erzeugt bei n = 25, Größe 4 sieben Teams (4,4,4,4,3,3,3). Alternative: abrunden → sechs Teams (4,4,4,4,4,5). Siehe offene Frage O1.
+5. **Größe-Modus**: k = aufrunden(n / Größe) erzeugt bei n = 25, Größe 4 sieben Teams (4,4,4,4,3,3,3). Entschieden (E25): **abrunden** → sechs Teams (4,4,4,4,4,5).
 
 ### 5.2 Ablauf
 1. Anwesende sammeln, k und Zielgrößen bestimmen (Größen unterscheiden sich max. um 1; welche Teams größer sind, entscheidet der Zufall).
@@ -170,6 +170,6 @@ Nach jedem Meilenstein: Tests, Browser-Prüfung, Commit und Push auf `main`.
 
 ## 11. Offene Fragen zur Freigabe
 
-- **O1 Größe-Modus:** Bei „Gruppen à 4“ und 25 Personen lieber **6 Teams (eins mit 5)** oder **7 Teams (drei mit 3)**? Vorschlag: Vorschau zeigt die gewählte Variante, Standard „lieber eine Person mehr“ (6 Teams).
-- **O2 Repo-Name:** Repo und Pages-Adresse von `teamlos` auf `mixup` umbenennen (Adresse dann `…github.io/mixup`)? Vorschlag: ja, vor M0.
+- ~~**O1 Größe-Modus**~~ → entschieden (E25): lieber eine Person mehr, k = abrunden(n / Größe), mindestens 1.
+- ~~**O2 Repo-Name**~~ → entschieden (E26): `mixup`, Adresse `https://lukasderewaelder.github.io/mixup/`.
 - **O3 Markenprüfung:** „Mixup“ ist ein verbreitetes Wort; für eine nicht kommerzielle Schul-App unkritisch, vor einer Veröffentlichung im App Store aber prüfen.

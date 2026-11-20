@@ -27,6 +27,9 @@ Wird nach jeder Fragenrunde fortgeschrieben.
 | 21 | Verlauf | **Letzte 10 Einteilungen je Klasse** (davon zählen 3 für „Wiederholungen vermeiden“) | 6 |
 | 22 | Schrift | **Klar & sachlich**: moderne Grotesk (Inter, mitgeliefert, OFL-Lizenz), dezente Rundungen | 6 |
 | 23 | Weiteres Vorgehen | Fragenrunden beendet → überarbeitete Spezifikation + Meilensteinplan in `02-spezifikation-mixup.md` | 6 |
+| 24 | Plan-Freigabe | Plan freigegeben (20.11.2026), Umsetzung ab M0 | 7 |
+| 25 | O1 Größe-Modus | **Lieber eine Person mehr**: k = abrunden(n / Größe), z. B. 25 Personen à 4 → 6 Teams (eins mit 5) | 7 |
+| 26 | O2 Name | Repo, Ordner und Pages-Adresse heißen **mixup** | 7 |
 
 ## Folgen
 
