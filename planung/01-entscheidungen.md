@@ -19,6 +19,10 @@ Wird nach jeder Fragenrunde fortgeschrieben.
 | 13 | Ausgabe | Nur **Vollbild-/Beamer-Ansicht** und **Drucken/PDF** (nach Teams sortiert). **Entfällt:** Text kopieren, CSV, Teilen-Menü | 4 |
 | 14 | Losen-Animation | **Kurz und elegant (~1,5 s)**: Namen mischen sich und gleiten in Teamkarten; „Reduzierte Bewegung“ wird respektiert | 4 |
 | 15 | Wiederholungen vermeiden | **Letzte 3 Einteilungen je Liste**, neuere zählen stärker, abschaltbar; Zusammen-Regeln haben Vorrang | 4 |
+| 16 | Namen erfassen | Alle drei Wege: **Liste einfügen** (ein Name pro Zeile, Doppelte erkennen), **einzeln tippen** (Enter = nächster), **CSV-/Textdatei laden** (optional Spalten Niveau/Geschlecht) | 5 |
+| 17 | Sicherung | **Backup-Datei** (alle Listen, Regeln, Verlauf) sichern/laden + **dezente Erinnerung** nach Änderungen, spätestens alle 4 Wochen | 5 |
+| 18 | Layout | **Schritt für Schritt** (eigene Bildschirme statt Zwei-Spalten-Ansicht) | 5 |
+| 19 | Regeln anlegen | **Personen markieren → „Zusammen“/„Getrennt“**; Regeln als farbige Chips am Namen, Gesamtübersicht in den Einstellungen | 5 |
 
 ## Folgen
 
