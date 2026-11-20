@@ -98,14 +98,20 @@ Die Lehrkraft wählt auf **iPad oder PC** eine Klasse, hakt ab, wer fehlt, stell
 5. **Verbessern** (außer Modus „Zufällig“ ohne Regeln): bis ca. 2000 Versuche Tauschen/Verschieben, angenommen nur bei sinkenden Kosten; Abbruch nach 300 Versuchen ohne Verbesserung.
 6. Alle Regeln prüfen, Verstöße als Hinweise zurückgeben.
 
-### 5.3 Kostenfunktion (Gewichte im Test justierbar)
+### 5.3 Kostenfunktion (umgesetzt in M1, `js/teams/cost.js`)
+Alle Anteile hängen nur von den Mitgliedern eines Teams ab; beim Tauschen werden nur zwei Teams neu bewertet.
 ```
-Kosten = 1000 · Getrennt-Verstöße
-       +   50 · Wiederholungen (Paare aus letzter Einteilung ×3, vorletzter ×2, drittletzter ×1)
-       +   10 · Abweichung von Geschlechter-Zielquoten
-       +    1 · Varianz der Niveau-Durchschnitte zwischen Teams      (Modus „ausgeglichen“)
-       +    1 · Summe der Niveau-Varianzen innerhalb der Teams        (Modus „gleiches Niveau“)
+Kosten je Team = 10000 · Paare einer Getrennt-Gruppe im Team
+               +    10 · Paare aus früheren Einteilungen (letzte ×3, vorletzte ×2, drittletzte ×1)
+               +   300 · Personen Abweichung von der Geschlechter-Zielquote (je Geschlecht)
+               +   300 · Teamgröße · (Niveau-Ø des Teams − Niveau-Ø aller)²   (Modus „ausgeglichen“)
+               +   300 · Σ (Niveau − Niveau-Ø des Teams)²                     (Modus „gleiches Niveau“)
 ```
+Gewichte in M1 gemessen: Mit den ersten Entwurfswerten verdrängte „Wiederholungen vermeiden“ den Geschlechter- und Niveau-Ausgleich. Jetzt gilt Getrennt ≫ Geschlecht ≈ Niveau > Wiederholung. Fehlendes Niveau zählt als 3.
+
+**Größe-Modus (verfeinert):** Es wird die Teamanzahl gewählt, deren Größen am wenigsten vom Wunsch abweichen; nur bei Gleichstand gilt „lieber eine Person mehr“ (E25). So werden 7 Personen à 4 zu 4 + 3 statt zu einem Team mit 7.
+
+**Ablauf (umgesetzt):** 3 Durchgänge aus gieriger Startverteilung (große Blöcke zuerst) und lokaler Suche (bis 4000 Versuche, Abbruch nach 600 ohne Verbesserung); der günstigste gewinnt. Ohne Regeln/Ausgleich/Gedächtnis: ein Durchgang, reiner Zufall. Teamreihenfolge wird am Ende gemischt.
 Größen sind keine Kosten, sondern feste Nebenbedingung. Im Modus „Zufällig“ zählen nur Getrennt-Regeln und Wiederholungen.
 
 ---

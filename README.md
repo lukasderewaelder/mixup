@@ -4,7 +4,7 @@ Teams per Zufall für den Unterricht: Klasse wählen, abhaken wer fehlt, „Lose
 Läuft als PWA auf iPad und PC, komplett offline, komplett auf Deutsch, ohne Konten und ohne Cloud. Alle Namen bleiben auf dem Gerät.
 
 **App:** https://lukasderewaelder.github.io/mixup/
-**Stand:** M0 (Grundgerüst) fertig. Weiter mit M1 (Algorithmus + Tests).
+**Stand:** M0 (Grundgerüst) und M1 (Teambildungs-Algorithmus, `js/teams/`, 37 Tests) fertig. Weiter mit M2 (Klassen, Namen, Anwesenheit, Regeln).
 
 ## Entwicklung
 
