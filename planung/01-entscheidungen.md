@@ -11,6 +11,10 @@ Wird nach jeder Fragenrunde fortgeschrieben.
 | 5 | Modi | Bleiben: **Zufällig**, **Ausgeglichen nach Niveau**, **Geschlechter gleichmäßig mischen**, **Gleiches Niveau pro Team** (Differenzierung). **Entfällt:** getrennte Jungen-/Mädchenteams | 2 |
 | 6 | Extras | Rein: **Wiederholungen vermeiden**, **Person per Antippen verschieben/tauschen**, **Reihenfolge auslosen**, **Verlauf der letzten Ergebnisse** | 2 |
 | 7 | Look | **Hell, ruhig, viel Weißraum**; Produktivitäts-App-Anmutung; deutlich moderner und eingängiger als das Original | 2 |
+| 8 | Hosting | Repo **öffentlich**, Auslieferung über **GitHub Pages** (HTTPS, installierbar). Keine Schülerdaten im Repo | 3 |
+| 9 | Technik | **Mehrere Dateien, reines JavaScript (ES-Module) + CSS, ohne Build**, ohne Framework/Bibliotheken/CDN; Algorithmus mit Node-Tests | 3 |
+| 10 | Teamnamen/-farben | Standard **„Team 1…n“ mit automatischen Farben** (Kontrast geprüft); eigene Namen nur optional | 3 |
+| 11 | Regeln & Teamanzahl | **Zusammen = fest**, **Getrennt = bestmöglich**, Verstöße namentlich als Hinweis; **1–20 Teams**, Wahl nach Anzahl oder Größe mit **Live-Vorschau** („5 Teams à 5–6“) | 3 |
 
 ## Folgen
 
