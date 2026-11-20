@@ -30,6 +30,17 @@ Wird nach jeder Fragenrunde fortgeschrieben.
 | 24 | Plan-Freigabe | Plan freigegeben (20.11.2026), Umsetzung ab M0 | 7 |
 | 25 | O1 Größe-Modus | **Lieber eine Person mehr**: k = abrunden(n / Größe), z. B. 25 Personen à 4 → 6 Teams (eins mit 5) | 7 |
 | 26 | O2 Name | Repo, Ordner und Pages-Adresse heißen **mixup** | 7 |
+| 27 | Niveau-Skala | **−5 bis +5**, Standard 0, Begriff bleibt „Niveau“; Eingabe per **Schieberegler**; alte Werte 1–5 → −4 … +4 (ersetzt E4 teilweise) | 8 |
+| 28 | Arten | Vier Arten: **Zufällig**, **Gleich stark** (gleiche Summe – Wettkampf), **Gemischt** (gleicher Durchschnitt – Gruppenarbeit, bisher „Ausgeglichen“), **Gleiches Niveau** (ersetzt E5) | 8 |
+| 29 | Gruppen-Gestaltung gilt | **je Klasse** (ersetzt E10) | 8 |
+| 30 | Vorlagen | **Wort** (Team, Gruppe, Tisch, Station, Mannschaft, eigenes) + **Zählung** (1 2 3 / A B C / **Farbname**) im Dialog **„Gruppen gestalten“** | 8 |
+| 31 | Einzelne Anpassung | **Direkt auf der Teamkarte**: Name antippen → umbenennen, Zeichen antippen → Farbe aus 20 geprüften Farben | 8 |
+| 32 | Beschriftung | **Großes Zeichen + eigener Name** („A Füchse“); bei Farbnamen großer Farbpunkt | 8 |
+| 33 | Aufbau | **Ein Hauptbildschirm wie im Original** statt drei Schritten; Beamer-Vollbild entfällt (ersetzt E13, E18, E20) | 8 |
+| 34 | Klassenansicht | Nach dem Losen **automatisch**; sichtbar: Klassenname, Neu losen, Zufallsperson, Reihenfolge, Tauschen per Antippen; Schrift passt sich an | 8 |
+| 35 | Schmale Bildschirme | Umschalter **„Namen | Teams“**, nach dem Losen automatisch „Teams“ | 8 |
+| 36 | Weitere Optionen | Geschlechter, Regeln, Wiederholungen **eingeklappt** unter „Weitere Optionen“ mit Kurzzeile | 8 |
+| 37 | Neu losen | Innerhalb von 10 Minuten nach einem unveränderten Ergebnis ersetzt „Neu losen“ den letzten Versuch (mit Rückgängig), sonst neuer Verlaufseintrag | 8 |
 
 ## Folgen
 

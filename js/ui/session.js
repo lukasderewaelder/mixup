@@ -1,12 +1,23 @@
 // Flüchtiger Bedienzustand (nicht gespeichert): was gerade an ist, solange die App offen ist.
 export const session = {
   playAnimation: false,   // nach „Losen“: Ergebnis mit Misch-Animation zeigen
-  step1Mode: 'present',   // 'present' | 'select' | 'edit'
+  namesMode: 'present',   // Namensliste: 'present' | 'select' | 'edit'
   selected: new Set(),    // ausgewählte Personen für Regeln
   pickedPlayer: null,     // Ergebnis: angetippte Person zum Verschieben
+  view: 'edit',           // Hauptbildschirm: 'edit' (alles sichtbar) | 'class' (nur Teams)
+  tab: 'names',           // schmale Bildschirme: 'names' | 'teams'
+  openAddNames: false,    // nach „Neue Klasse“: Dialog „Namen hinzufügen“ öffnen
 };
 
-export function resetStep1() {
-  session.step1Mode = 'present';
+export function resetNames() {
+  session.namesMode = 'present';
   session.selected.clear();
+}
+
+/** Beim Öffnen einer Klasse: Bearbeiten-Ansicht, passender Reiter. */
+export function enterClass(hasResult) {
+  resetNames();
+  session.pickedPlayer = null;
+  session.view = 'edit';
+  session.tab = hasResult ? 'teams' : 'names';
 }

@@ -49,7 +49,11 @@ function splitLine(line, delimiter) {
   return cells.map((c) => c.trim());
 }
 
-const parseLevel = (v) => (/^[1-5]$/.test(String(v).trim()) ? Number(v) : null);
+/** Niveau −5 … +5; akzeptiert „+3“, „-3“ und „−3“ (typografisches Minus). */
+export const parseLevel = (v) => {
+  const s = String(v ?? '').trim().replace(/^[−–]/, '-');
+  return /^[+-]?[0-5]$/.test(s) ? Number(s) : null;
+};
 const parseGender = (v) => GENDER_MAP[String(v).trim().toLocaleLowerCase('de')] ?? null;
 
 /**

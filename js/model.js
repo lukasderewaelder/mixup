@@ -2,23 +2,29 @@
 import { DEFAULT_OPTIONS } from './teams/algorithm.js';
 import { cryptoRandom, randInt } from './teams/random.js';
 
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 export const MAX_HISTORY = 10;
-export const LEVELS = [1, 2, 3, 4, 5];
+export const LEVEL_MIN = -5;
+export const LEVEL_MAX = 5;
+export const LEVELS = Array.from({ length: LEVEL_MAX - LEVEL_MIN + 1 }, (_, i) => LEVEL_MIN + i);
 export const GENDERS = ['m', 'w', 'd'];
 export const GENDER_LABEL = { m: 'männlich', w: 'weiblich', d: 'divers' };
 
 export const DEFAULT_SETTINGS = {
-  showLevel: false,       // Niveau in der Namensliste zeigen
+  showLevel: true,        // Niveau in der Namensliste zeigen (in der Klassenansicht nie)
   showGender: false,      // Geschlecht in der Namensliste zeigen
   nameOrder: 'alpha',     // 'alpha' | 'draw' – Reihenfolge der Namen in den Teamkarten
   animation: true,
   backupReminder: true,
-  teamNames: [],          // eigene Teamnamen (leer = „Team“)
   lastBackupAt: null,
   lastChangeAt: null,
   installHintDismissed: false,
 };
+
+/** Gestaltung der Gruppen – je Klasse. names/colors: Position (0–19) → eigener Name / Paletten-Nr. */
+export const GROUP_WORDS = ['Team', 'Gruppe', 'Tisch', 'Station', 'Mannschaft'];
+export const NUMBERINGS = ['number', 'letter', 'color'];
+export const DEFAULT_GROUP_STYLE = { word: 'Team', customWord: '', numbering: 'number', names: {}, colors: {} };
 
 // ---------- Hilfen ----------
 export function uid() {
@@ -37,12 +43,35 @@ export const normalizeName = (s) => String(s ?? '').replace(/\s+/g, ' ').trim();
 const nameKey = (s) => normalizeName(s).toLocaleLowerCase('de');
 export const byName = (a, b) => a.localeCompare(b, 'de', { sensitivity: 'base', numeric: true });
 
-const clampLevel = (x) => (LEVELS.includes(Number(x)) ? Number(x) : 3);
+export const clampLevel = (x) => {
+  const n = Math.round(Number(x));
+  return Number.isFinite(n) && n >= LEVEL_MIN && n <= LEVEL_MAX ? n : 0;
+};
+/** „+2“, „0“, „−3“ (typografisches Minus). */
+export const formatLevel = (l) => (l > 0 ? `+${l}` : l < 0 ? `−${-l}` : '0');
 const cleanGender = (g) => (GENDERS.includes(g) ? g : null);
 
 // ---------- Zustand ----------
 export function createState() {
-  return { version: SCHEMA_VERSION, classes: [], activeClassId: null, settings: { ...DEFAULT_SETTINGS, teamNames: [] } };
+  return { version: SCHEMA_VERSION, classes: [], activeClassId: null, settings: { ...DEFAULT_SETTINGS } };
+}
+
+function cleanGroupStyle(raw, legacyNames = []) {
+  const s = structuredClone(DEFAULT_GROUP_STYLE);
+  if (raw && typeof raw === 'object') {
+    if (GROUP_WORDS.includes(raw.word) || raw.word === 'custom') s.word = raw.word;
+    s.customWord = normalizeName(raw.customWord).slice(0, 30);
+    if (NUMBERINGS.includes(raw.numbering)) s.numbering = raw.numbering;
+    for (const [k, v] of Object.entries(raw.names || {})) {
+      const name = normalizeName(v).slice(0, 40);
+      if (/^\d+$/.test(k) && Number(k) < 20 && name) s.names[k] = name;
+    }
+    for (const [k, v] of Object.entries(raw.colors || {})) {
+      if (/^\d+$/.test(k) && Number(k) < 20 && Number.isInteger(v) && v >= 0 && v < 20) s.colors[k] = v;
+    }
+  }
+  legacyNames.forEach((n, i) => { const name = normalizeName(n); if (name && i < 20 && !s.names[i]) s.names[i] = name.slice(0, 40); });
+  return s;
 }
 
 export function createClass(name) {
@@ -59,6 +88,7 @@ export function createClass(name) {
     history: [],
     currentResultId: null,
     draw: { mode: 'noRepeat', drawn: [], source: 'all' },
+    groupStyle: structuredClone(DEFAULT_GROUP_STYLE),
   };
 }
 
@@ -89,7 +119,7 @@ export function addPlayers(cls, entries) {
     const key = nameKey(name);
     if (known.has(key)) { duplicates.push(name); continue; }
     known.add(key);
-    const player = { id: uid(), name, level: clampLevel(entry.level), gender: cleanGender(entry.gender) };
+    const player = { id: uid(), name, level: clampLevel(entry.level ?? 0), gender: cleanGender(entry.gender) };
     cls.players.push(player);
     added.push(player);
   }
@@ -245,10 +275,12 @@ const isObj = (x) => x && typeof x === 'object' && !Array.isArray(x);
 export function validateState(raw) {
   if (!isObj(raw) || !Array.isArray(raw.classes)) throw new Error('Das ist keine Mixup-Sicherung.');
   if (Number(raw.version) > SCHEMA_VERSION) throw new Error('Diese Sicherung stammt aus einer neueren Mixup-Version. Bitte die App aktualisieren.');
+  const legacy = !(Number(raw.version) >= 2); // Version 1: Niveau 1–5, Teamnamen global
   const state = createState();
-  state.settings = { ...DEFAULT_SETTINGS, ...(isObj(raw.settings) ? raw.settings : {}) };
-  if (!Array.isArray(state.settings.teamNames)) state.settings.teamNames = [];
-  state.settings.teamNames = state.settings.teamNames.slice(0, 20).map((s) => normalizeName(s).slice(0, 40));
+  const { teamNames: legacyNames = [], ...rawSettings } = isObj(raw.settings) ? raw.settings : {};
+  state.settings = { ...DEFAULT_SETTINGS, ...rawSettings };
+  if (legacy) state.settings.showLevel = true; // Klassenansicht blendet das Niveau ohnehin aus
+  const levelOf = (l) => (legacy ? ([1, 2, 3, 4, 5].includes(Number(l)) ? (Number(l) - 3) * 2 : 0) : clampLevel(l));
 
   for (const c of raw.classes) {
     if (!isObj(c) || !c.id) continue;
@@ -264,7 +296,7 @@ export function validateState(raw) {
       const name = normalizeName(p?.name);
       if (!name || !p.id || seen.has(String(p.id))) continue;
       seen.add(String(p.id));
-      cls.players.push({ id: String(p.id), name, level: clampLevel(p.level), gender: cleanGender(p.gender) });
+      cls.players.push({ id: String(p.id), name, level: levelOf(p.level), gender: cleanGender(p.gender) });
     }
     const valid = (id) => seen.has(String(id));
     for (const g of Array.isArray(c.groups) ? c.groups : []) {
@@ -286,6 +318,7 @@ export function validateState(raw) {
     }
     cls.currentResultId = cls.history.some((e) => e.id === c.currentResultId) ? c.currentResultId : null;
     if (isObj(c.draw)) cls.draw = { mode: c.draw.mode === 'any' ? 'any' : 'noRepeat', drawn: (c.draw.drawn || []).map(String).filter(valid), source: 'all' };
+    cls.groupStyle = cleanGroupStyle(c.groupStyle, legacy && Array.isArray(legacyNames) ? legacyNames : []);
     state.classes.push(cls);
   }
   state.activeClassId = state.classes.some((c) => c.id === raw.activeClassId) ? raw.activeClassId : null;

@@ -108,7 +108,7 @@ describe('Teambildung: Grundregeln', () => {
     for (let run = 0; run < 500; run++) {
       const n = 1 + Math.floor(rng() * 35);
       const players = makePlayers(n, rng, (i, r) => ({
-        level: 1 + Math.floor(r() * 5),
+        level: -5 + Math.floor(r() * 11),
         gender: ['m', 'w', 'd', null][Math.floor(r() * 4)],
         active: r() > 0.1,
       }));
@@ -116,7 +116,7 @@ describe('Teambildung: Grundregeln', () => {
       const options = {
         by: rng() < 0.5 ? 'count' : 'size',
         value: 1 + Math.floor(rng() * 22),
-        mode: ['random', 'balanced', 'equal'][Math.floor(rng() * 3)],
+        mode: ['random', 'strength', 'balanced', 'equal'][Math.floor(rng() * 4)],
         mixGender: rng() < 0.5,
       };
       const r = makeTeams({ players, options, rng });
@@ -167,7 +167,7 @@ describe('Teambildung: Regeln (Abnahme 4)', () => {
   test('Zusammen-Gruppen bleiben immer zusammen', () => {
     const rng = seededRandom(21);
     for (let run = 0; run < 200; run++) {
-      const players = makePlayers(25, rng, (i, r) => ({ level: 1 + Math.floor(r() * 5) }));
+      const players = makePlayers(25, rng, (i, r) => ({ level: -5 + Math.floor(r() * 11) }));
       const groups = [
         { id: 'g1', name: 'Freunde', type: 'together', playerIds: ['p1', 'p2', 'p3'] },
         { id: 'g2', name: 'Lernpaar', type: 'together', playerIds: ['p10', 'p11'] },
@@ -253,25 +253,25 @@ describe('Teambildung: Regeln (Abnahme 4)', () => {
 });
 
 describe('Teambildung: Ausgleich', () => {
-  test('Abnahme 5: ausgeglichen – Niveau-Durchschnitte weichen höchstens 0,5 ab (24 Personen, 4 Teams)', () => {
+  test('Abnahme 5: gemischt – Niveau-Durchschnitte weichen höchstens 1,0 ab (Skala −5…+5) (24 Personen, 4 Teams)', () => {
     const rng = seededRandom(13);
     for (let run = 0; run < 100; run++) {
-      const players = makePlayers(24, rng, (i, r) => ({ level: 1 + Math.floor(r() * 5) }));
+      const players = makePlayers(24, rng, (i, r) => ({ level: -5 + Math.floor(r() * 11) }));
       const level = new Map(players.map((p) => [p.id, p.level]));
       const r = makeTeams({ players, options: { value: 4, mode: 'balanced' }, rng });
       const means = r.teams.map((t) => mean(t.map((id) => level.get(id))));
-      assert.ok(Math.max(...means) - Math.min(...means) <= 0.5, `Lauf ${run}: ${means.map((m) => m.toFixed(2))}`);
+      assert.ok(Math.max(...means) - Math.min(...means) <= 1.0, `Lauf ${run}: ${means.map((m) => m.toFixed(2))}`);
     }
   });
 
   test('ausgeglichen auch bei ungleichen Teamgrößen (25 Personen à 4)', () => {
     const rng = seededRandom(14);
     for (let run = 0; run < 50; run++) {
-      const players = makePlayers(25, rng, (i, r) => ({ level: 1 + Math.floor(r() * 5) }));
+      const players = makePlayers(25, rng, (i, r) => ({ level: -5 + Math.floor(r() * 11) }));
       const level = new Map(players.map((p) => [p.id, p.level]));
       const r = makeTeams({ players, options: { by: 'size', value: 4, mode: 'balanced' }, rng });
       const means = r.teams.map((t) => mean(t.map((id) => level.get(id))));
-      assert.ok(Math.max(...means) - Math.min(...means) <= 0.6, `Lauf ${run}: ${means.map((m) => m.toFixed(2))}`);
+      assert.ok(Math.max(...means) - Math.min(...means) <= 1.2, `Lauf ${run}: ${means.map((m) => m.toFixed(2))}`);
     }
   });
 
@@ -283,19 +283,47 @@ describe('Teambildung: Ausgleich', () => {
     }));
     let equal = 0, random = 0;
     for (let run = 0; run < 50; run++) {
-      const players = makePlayers(24, rng, (i) => ({ level: 1 + (i % 4) })); // je 6 × Niveau 1–4
+      const players = makePlayers(24, rng, (i) => ({ level: [-4, -1, 2, 5][i % 4] })); // je 6 × vier Niveaus
       const level = new Map(players.map((p) => [p.id, p.level]));
       equal += spread(makeTeams({ players, options: { value: 4, mode: 'equal' }, rng }).teams, level);
       random += spread(makeTeams({ players, options: { value: 4, mode: 'random' }, rng }).teams, level);
     }
-    assert.ok(equal / 50 < 0.1, `Streuung gleiches Niveau: ${(equal / 50).toFixed(3)}`);
+    assert.ok(equal / 50 < 0.9, `Streuung gleiches Niveau: ${(equal / 50).toFixed(3)}`);
     assert.ok(equal * 5 < random, `kaum besser als Zufall: ${equal} vs. ${random}`);
+  });
+
+  test('Gleich stark (Wettkampf): Summen der Teams weichen höchstens 2 ab – auch bei ungleichen Größen', () => {
+    const rng = seededRandom(18);
+    for (let run = 0; run < 100; run++) {
+      const players = makePlayers(25, rng, (i, r) => ({ level: -5 + Math.floor(r() * 11) }));
+      const level = new Map(players.map((p) => [p.id, p.level]));
+      const r = makeTeams({ players, options: { by: 'size', value: 4, mode: 'strength' }, rng });
+      assertValid(r, players);
+      const sums = r.teams.map((t) => t.reduce((s, id) => s + level.get(id), 0));
+      assert.ok(Math.max(...sums) - Math.min(...sums) <= 2, `Lauf ${run}: Summen ${sums}`);
+    }
+  });
+
+  test('Gleich stark vs. Gemischt: das größere Team bekommt bei „Gleich stark“ schwächere Personen', () => {
+    // 9 Personen, Summe 20 → je Team 10: das 5er-Team hat dann Ø 2,0, das 4er-Team Ø 2,5
+    const rng = seededRandom(19);
+    let smallerMean = 0;
+    for (let run = 0; run < 50; run++) {
+      const players = makePlayers(9, rng, (i) => ({ level: [4, 4, 3, 3, 2, 2, 1, 0, 1][i] }));
+      const level = new Map(players.map((p) => [p.id, p.level]));
+      const r = makeTeams({ players, options: { value: 2, mode: 'strength' }, rng });
+      const big = r.teams.find((t) => t.length === 5);
+      const small = r.teams.find((t) => t.length === 4);
+      const avg = (t) => mean(t.map((id) => level.get(id)));
+      if (avg(big) < avg(small)) smallerMean++;
+    }
+    assert.ok(smallerMean >= 45, `nur ${smallerMean} von 50`);
   });
 
   test('Geschlechter gleichmäßig: 12 m / 12 w in 4 Teams → je 3 / 3', () => {
     const rng = seededRandom(16);
     for (let run = 0; run < 100; run++) {
-      const players = makePlayers(24, rng, (i) => ({ gender: i % 2 ? 'w' : 'm', level: 1 + (i % 5) }));
+      const players = makePlayers(24, rng, (i) => ({ gender: i % 2 ? 'w' : 'm', level: (i % 5) * 2 - 4 }));
       const g = new Map(players.map((p) => [p.id, p.gender]));
       const mode = ['random', 'balanced'][run % 2];
       const r = makeTeams({ players, options: { value: 4, mode, mixGender: true }, rng });
@@ -303,7 +331,7 @@ describe('Teambildung: Ausgleich', () => {
     }
   });
 
-  test('Niveau fehlt → zählt als 3, kein Absturz', () => {
+  test('Niveau fehlt → zählt als 0, kein Absturz', () => {
     const players = makePlayers(10, null);
     const r = makeTeams({ players, options: { value: 2, mode: 'balanced' }, rng: seededRandom(1) });
     assertValid(r, players);
@@ -335,14 +363,14 @@ describe('Teambildung: Wiederholungen vermeiden (Abnahme 6)', () => {
   test('alle Optionen zugleich: Ausgleich und Geschlechter bleiben vorrangig vor Wiederholungen', () => {
     const rng = seededRandom(5);
     for (let run = 0; run < 60; run++) {
-      const players = makePlayers(26, rng, (i, r) => ({ level: 1 + Math.floor(r() * 5), gender: i % 3 ? 'w' : 'm' }));
+      const players = makePlayers(26, rng, (i, r) => ({ level: -5 + Math.floor(r() * 11), gender: i % 3 ? 'w' : 'm' }));
       const p = new Map(players.map((x) => [x.id, x]));
       const options = { value: 5, mode: 'balanced', mixGender: true, avoidRepeats: true };
       const history = [];
       for (let h = 0; h < 3; h++) history.unshift({ teams: makeTeams({ players, history, options, rng }).teams });
       const r = makeTeams({ players, history, options, rng });
       const means = r.teams.map((t) => mean(t.map((id) => p.get(id).level)));
-      assert.ok(Math.max(...means) - Math.min(...means) <= 0.5, `Lauf ${run}: Niveau ${means.map((m) => m.toFixed(2))}`);
+      assert.ok(Math.max(...means) - Math.min(...means) <= 1.0, `Lauf ${run}: Niveau ${means.map((m) => m.toFixed(2))}`);
       for (const t of r.teams) {
         const w = t.filter((id) => p.get(id).gender === 'w').length;
         assert.ok(Math.abs(w - (t.length * 17) / 26) <= 1, `Lauf ${run}: ${w} w in Team mit ${t.length}`);
@@ -362,7 +390,7 @@ describe('Teambildung: Wiederholungen vermeiden (Abnahme 6)', () => {
 describe('Laufzeit', () => {
   test('Abnahme 2: 35 Personen mit allen Optionen unter 300 ms', () => {
     const rng = seededRandom(99);
-    const players = makePlayers(35, rng, (i, r) => ({ level: 1 + Math.floor(r() * 5), gender: i % 2 ? 'w' : 'm' }));
+    const players = makePlayers(35, rng, (i, r) => ({ level: -5 + Math.floor(r() * 11), gender: i % 2 ? 'w' : 'm' }));
     const groups = [
       { id: 'a', name: 'A', type: 'together', playerIds: ['p1', 'p2', 'p3'] },
       { id: 'b', name: 'B', type: 'apart', playerIds: ['p4', 'p5', 'p6', 'p7'] },

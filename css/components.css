@@ -80,42 +80,6 @@
 
 .button-row { display: flex; flex-wrap: wrap; gap: var(--s3); }
 
-/* ---------- Schritte ---------- */
-.stepper {
-  padding: var(--s3) max(var(--s5), env(safe-area-inset-left)) 0;
-}
-.stepper ol {
-  display: flex; gap: var(--s2);
-  max-width: var(--page-max); margin: 0 auto; padding: 0;
-  list-style: none;
-}
-.stepper li { flex: 1; min-width: 0; }
-.stepper a {
-  display: flex; align-items: center; gap: var(--s3);
-  min-height: var(--tap);
-  padding: var(--s2) var(--s3) var(--s3);
-  border-bottom: 3px solid var(--line);
-  color: var(--muted); text-decoration: none;
-  font-weight: 600; font-size: var(--fs-sm);
-  transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
-}
-.stepper a:hover { color: var(--ink); }
-.step-num {
-  display: inline-grid; place-items: center; flex: none;
-  width: 28px; height: 28px; border-radius: var(--r-pill);
-  border: 1.5px solid currentColor;
-  font-size: var(--fs-sm); font-variant-numeric: tabular-nums;
-}
-.step-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.stepper a[aria-current='step'] { color: var(--ink); border-bottom-color: var(--ink); }
-.stepper a[aria-current='step'] .step-num { background: var(--ink); border-color: var(--ink); color: var(--paper); }
-.stepper a.is-done .step-num { background: var(--mist); border-color: var(--line-strong); color: var(--ink); }
-
-@media (max-width: 560px) {
-  .stepper a:not([aria-current='step']) .step-label { display: none; }
-  .stepper li:has(a[aria-current='step']) { flex: 3; }
-}
-
 /* ---------- Eingaben ---------- */
 .input {
   width: 100%;
@@ -212,7 +176,19 @@ select.input { appearance: none; -webkit-appearance: none; padding-right: var(--
 }
 .team-name { display: flex; align-items: baseline; gap: var(--s2); min-width: 0; color: var(--c); font-weight: 700; font-size: var(--fs-md); }
 .team-num { font-size: var(--fs-2xl); font-weight: 800; line-height: 1; letter-spacing: -0.05em; font-variant-numeric: tabular-nums; }
-.team-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.team-dot { display: inline-block; flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--c); align-self: center; }
+.team-title { overflow-wrap: anywhere; text-align: left; }
+.team-head { flex-wrap: wrap; }
+.cv-grid .team-head { flex-wrap: nowrap; }
+/* Zeichen und Name auf der Karte sind antippbar (Farbe / Umbenennen), sehen aber wie Text aus */
+.team-mark-btn, .team-title-btn {
+  display: inline-flex; align-items: baseline; min-width: 0;
+  margin: -4px; padding: 4px;
+  border: 0; border-radius: 8px;
+  background: transparent; color: inherit; font: inherit;
+}
+.team-title-btn { overflow: hidden; }
+.team-mark-btn:hover, .team-title-btn:hover { background: color-mix(in srgb, var(--c) 10%, transparent); }
 .team-count { flex: none; color: color-mix(in srgb, var(--c-ink) 70%, transparent); font-size: var(--fs-xs); font-variant-numeric: tabular-nums; }
 .team-members { margin: 0; padding: 0; list-style: none; display: grid; gap: 1px; }
 .member {

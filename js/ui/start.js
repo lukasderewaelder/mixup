@@ -4,7 +4,7 @@ import { openDialog, promptDialog, confirmDialog, toast } from './dialogs.js';
 import { getState, update, replaceState } from '../store.js';
 import { createClass, duplicateClass, presentCount } from '../model.js';
 import { drawTeams, createExampleClass } from '../actions.js';
-import { resetStep1, session } from './session.js';
+import { enterClass, session } from './session.js';
 import { banners } from './banners.js';
 
 export const title = 'Klassen';
@@ -70,15 +70,16 @@ function classCard(cls) {
 
 function open(id) {
   update((s) => { s.activeClassId = id; }, { dataChange: false });
-  resetStep1();
+  enterClass(Boolean(getState().classes.find((c) => c.id === id)?.history.length));
   location.hash = '#/klasse';
 }
 
 function quick(id) {
   update((s) => { s.activeClassId = id; }, { dataChange: false });
-  const result = drawTeams();
-  if (!result.teams.length) { toast(result.warnings[0]?.message || 'Losen nicht möglich.'); return; }
-  location.hash = '#/ergebnis';
+  enterClass(true);
+  const result = drawTeams(); // schaltet auf die Klassenansicht
+  if (!result.teams.length) { toast(result.warnings[0]?.message || 'Losen nicht möglich.'); session.view = 'edit'; }
+  location.hash = '#/klasse';
 }
 
 const uniqueName = (exceptId) => (v) => {
@@ -93,7 +94,7 @@ async function newClass() {
   if (!name) return;
   const cls = createClass(name);
   update((s) => { s.classes.push(cls); s.activeClassId = cls.id; });
-  resetStep1();
+  enterClass(false);
   session.openAddNames = true;
   location.hash = '#/klasse';
 }

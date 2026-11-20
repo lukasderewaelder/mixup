@@ -1,11 +1,17 @@
 /* Druckansicht: nur Kopfzeile mit Klasse/Datum und die Teamkarten, nach Teams sortiert */
 @page { size: A4; margin: 14mm; }
 
-.topbar, .stepper, .step-actions, .skip-link, .toolbar, .notices, .pick-hint, .move-here,
-.toast-host, .shuffle-layer, .screen-head, dialog, .beamer { display: none !important; }
+.topbar, .skip-link, .toolbar, .notices, .pick-hint, .move-here, .toast-host, .shuffle-layer,
+.screen-head, dialog, .main-head, .view-tabs, .col-names, .options-panel, .results-lead, .cv-bar,
+.results-empty { display: none !important; }
 
 body { font-size: 11pt; background: #fff; }
-.page { padding: 0; max-width: none; }
+.page, .page:has(.main-screen) { padding: 0 !important; max-width: none !important; }
+.main-grid, .main-grid.show-names { display: block !important; }
+.main-grid.show-names .col-teams { display: block !important; }
+.class-view { display: block !important; height: auto !important; padding: 0 !important; }
+.team-grid.cv-grid { height: auto !important; font-size: 11pt !important; }
+.team-title-btn, .team-mark-btn { padding: 0 !important; margin: 0 !important; }
 
 .print-head {
   display: flex !important; justify-content: space-between; align-items: baseline;

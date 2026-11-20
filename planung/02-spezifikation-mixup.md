@@ -196,3 +196,15 @@ Nach jedem Meilenstein: Tests, Browser-Prüfung, Commit und Push auf `main`.
 | M6 | fertig bis auf iPad-Echttest | Offline-Cache und Update-Hinweis auf GitHub Pages geprüft; Service Worker auf „Netz zuerst“ umgestellt (siehe 8) |
 
 **Abnahmekriterien:** 2–8 automatisch getestet (58 Tests) bzw. im Browser geprüft. Kriterium 1 (Installation und Offline-Betrieb auf iPad) ist noch auf einem echten Gerät zu prüfen.
+
+---
+
+## 13. Version 1.1 (20.11.2026)
+
+Rückmeldung nach dem ersten Ausprobieren, geklärt in 15 Rückfragen (Entscheidungen E27–E37). Plan: `~/.claude/plans/replicated-coalescing-cascade.md`.
+
+- **Niveau −5 … +5** (Standard 0, Schieberegler). Datenformat Version 2; ältere Daten und Sicherungen werden beim Laden umgerechnet (1–5 → −4 … +4, globale Teamnamen → jede Klasse).
+- **Vier Arten**: Zufällig · Gleich stark (Summe gleich, Kostenanteil `(Summe − Gesamtsumme/k)²`) · Gemischt (Durchschnitt, bisher „Ausgeglichen“) · Gleiches Niveau. Gewichte für die doppelt so breite Skala neu gemessen: Gemischt Ø-Abweichung ≤ 0,53, Gleich stark Summen-Abweichung ≤ 2 bei allen Optionen zugleich.
+- **Gruppen gestalten je Klasse** (`js/labels.js`, `js/ui/group-style.js`): Wort + Zählung (Zahlen, Buchstaben, Farbnamen), Name und Farbe einzeln auf der Karte.
+- **Hauptbildschirm** (`js/ui/main.js` mit `names-panel`, `options-panel`, `results-panel`) ersetzt die drei Schritte und die Beamer-Ansicht. Nach dem Losen **Klassenansicht**: nur Teams, Schrift automatisch so groß wie möglich (`js/ui/fit.js`), Kopfzeile der App ausgeblendet.
+- Abnahme 5 gilt jetzt auf der neuen Skala: Gemischt ≤ 1,0; neu: Gleich stark ≤ 2 (Summen, auch bei ungleichen Größen).

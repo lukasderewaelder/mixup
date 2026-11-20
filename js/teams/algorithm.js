@@ -26,9 +26,10 @@ const EPS = 1e-9;
  * @param {object} [input.options]   siehe DEFAULT_OPTIONS
  * @param {{teams: string[][]}[]} [input.history]  frühere Einteilungen, neueste zuerst
  * @param {() => number} [input.rng]
+ * @param {(i: number) => string} [input.label]  Bezeichnung der Gruppe i in Hinweisen (Standard „Team i+1“)
  * @returns {{teams: string[][], k: number, warnings: {type, message, groupId?}[], cost: number}}
  */
-export function makeTeams({ players, groups = [], options = {}, history = [], rng = cryptoRandom }) {
+export function makeTeams({ players, groups = [], options = {}, history = [], rng = cryptoRandom, label }) {
   const opts = { ...DEFAULT_OPTIONS, ...options };
   const present = players.filter((p) => p.active !== false);
   const n = present.length;
@@ -52,7 +53,7 @@ export function makeTeams({ players, groups = [], options = {}, history = [], rn
   const { blocks, warnings: blockWarnings } = buildBlocks(present.map((p) => p.id), together, hi);
   warnings.push(...blockWarnings);
 
-  const model = createCostModel({ players: present, apartGroups: apart, history, options: opts });
+  const model = createCostModel({ players: present, apartGroups: apart, history, options: opts, k });
   const ctx = { k, lo, hi, bigCount, model, rng, opts };
 
   let best = null;
@@ -70,7 +71,7 @@ export function makeTeams({ players, groups = [], options = {}, history = [], rn
   const all = [
     ...warnings,
     ...best.splitWarnings(together),
-    ...checkRules(teams, { players: present, groups: rules }).filter((w) => !(w.type === 'together-split' && tooBig.has(w.groupId))),
+    ...checkRules(teams, { players: present, groups: rules, label }).filter((w) => !(w.type === 'together-split' && tooBig.has(w.groupId))),
   ];
   const seen = new Set();
   const unique = all.filter((w) => {
@@ -191,7 +192,7 @@ const joinNames = (names) => (names.length <= 2 ? names.join(' und ') : `${names
  * @param {string[][]} teams
  * @param {{players: {id,name}[], groups: object[]}} ctx  nur aktive Regeln übergeben
  */
-export function checkRules(teams, { players, groups }) {
+export function checkRules(teams, { players, groups, label = (t) => `Team ${t + 1}` }) {
   const name = new Map(players.map((p) => [p.id, p.name]));
   const teamOf = new Map();
   teams.forEach((ids, t) => ids.forEach((id) => teamOf.set(id, t)));
@@ -218,7 +219,7 @@ export function checkRules(teams, { players, groups }) {
         if (ids.length > allowed) {
           const names = joinNames(ids.map((id) => name.get(id)));
           const verb = ids.length === 2 ? 'sind beide' : 'sind';
-          warnings.push({ type: 'apart-violated', groupId: g.id, team: t, message: `„${g.name}“: ${names} ${verb} in Team ${t + 1}.` });
+          warnings.push({ type: 'apart-violated', groupId: g.id, team: t, message: `„${g.name}“: ${names} ${verb} in ${label(t)}.` });
         }
       }
     }

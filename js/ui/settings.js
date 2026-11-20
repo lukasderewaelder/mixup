@@ -2,8 +2,7 @@
 import { h, button, screenHead, segmented, toggle, formatDate, replaceKeepFocus } from './dom.js';
 import { confirmDialog, toast } from './dialogs.js';
 import { getState, update, replaceState } from '../store.js';
-import { createState, normalizeName } from '../model.js';
-import { MAX_TEAMS } from '../teams/colors.js';
+import { createState } from '../model.js';
 import { exportBackup, importBackup } from '../backup.js';
 import { APP_VERSION } from '../version.js';
 
@@ -26,27 +25,11 @@ function paint() {
     screenHead('Einstellungen', null, h('a', { class: 'btn btn-quiet', href: '#/' }, 'Zu den Klassen')),
 
     section('Anzeige', 'display',
-      toggle('Niveau in der Namensliste zeigen', s.showLevel, (v) => set({ showLevel: v }), { id: 's-level', hint: 'Nur in Schritt 1. In Teams, Beamer und Druck erscheint das Niveau nie.' }),
-      toggle('Geschlecht in der Namensliste zeigen', s.showGender, (v) => set({ showGender: v }), { id: 's-gender', hint: 'Nur in Schritt 1.' }),
+      toggle('Niveau in der Namensliste zeigen', s.showLevel, (v) => set({ showLevel: v }), { id: 's-level', hint: 'Zeigt das Niveau (−5 bis +5) an den Namen. In der Klassenansicht, auf den Teamkarten und im Druck erscheint es nie.' }),
+      toggle('Geschlecht in der Namensliste zeigen', s.showGender, (v) => set({ showGender: v }), { id: 's-gender', hint: 'Nur an den Namen, nie in der Klassenansicht.' }),
       toggle('Misch-Animation beim Losen', s.animation, (v) => set({ animation: v }), { id: 's-anim', hint: 'Wird automatisch abgeschaltet, wenn das Gerät „Bewegung reduzieren“ verlangt.' }),
       h('div', { class: 'field' }, h('span', { class: 'field-label' }, 'Namen in den Teamkarten'),
         segmented('name-order', [{ value: 'alpha', label: 'Alphabetisch' }, { value: 'draw', label: 'In Losreihenfolge' }], s.nameOrder, (v) => set({ nameOrder: v }), { label: 'Namen in den Teamkarten' })),
-    ),
-
-    section('Teamnamen', 'names',
-      h('p', { class: 'muted' }, 'Leer lassen für „Team 1“, „Team 2“ … Die Namen gelten für alle Klassen.'),
-      h('div', { class: 'team-name-grid' }, Array.from({ length: MAX_TEAMS }, (_, i) => h('label', { class: 'team-name-field', '--c': `var(--team-${i + 1})` },
-        h('span', { class: 'team-name-dot', 'aria-hidden': 'true' }, i + 1),
-        h('input', {
-          class: 'input', type: 'text', value: s.teamNames[i] || '', placeholder: `Team ${i + 1}`, maxlength: 40, 'aria-label': `Name für Team ${i + 1}`,
-          onChange: (e) => {
-            const names = [...getState().settings.teamNames];
-            names[i] = normalizeName(e.target.value);
-            while (names.length && !names.at(-1)) names.pop();
-            update((st) => { st.settings.teamNames = names; }, { dataChange: false });
-          },
-        })))),
-      s.teamNames.some(Boolean) ? button('Alle Teamnamen zurücksetzen', { variant: 'quiet', onClick: () => set({ teamNames: [] }) }) : null,
     ),
 
     section('Sicherung', 'backup',
@@ -65,8 +48,8 @@ function paint() {
 
     section('Tastenkürzel', 'keys',
       h('dl', { class: 'keys' }, [
-        ['1 / 2 / 3', 'Schritt wechseln'], ['Leertaste', 'Teams losen bzw. neu losen'], ['B', 'Beamer-Ansicht'],
-        ['Z', 'Zufallsperson'], ['R', 'Reihenfolge'], ['V', 'Verlauf'], ['Strg + P', 'Drucken'], ['Esc', 'Schließen, Auswahl aufheben'],
+        ['Leertaste', 'Teams losen bzw. neu losen'], ['K', 'Klassenansicht an/aus'],
+        ['Z', 'Zufallsperson'], ['R', 'Reihenfolge'], ['V', 'Verlauf'], ['Strg + P', 'Drucken'], ['Esc', 'Schließen, Auswahl aufheben, Klassenansicht verlassen'],
       ].map(([k, v]) => [h('dt', {}, h('kbd', {}, k)), h('dd', {}, v)])),
     ),
 

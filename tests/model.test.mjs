@@ -19,7 +19,7 @@ describe('Personen', () => {
     const { added, duplicates } = M.addPlayers(cls, [{ name: '  Greta   Maier ' }, { name: 'aylin' }, { name: '' }, { name: 'Greta Maier' }]);
     assert.deepEqual(added.map((p) => p.name), ['Greta Maier']);
     assert.deepEqual(duplicates, ['aylin', 'Greta Maier']);
-    assert.equal(added[0].level, 3);
+    assert.equal(added[0].level, 0);
     assert.equal(added[0].gender, null);
   });
 
@@ -129,7 +129,7 @@ describe('Laden und Sicherung', () => {
     M.recordResult(cls, { teams: [[id(cls, 'Aylin')], [id(cls, 'Ben')]] }, { value: 2 });
     s.classes.push(cls);
     s.activeClassId = cls.id;
-    s.settings.teamNames = ['Füchse'];
+    cls.groupStyle = { word: 'custom', customWord: 'Tisch', numbering: 'letter', names: { 0: 'Füchse' }, colors: { 1: 7 } };
     const back = M.validateState(JSON.parse(JSON.stringify(s)));
     assert.deepEqual(back, s);
   });
@@ -137,8 +137,8 @@ describe('Laden und Sicherung', () => {
   test('validateState bereinigt kaputte Teile und lehnt Fremdes ab', () => {
     assert.throws(() => M.validateState({ foo: 1 }), /keine Mixup-Sicherung/);
     assert.throws(() => M.validateState({ version: 99, classes: [] }), /neueren/);
-    const s = M.validateState({ version: 1, classes: [{ id: 'c', name: 'X', players: [{ id: 'p', name: ' A ', level: 9, gender: 'x' }, { name: 'ohne id' }], groups: [{ type: 'together', playerIds: ['p', 'fehlt'] }] }] });
-    assert.deepEqual(s.classes[0].players, [{ id: 'p', name: 'A', level: 3, gender: null }]);
+    const s = M.validateState({ version: 2, classes: [{ id: 'c', name: 'X', players: [{ id: 'p', name: ' A ', level: 9, gender: 'x' }, { name: 'ohne id' }], groups: [{ type: 'together', playerIds: ['p', 'fehlt'] }] }] });
+    assert.deepEqual(s.classes[0].players, [{ id: 'p', name: 'A', level: 0, gender: null }]);
     assert.equal(s.classes[0].groups.length, 0);
   });
 

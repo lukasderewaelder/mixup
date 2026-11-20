@@ -1,11 +1,7 @@
-// Teamkarte – gemeinsam für Ergebnis, Beamer und Druck.
+// Teamkarte – für Ergebnis, Klassenansicht und Druck.
 import { h } from './dom.js';
 import { byName } from '../model.js';
-
-export function teamLabel(index, settings) {
-  const custom = settings?.teamNames?.[index];
-  return custom ? custom : `Team ${index + 1}`;
-}
+import { groupCode, groupColor, groupLabel, groupWord } from '../labels.js';
 
 /** Namen eines Teams in der eingestellten Reihenfolge. */
 export function orderedMembers(ids, players, settings) {
@@ -13,18 +9,39 @@ export function orderedMembers(ids, players, settings) {
   return settings?.nameOrder === 'draw' ? named : named.sort((a, b) => byName(a.name, b.name));
 }
 
+/** CSS-Variablen für die Farbe der Gruppe an Position i. */
+export function colorVars(i, style) {
+  const n = groupColor(i, style) + 1;
+  return { '--c': `var(--team-${n})`, '--c-tint': `var(--team-${n}-tint)`, '--c-ink': `var(--team-${n}-ink)` };
+}
+
 /**
  * @param {number} index
  * @param {{id,name}[]} members  bereits sortiert
- * @param {object} o  settings, interactive (Ergebnis: Personen antippbar), picked, onPick, onTeam
+ * @param {object} o
+ *   style       Gruppen-Gestaltung der Klasse
+ *   interactive Personen antippbar (Tauschen/Verschieben), Name und Farbe änderbar
+ *   picked, onPick, onTeam, onRename, onColor
  */
-export function teamCard(index, members, { settings, interactive = false, picked = null, onPick, onTeam } = {}) {
-  const n = index + 1;
-  const custom = settings?.teamNames?.[index];
+export function teamCard(index, members, { style, interactive = false, picked = null, onPick, onTeam, onRename, onColor } = {}) {
+  const code = groupCode(index, style);
+  const custom = style?.names?.[index];
+  // Neben dem großen Zeichen: eigener Name, sonst das Wort („Gruppe“) bzw. bei Farbnamen „Gruppe Blau“
+  const title = custom || (code ? groupWord(style) : groupLabel(index, style));
   const count = members.length === 1 ? '1 Person' : `${members.length} Personen`;
 
+  const mark = code
+    ? h('span', { class: 'team-num' }, code)
+    : h('span', { class: 'team-dot', 'aria-hidden': 'true' });
+
   const head = h('header', { class: 'team-head' },
-    h('span', { class: 'team-name' }, h('span', { class: 'team-num' }, n), h('span', { class: 'team-title' }, custom || 'Team')),
+    h('span', { class: 'team-name' },
+      interactive
+        ? h('button', { type: 'button', class: 'team-mark-btn', 'aria-label': `Farbe von ${groupLabel(index, style)} ändern`, title: 'Farbe ändern', onClick: (e) => { e.stopPropagation(); onColor?.(index); } }, mark)
+        : mark,
+      interactive
+        ? h('button', { type: 'button', class: 'team-title-btn', title: 'Namen ändern', 'aria-label': `${groupLabel(index, style)} umbenennen`, onClick: (e) => { e.stopPropagation(); onRename?.(index); } }, h('span', { class: 'team-title' }, title))
+        : h('span', { class: 'team-title' }, title)),
     h('span', { class: 'team-count' }, count));
 
   const list = h('ul', { class: 'team-members' }, members.map((p) => h('li', { 'data-id': p.id },
@@ -38,17 +55,14 @@ export function teamCard(index, members, { settings, interactive = false, picked
 
   const card = h('article', {
     class: `team-card${interactive && picked ? ' is-target' : ''}`,
-    '--c': `var(--team-${n})`, '--c-tint': `var(--team-${n}-tint)`, '--c-ink': `var(--team-${n}-ink)`,
+    ...colorVars(index, style),
     '--i': index,
     'data-team': index,
-    'aria-label': `${teamLabel(index, settings)}, ${count}`,
+    'aria-label': `${groupLabel(index, style)}, ${count}`,
   }, head, list);
 
-  if (interactive && picked) {
-    const already = members.some((p) => p.id === picked);
-    if (!already) {
-      card.append(h('button', { type: 'button', class: 'move-here', 'data-key': `t-${index}`, onClick: () => onTeam?.(index) }, `Hierher verschieben`));
-    }
+  if (interactive && picked && !members.some((p) => p.id === picked)) {
+    card.append(h('button', { type: 'button', class: 'move-here', 'data-key': `t-${index}`, onClick: () => onTeam?.(index) }, 'Hierher verschieben'));
   }
   return card;
 }

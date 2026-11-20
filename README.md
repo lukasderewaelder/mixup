@@ -4,23 +4,23 @@ Teams per Zufall für den Unterricht: Klasse wählen, abhaken wer fehlt, „Team
 Läuft als PWA auf iPad und PC, komplett offline, komplett auf Deutsch, ohne Konten und ohne Cloud. Alle Namen bleiben auf dem Gerät.
 
 **App:** https://lukasderewaelder.github.io/mixup/
-**Stand:** Version 1.0.0 – alle Meilensteine M0–M6 umgesetzt, 58 Tests. Offen: Test auf einem echten iPad.
+**Stand:** Version 1.1.0 – Hauptbildschirm wie im Original, Niveau −5 bis +5, vier Arten, Gruppen je Klasse gestaltbar; 70 Tests. Offen: Test auf einem echten iPad.
 
 ## Was Mixup kann
 
 - **Klassen** anlegen, umbenennen, duplizieren, löschen (mit Rückgängig); Beispielklasse zum Ausprobieren
+- **Ein Hauptbildschirm** je Klasse: links die Namen, rechts Optionen, „Teams losen“ und die Teams (schmale Bildschirme: Umschalter „Namen | Teams“)
 - **Namen** eintippen, als Liste einfügen (Nummern/Aufzählungszeichen werden entfernt) oder aus CSV/Text laden (Vorname/Nachname, Niveau, Geschlecht werden erkannt); doppelte Namen werden gemeldet
-- **Wer fehlt heute?** – Antippen setzt abwesend, gilt nur für den Tag
+- **Niveau −5 bis +5** per Schieberegler (Standard 0); **Wer fehlt heute?** – Antippen setzt abwesend, gilt nur für den Tag
 - **Regeln**: Personen markieren → „Zusammen“ (immer im selben Team) oder „Getrennt“ (möglichst verschiedene Teams); einzeln oder gesamt abschaltbar
-- **Teams einstellen**: Anzahl (1–20) oder Personen pro Team, Live-Vorschau; Art zufällig, ausgeglichen nach Niveau oder gleiches Niveau; Geschlechter mischen; Wiederholungen vermeiden (letzte 3 Einteilungen)
-- **Ergebnis** mit kurzer Misch-Animation, Person antippen zum Tauschen/Verschieben, Regel-Hinweise mit Namen, Neu losen (mit Rückgängig), Verlauf der letzten 10 Einteilungen
-- **Beamer-Ansicht** im Vollbild mit automatisch größter Schrift, **Drucken/PDF**, **Zufallsperson** (jede Person einmal oder immer aus allen), **Reihenfolge** auslosen
-- **Schnellstart** „Wie letztes Mal losen“ auf der Klassenkarte
+- **Arten**: Zufällig · **Gleich stark** (gleiche Niveau-Summe – wenn Teams gegeneinander antreten) · **Gemischt** (gleicher Durchschnitt – Gruppenarbeit) · Gleiches Niveau; dazu eingeklappt: Geschlechter mischen, Regeln beachten, Wiederholungen vermeiden
+- **Gruppen gestalten** je Klasse: Team, Gruppe, Tisch, Station, Mannschaft oder eigenes Wort; Zählung 1 2 3, A B C oder Farbnamen; Name und Farbe direkt auf der Karte antippen
+- **Klassenansicht** nach dem Losen: nur die Teams, Schrift automatisch so groß wie möglich, Neu losen, Zufallsperson, Reihenfolge, Tauschen per Antippen – Niveau, Regeln und Optionen sind ausgeblendet
+- **Verlauf** der letzten 10 Einteilungen, **Drucken/PDF**, **Zufallsperson** (jede Person einmal oder immer aus allen), **Reihenfolge** auslosen, **Schnellstart** „Wie letztes Mal losen“
 - **Sicherung** als JSON-Datei (ersetzen oder zusammenführen) mit dezenter Erinnerung
-- Niveau und Geschlecht erscheinen **nie** in Ergebnis, Beamer oder Druck
-- Tastenkürzel: `1/2/3` Schritte, `Leertaste` losen, `B` Beamer, `Z` Zufallsperson, `R` Reihenfolge, `V` Verlauf, `Esc`
+- Tastenkürzel: `Leertaste` losen, `K` Klassenansicht an/aus, `Z` Zufallsperson, `R` Reihenfolge, `V` Verlauf, `Esc`
 
-Getestet in Chromium (Desktop- und Handybreite). Benötigt einen aktuellen Browser (Safari/iPadOS ab 16.4, Chrome/Edge ab 111).
+Getestet in Chromium (Desktop-, iPad-hochkant- und Handybreite). Benötigt einen aktuellen Browser (Safari/iPadOS ab 16.4, Chrome/Edge ab 111).
 
 ## Entwicklung
 
@@ -39,8 +39,9 @@ Keine Abhängigkeiten, kein Build. Der Service Worker wird auf `localhost` nicht
 js/teams/   Teambildung (rein, getestet): algorithm.js, cost.js, sizes.js, blocks.js, random.js, colors.js
 js/model.js Datenmodell (rein, getestet) · js/import.js Namen-Import · js/store.js Speicher
 js/backup.js Sicherung · js/actions.js Losen, Beispielklasse · js/app.js Router, Kürzel, Service Worker
-js/ui/      Bildschirme (start, step1-klasse, step2-einstellen, step3-ergebnis, settings),
-            beamer, draw (Zufallsperson/Reihenfolge), team-card, dialogs, banners, dom, icons
+js/labels.js Gruppen-Bezeichnung und -Farbe (rein, getestet)
+js/ui/      Bildschirme: start, main (Hauptbildschirm mit names-panel, options-panel, results-panel), settings;
+            group-style, fit (Schriftanpassung), draw (Zufallsperson/Reihenfolge), team-card, dialogs, banners, dom, icons
 css/        tokens (Farben, Teamfarben, Schrift), base, components, screens, print
 ```
 

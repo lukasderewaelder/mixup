@@ -3,6 +3,7 @@ import { makeTeams } from './teams/algorithm.js';
 import { playersForToday, memoryFor, recordResult, createClass, addPlayers, addGroup } from './model.js';
 import { update } from './store.js';
 import { session } from './ui/session.js';
+import { groupLabel } from './labels.js';
 
 /**
  * Lost Teams für die aktive Klasse und speichert das Ergebnis.
@@ -16,11 +17,14 @@ export function drawTeams({ replaceCurrent = false } = {}) {
       groups: cls.groups,
       options: cls.options,
       history: cls.options.avoidRepeats ? memoryFor(cls, { replaceCurrent }) : [],
+      label: (i) => groupLabel(i, cls.groupStyle),
     });
     if (result.teams.length) {
       recordResult(cls, result, cls.options, { replaceCurrent });
       session.playAnimation = true;
       session.pickedPlayer = null;
+      session.view = 'class';
+      session.tab = 'teams';
     }
     return result;
   });
@@ -34,7 +38,7 @@ export function createExampleClass(existingNames) {
   let name = 'Beispielklasse';
   for (let i = 2; existingNames.includes(name); i++) name = `Beispielklasse ${i}`;
   const cls = createClass(name);
-  addPlayers(cls, EXAMPLE_NAMES.map((n, i) => ({ name: n, level: 1 + ((i * 7) % 5), gender: i % 2 ? 'w' : 'm' })));
+  addPlayers(cls, EXAMPLE_NAMES.map((n, i) => ({ name: n, level: ((i * 7) % 11) - 5, gender: i % 2 ? 'w' : 'm' })));
   const id = (n) => cls.players.find((p) => p.name === n).id;
   addGroup(cls, 'together', [id('Ben'), id('Emil')]);
   addGroup(cls, 'apart', [id('Jonas'), id('Leon'), id('Noah')]);

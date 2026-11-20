@@ -5,7 +5,7 @@ import { openDialog } from './dialogs.js';
 import { activeClass, update, getState } from '../store.js';
 import { absentIds, currentResult, drawPerson, remainingInDraw, byName } from '../model.js';
 import { shuffle } from '../teams/random.js';
-import { teamLabel } from './team-card.js';
+import { groupLabel, groupColor } from '../labels.js';
 
 const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches || !getState().settings.animation;
 
@@ -81,7 +81,7 @@ export function openDraw({ team = null } = {}) {
     teams.length ? h('label', { class: 'field field-inline' }, h('span', { class: 'field-label' }, 'Aus'),
       h('select', { class: 'input', onChange: (e) => { source = e.target.value; nameEl.textContent = 'Bereit?'; refresh(); } },
         h('option', { value: 'all', selected: source === 'all' }, 'allen Anwesenden'),
-        teams.map((t, i) => h('option', { value: String(i), selected: source === String(i) }, teamLabel(i, getState().settings))))) : null,
+        teams.map((t, i) => h('option', { value: String(i), selected: source === String(i) }, groupLabel(i, cls.groupStyle))))) : null,
   );
 
   const dlg = openDialog({
@@ -109,8 +109,8 @@ export function openOrder() {
   function roll() {
     if (kind === 'teams') {
       const order = shuffle(teams.map((_, i) => i));
-      list.replaceChildren(...order.map((t) => h('li', { class: 'order-item', '--c': `var(--team-${t + 1})` },
-        h('span', { class: 'order-dot' }), h('span', { class: 'order-team' }, teamLabel(t, settings)),
+      list.replaceChildren(...order.map((t) => h('li', { class: 'order-item', '--c': `var(--team-${groupColor(t, cls.groupStyle) + 1})` },
+        h('span', { class: 'order-dot' }), h('span', { class: 'order-team' }, groupLabel(t, cls.groupStyle)),
         h('span', { class: 'order-members' }, teams[t].map((id) => cls.players.find((p) => p.id === id)?.name).sort(byName).join(', ')))));
     } else {
       const ids = shuffle(presentIdsFor(cls));
