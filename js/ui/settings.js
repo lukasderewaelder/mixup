@@ -42,8 +42,6 @@ function paint() {
     ),
 
     section('Anzeige', 'display',
-      toggle('Niveau in der Namensliste zeigen', s.showLevel, (v) => set({ showLevel: v }), { id: 's-level', hint: 'Zeigt das Niveau (−5 bis +5) an den Namen. In der Klassenansicht, auf den Teamkarten und im Druck erscheint es nie.' }),
-      toggle('Geschlecht in der Namensliste zeigen', s.showGender, (v) => set({ showGender: v }), { id: 's-gender', hint: 'Nur an den Namen, nie in der Klassenansicht.' }),
       toggle('Misch-Animation beim Losen', s.animation, (v) => set({ animation: v }), { id: 's-anim', hint: 'Wird automatisch abgeschaltet, wenn das Gerät „Bewegung reduzieren“ verlangt.' }),
       h('div', { class: 'field' }, h('span', { class: 'field-label' }, 'Namen in den Teamkarten'),
         segmented('name-order', [{ value: 'alpha', label: 'Alphabetisch' }, { value: 'draw', label: 'In Losreihenfolge' }], s.nameOrder, (v) => set({ nameOrder: v }), { label: 'Namen in den Teamkarten' })),
@@ -60,12 +58,12 @@ function paint() {
 
     section('Datenschutz', 'privacy',
       h('p', {}, 'Mixup speichert alles nur auf diesem Gerät im Browser-Speicher. Es gibt kein Konto, keine Cloud, keine Werbung und keine Statistik. Nichts wird an einen Server geschickt – nach dem ersten Laden läuft die App auch ganz ohne Internet.'),
-      h('p', { class: 'muted' }, 'Niveau und Geschlecht sind nur für die Teambildung da und werden nirgends angezeigt, wo die Klasse mitschaut.'),
+      h('p', { class: 'muted' }, 'Niveau und Geschlecht sind nur für die Teambildung da. Sie stehen nur in den Details einer Person (Name antippen) – nie in der Namensliste, der Klassenansicht oder im Druck.'),
     ),
 
     section('Tastenkürzel', 'keys',
       h('dl', { class: 'keys' }, [
-        ['Leertaste', 'Teams losen bzw. neu losen'], ['K', 'Klassenansicht an/aus'],
+        ['Leertaste', 'Teams losen bzw. neu losen'], ['K', 'Klassenansicht an/aus'], ['O', 'Optionen'],
         ['Z', 'Zufallsperson'], ['R', 'Reihenfolge'], ['V', 'Verlauf'], ['Strg + P', 'Drucken'], ['Esc', 'Schließen, Auswahl aufheben, Klassenansicht verlassen'],
       ].map(([k, v]) => [h('dt', {}, h('kbd', {}, k)), h('dd', {}, v)])),
     ),

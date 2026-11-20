@@ -2,7 +2,7 @@
 @page { size: A4; margin: 14mm; }
 
 .topbar, .skip-link, .toolbar, .notices, .pick-hint, .move-here, .toast-host, .shuffle-layer,
-.screen-head, dialog, .main-head, .view-tabs, .col-names, .options-panel, .results-lead, .cv-bar,
+.screen-head, dialog, .main-head, .main-toolbar, .main-status, .view-tabs, .col-names, .results-lead, .cv-bar,
 .results-empty { display: none !important; }
 
 body { font-size: 11pt; background: #fff !important; background-image: none !important; }

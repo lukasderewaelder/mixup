@@ -1,7 +1,7 @@
 // Flüchtiger Bedienzustand (nicht gespeichert): was gerade an ist, solange die App offen ist.
 export const session = {
   playAnimation: false,   // nach „Losen“: Ergebnis mit Misch-Animation zeigen
-  namesMode: 'present',   // Namensliste: 'present' | 'select' | 'edit'
+  namesMode: 'present',   // Namensliste: 'present' | 'select' (Personen für eine Regel auswählen)
   selected: new Set(),    // ausgewählte Personen für Regeln
   pickedPlayer: null,     // Ergebnis: angetippte Person zum Verschieben
   view: 'edit',           // Hauptbildschirm: 'edit' (alles sichtbar) | 'class' (nur Teams)

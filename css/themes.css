@@ -76,7 +76,7 @@
 [data-theme='poster'] .step-btn { border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink); }
 
 /* Flächen */
-[data-theme='poster'] :is(.options-panel, .panel, .class-card, .add-way, .banner) {
+[data-theme='poster'] :is(.main-toolbar, .name-list, .panel, .class-card, .add-way, .banner) {
   background: #fff; border: 2px solid var(--ink); border-radius: 6px 22px 6px 6px; box-shadow: 5px 5px 0 var(--ink);
 }
 [data-theme='poster'] .results-empty { background: #fff; border: 2px dashed var(--ink); border-radius: 6px 22px 6px 6px; }
@@ -85,12 +85,21 @@
 [data-theme='poster'] .view-tab[aria-selected='true'] { background: var(--ink); color: #fff; box-shadow: none; }
 [data-theme='poster'] .modal { border: 3px solid var(--ink); border-radius: 6px 24px 6px 6px; box-shadow: 8px 8px 0 var(--ink); }
 [data-theme='poster'] .toast { border-radius: 6px; box-shadow: 4px 4px 0 var(--hit); }
-[data-theme='poster'] .select-bar { border: 2px solid var(--ink); box-shadow: 5px 5px 0 var(--ink); border-radius: 6px 22px 6px 6px; }
+[data-theme='poster'] .main-toolbar { box-shadow: 4px 4px 0 var(--ink); }
+[data-theme='poster'] .tb-group + .tb-group { border-left: 2px solid var(--ink); }
+[data-theme='poster'] .main-toolbar .tb-go { border-radius: 8px 20px 8px 8px; box-shadow: 4px 4px 0 var(--hit); }
+[data-theme='poster'] .empty-note { border: 2px dashed var(--ink); }
 
-/* Namenskacheln */
-[data-theme='poster'] .name-tile { background: #fff; border: 2px solid var(--ink); border-radius: 4px 14px 4px 4px; box-shadow: 2px 2px 0 var(--ink); }
-[data-theme='poster'] .name-tile.is-absent { background: transparent; border-style: dashed; box-shadow: none; }
-[data-theme='poster'] .name-tile.is-selected { background: var(--sticker); }
+/* Namensliste */
+[data-theme='poster'] .name-row { border-bottom: 2px solid var(--ink); }
+[data-theme='poster'] .name-row:last-child { border-bottom: 0; }
+[data-theme='poster'] .nr-open:hover, [data-theme='poster'] .nr-pick:hover { background: var(--mist); }
+[data-theme='poster'] .nr-absent { color: #b9b2a3; }
+[data-theme='poster'] .nr-absent[aria-pressed='true'] { color: #fff; background: #8a1f28; border-radius: 4px 12px 4px 4px; }
+[data-theme='poster'] .name-row.is-absent .nr-name { text-decoration-color: #8a1f28; text-decoration-thickness: 3px; }
+[data-theme='poster'] .name-row.is-selected .nr-pick { background: var(--sticker); }
+[data-theme='poster'] .nr-check { border: 2px solid var(--ink); border-radius: 3px 8px 3px 3px; }
+[data-theme='poster'] .names-panel.is-selecting .name-list { box-shadow: 5px 5px 0 var(--hit); }
 
 /* Teamkarten: weiße Fläche, Tintenrand, Schatten in Teamfarbe, schräger Sticker */
 [data-theme='poster'] .team-card {
@@ -147,7 +156,7 @@
 [data-theme='heft'] .input { border: 1.5px solid var(--line-strong); border-radius: 2px 14px 2px 14px; }
 [data-theme='heft'] .step-btn { border-radius: 6px 20px 6px 20px; }
 
-[data-theme='heft'] :is(.options-panel, .panel, .class-card, .add-way, .banner) {
+[data-theme='heft'] :is(.main-toolbar, .panel, .class-card, .add-way, .banner) {
   background: #fff; border: 1px solid var(--line); border-radius: 2px 2px 22px 2px;
   box-shadow: 0 1px 0 var(--line), 0 10px 22px rgb(22 27 38 / .06);
 }
@@ -156,9 +165,24 @@
 [data-theme='heft'] .modal { border-radius: 4px 4px 26px 4px; }
 [data-theme='heft'] .toast { border-radius: 4px 16px 4px 16px; }
 
-[data-theme='heft'] .name-tile { background: #fff; border: 1px solid var(--line); border-radius: 2px 2px 14px 2px; box-shadow: 0 2px 0 var(--line); }
-[data-theme='heft'] .name-tile.is-absent { background: transparent; box-shadow: none; }
-[data-theme='heft'] .name-tile.is-selected { background: var(--marker); border-color: var(--ink); }
+/* Namensliste als Heftseite: blaue Linien, roter Rand links, Abwesende mit Rotstift durchgestrichen */
+[data-theme='heft'] .name-list {
+  border: 1px solid var(--line); border-radius: 2px 2px 22px 2px;
+  background: linear-gradient(90deg, transparent 34px, #f3a6a6 34px, #f3a6a6 36px, transparent 36px), #fff;
+  box-shadow: 0 1px 0 var(--line), 0 10px 22px rgb(22 27 38 / .06);
+}
+[data-theme='heft'] .name-row { border-bottom: 1px solid #c9d8ee; }
+[data-theme='heft'] .nr-open, [data-theme='heft'] .nr-pick { padding-left: 48px; }
+[data-theme='heft'] .nr-pick { padding-left: 8px; gap: 22px; }
+[data-theme='heft'] .nr-open:hover, [data-theme='heft'] .nr-pick:hover { background: rgb(255 227 110 / .35); }
+[data-theme='heft'] .name-row.is-absent .nr-name { text-decoration-color: #d23c3c; text-decoration-thickness: 2.5px; }
+[data-theme='heft'] .nr-absent { border-radius: 4px 14px 4px 14px; }
+[data-theme='heft'] .nr-absent[aria-pressed='true'] { color: #d23c3c; background: #fde8e8; }
+[data-theme='heft'] .name-row.is-selected .nr-pick { background: transparent; }
+[data-theme='heft'] .name-row.is-selected .nr-name { background: linear-gradient(transparent 50%, var(--marker) 50%, var(--marker) 92%, transparent 92%); }
+[data-theme='heft'] .nr-check { border-radius: 2px 8px 2px 8px; }
+[data-theme='heft'] .tb-group + .tb-group { border-left: 1.5px dashed var(--line-strong); }
+[data-theme='heft'] .main-toolbar .tb-go { border-radius: 6px 24px 6px 24px; }
 
 /* Klebezettel: aufgehellte Teamfarbe, leicht gedreht, Papierschatten */
 [data-theme='heft'] .team-card {
@@ -208,16 +232,22 @@
 [data-theme='akzent'] .input { border-radius: 4px 16px 4px 4px; border-bottom: 3px solid var(--ink); }
 [data-theme='akzent'] .step-btn { border-bottom: 4px solid var(--ink); }
 
-[data-theme='akzent'] :is(.options-panel, .panel, .class-card, .add-way, .banner) { border-radius: 24px 6px 24px 24px; }
+[data-theme='akzent'] :is(.main-toolbar, .name-list, .panel, .class-card, .add-way, .banner) { border-radius: 24px 6px 24px 24px; }
 [data-theme='akzent'] .count-pill { background: color-mix(in srgb, var(--accent) 14%, #fff); color: #1c3a7a; border-radius: 4px 12px 4px 4px; }
 [data-theme='akzent'] .view-tabs { border-radius: 4px 18px 4px 4px; }
 [data-theme='akzent'] .view-tab[aria-selected='true'] { box-shadow: inset 0 -3px 0 var(--accent); }
 [data-theme='akzent'] .modal { border-radius: 26px 6px 26px 26px; }
 [data-theme='akzent'] .toast { border-radius: 4px 18px 4px 4px; border-bottom: 4px solid var(--accent); }
 
-[data-theme='akzent'] .name-tile { border-radius: 4px 16px 4px 4px; border-bottom: 3px solid var(--line-strong); }
-[data-theme='akzent'] .name-tile.is-absent { border-bottom-style: dashed; }
-[data-theme='akzent'] .name-tile.is-selected { border-bottom-color: var(--accent); }
+[data-theme='akzent'] .main-toolbar { border-bottom: 4px solid var(--ink); }
+[data-theme='akzent'] .main-toolbar .tb-go { border-radius: 6px 26px 6px 6px; border-bottom-width: 5px; }
+[data-theme='akzent'] .name-list { border-bottom: 4px solid var(--line-strong); }
+[data-theme='akzent'] .name-row { position: relative; }
+[data-theme='akzent'] .name-row.is-selected .nr-pick { background: color-mix(in srgb, var(--accent) 9%, #fff); box-shadow: inset 5px 0 0 var(--accent); }
+[data-theme='akzent'] .nr-check { border-radius: 3px 10px 3px 3px; }
+[data-theme='akzent'] .name-row.is-selected .nr-check { background: var(--accent); border-color: var(--accent); }
+[data-theme='akzent'] .nr-absent { border-radius: 4px 16px 4px 4px; }
+[data-theme='akzent'] .names-panel.is-selecting .name-list { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
 
 /* Teamkarten: vollfarbiger Kopf mit weißer Schrift, helle Fläche */
 [data-theme='akzent'] .team-card {
@@ -274,3 +304,7 @@
 .tp-akzent .tp-card b { background: #3f71d3; color: #fff; padding: 6px 10px; }
 .tp-akzent .tp-card span { display: block; padding: 6px 10px; }
 .tp-akzent .tp-btn { background: #161b26; color: #fff; border-radius: 3px 12px 3px 3px; border-bottom: 3px solid #3f71d3; }
+
+/* ---------- Löschen-Tasten in Dialogen: in jedem Design rot gefüllt (Bestätigen) bzw. rot umrandet (Entfernen im Personenblatt) ---------- */
+:root .modal-actions .btn-danger, :root[data-theme] .modal-actions .btn-danger { background: var(--danger); border-color: var(--danger); color: #fff; }
+:root .person-dialog .modal-actions .btn-danger, :root[data-theme] .person-dialog .modal-actions .btn-danger { background: var(--paper); border-color: color-mix(in srgb, var(--danger) 55%, var(--paper)); color: var(--danger); }

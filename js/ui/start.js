@@ -1,6 +1,6 @@
 import { h, button, iconButton, screenHead, relativeDay, replaceKeepFocus } from './dom.js';
 import { icon } from './icons.js';
-import { openDialog, promptDialog, confirmDialog, toast } from './dialogs.js';
+import { openDialog, promptDialog, confirmDialog, toast, menuList } from './dialogs.js';
 import { getState, update, replaceState } from '../store.js';
 import { createClass, duplicateClass, presentCount } from '../model.js';
 import { drawTeams, createExampleClass } from '../actions.js';
@@ -121,11 +121,6 @@ function manage(cls) {
   });
 }
 
-/** Liste großer Menütasten; schließt den Dialog vor der Aktion. */
-export function menuList(items, close) {
-  return h('div', { class: 'menu-list' }, items.map(([iconName, label, fn, tone]) =>
-    h('button', { type: 'button', class: `menu-item${tone ? ` menu-item-${tone}` : ''}`, onClick: () => { close(); fn(); } }, icon(iconName), h('span', {}, label))));
-}
 
 async function rename(cls) {
   const name = await promptDialog({ title: 'Klasse umbenennen', label: 'Name der Klasse', value: cls.name, validate: uniqueName(cls.id) });

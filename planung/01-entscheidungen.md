@@ -49,6 +49,15 @@ Wird nach jeder Fragenrunde fortgeschrieben.
 | 43 | Rest-Regel Ort | Unter „Weitere Optionen“, je Klasse gemerkt; nur bei „Personen pro Team“ | 9 |
 | 44 | Klassenansicht | Gruppentitel brechen um statt abgeschnitten zu werden; Zeilen nie kleiner als ihr Inhalt | 9 |
 | 45 | Prüfung | Web Interface Guidelines angewendet, Ergebnis in `04-pruefung-1.2.md` | 9 |
+| 46 | Personen-Einstellungen | Versteckt wie im Original: **›** je Name öffnet ein Blatt mit Name, „Fehlt heute“, Niveau-Regler, Geschlecht, Regeln der Person, Entfernen; im Blatt zur vorherigen/nächsten Person blättern (ersetzt „Bearbeiten“-Liste) | 10 |
+| 47 | Namensliste | **Einspaltig**, nur der Name; Abwesende durchgestrichen; eigener Schalter ⊘ rechts neben dem Namen; Niveau/Geschlecht/Regel-Chips nie in der Liste (Einstellungen „Niveau/Geschlecht zeigen“ entfallen) | 10 |
+| 48 | Lage der Bedienelemente | **Alles oben** in einer Leiste unter dem Klassennamen (klebt beim Scrollen); untere Losen-Leiste entfällt | 10 |
+| 49 | Reihenfolge der Leiste | Links → rechts wie der Ablauf: **Namen + · Regeln** │ **− Zahl + · Optionen** │ **Zufallsperson · Mehr** │ **Losen** (ganz rechts) | 10 |
+| 50 | Optionen | Blatt **„Optionen“**: Aufteilen nach, Rest-Regel, Art der Teams, Gruppen gestalten, Geschlechter/Regeln/Wiederholungen; Zusammenfassung als Statuszeile unter der Leiste | 10 |
+| 51 | Mehr | Menü mit Klassenansicht (K), Reihenfolge (R), Verlauf (V), Drucken | 10 |
+| 52 | Regeln anlegen | Taste **„Regeln“** öffnet die Regelliste; „Neue Regel“ (oder „Neue Regel mit …“ im Personenblatt) schaltet die Namensliste in den Auswahlmodus, die Leiste zeigt dann Abbrechen · Anzahl · Getrennt · **Zusammen** | 10 |
+| 53 | Tastenregeln | Jede Taste Symbol + Wort; genau **eine Haupttaste je Ansicht, immer rechts**; Zurück/Abbrechen immer links; iPad quer: Zufallsperson/Mehr nur Symbol, iPad hochkant/Telefon: alle Nebentasten nur Symbol (Wort als Tooltip/Screenreader-Text); Telefon: zwei Zeilen | 10 |
+| 54 | Klassenansicht-Leiste | **Bearbeiten** (links) · Klassenname · Zufallsperson · Reihenfolge · **Neu losen** (rechts) | 10 |
 
 ## Folgen
 

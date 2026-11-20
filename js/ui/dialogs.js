@@ -11,8 +11,9 @@ import { icon } from './icons.js';
  *        onClick gibt false zurück, wenn der Dialog offen bleiben soll.
  * @param {() => void} [o.onClose]
  * @param {'normal'|'wide'|'full'} [o.size]
+ * @param {Node[]} [o.footer]  eigene Fußleiste statt actions (z. B. Entfernen links, Fertig rechts)
  */
-export function openDialog({ title, body, actions = [], onClose, size = 'normal', className = '' }) {
+export function openDialog({ title, body, actions = [], footer: customFooter, onClose, size = 'normal', className = '' }) {
   const titleId = `dlg-${Math.random().toString(36).slice(2, 8)}`;
   const dialog = h('dialog', { class: `modal modal-${size} ${className}`.trim(), 'aria-labelledby': titleId });
   const opener = document.activeElement;
@@ -29,12 +30,14 @@ export function openDialog({ title, body, actions = [], onClose, size = 'normal'
     }
   };
 
-  const footer = actions.length
-    ? h('footer', { class: 'modal-actions' }, actions.map((a) => button(a.label, {
-      variant: a.variant, icon: a.icon, disabled: a.disabled,
-      onClick: async () => { if ((await a.onClick?.(close)) !== false) close(); },
-    })))
-    : null;
+  const footer = customFooter
+    ? h('footer', { class: 'modal-actions' }, customFooter)
+    : actions.length
+      ? h('footer', { class: 'modal-actions' }, actions.map((a) => button(a.label, {
+        variant: a.variant, icon: a.icon, disabled: a.disabled,
+        onClick: async () => { if ((await a.onClick?.(close)) !== false) close(); },
+      })))
+      : null;
 
   dialog.append(
     h('header', { class: 'modal-head' },
@@ -50,6 +53,19 @@ export function openDialog({ title, body, actions = [], onClose, size = 'normal'
   const autofocus = dialog.querySelector('[autofocus]');
   if (autofocus) autofocus.focus();
   return { close, dialog };
+}
+
+/** Liste großer Menütasten; schließt den Dialog vor der Aktion. items: [icon, label, fn, tone?] */
+export function menuList(items, close) {
+  return h('div', { class: 'menu-list' }, items.filter(Boolean).map(([iconName, label, fn, tone, hint]) =>
+    h('button', { type: 'button', class: `menu-item${tone ? ` menu-item-${tone}` : ''}`, onClick: () => { close(); fn(); } },
+      icon(iconName), h('span', { class: 'menu-label' }, label), hint ? h('kbd', { class: 'menu-key' }, hint) : null)));
+}
+
+/** Menü als Dialog (einheitlich für „Mehr“ und Klassen-Menü). */
+export function menuDialog(title, items) {
+  const dlg = openDialog({ title, body: menuList(items, () => dlg.close()), className: 'menu-dialog' });
+  return dlg;
 }
 
 export function confirmDialog({ title, text, confirmLabel = 'OK', danger = false }) {

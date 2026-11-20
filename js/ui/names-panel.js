@@ -1,5 +1,7 @@
-// Namensliste im Hauptbildschirm: Anwesenheit, Namen erfassen und bearbeiten, Regeln.
-import { h, button, iconButton, toggle } from './dom.js';
+// Namensliste im Hauptbildschirm – wie im Original: eine Zeile pro Person, nur der Name.
+// Rechts der Schalter „fehlt heute“ und › für die Details (Name, Niveau, Geschlecht, Regeln, Entfernen).
+// Regeln entstehen im Auswahlmodus: Personen antippen, dann oben „Zusammen“ oder „Getrennt“.
+import { h, button, iconButton, toggle, segmented } from './dom.js';
 import { icon } from './icons.js';
 import { openDialog, promptDialog, toast } from './dialogs.js';
 import { activeClass, getState, update, replaceState } from '../store.js';
@@ -12,114 +14,192 @@ import { session } from './session.js';
 
 export const groupLetter = (i) => (i < 26 ? String.fromCharCode(65 + i) : `${String.fromCharCode(65 + Math.floor(i / 26) - 1)}${String.fromCharCode(65 + (i % 26))}`);
 
+const sortedPlayers = (cls) => [...cls.players].sort((a, b) => byName(a.name, b.name));
+
 /** @param {() => void} refresh  Hauptbildschirm neu zeichnen */
 export function namesPanel(refresh) {
   const cls = activeClass();
   const total = cls.players.length;
   const present = presentCount(cls);
-  const mode = session.namesMode;
-  const setMode = (m) => { session.namesMode = m; session.selected.clear(); refresh(); };
+  const selecting = session.namesMode === 'select';
 
-  const head = h('div', { class: 'panel-head' },
-    h('h2', { class: 'panel-title' }, 'Namen'),
-    total ? h('span', { class: 'count-pill', 'aria-live': 'polite' }, `${present} von ${total} da`) : null);
-
-  const hint = !total ? null
-    : mode === 'select' ? 'Personen antippen, die immer zusammen oder möglichst getrennt sein sollen.'
-      : mode === 'edit' ? 'Namen ändern, Niveau (−5 bis +5) und Geschlecht einstellen oder Personen entfernen. Beides erscheint nie in der Klassenansicht.'
-        : 'Antippen, wenn jemand heute fehlt.';
-
-  return h('section', { class: `names-panel mode-${mode}`, 'aria-label': 'Namen' },
-    head,
-    total ? toolbar(mode, present, total, setMode, refresh) : null,
-    hint ? h('p', { class: 'panel-hint' }, hint) : null,
-    total ? (mode === 'edit' ? editList(cls, refresh) : nameGrid(cls, mode, refresh)) : addWays(refresh),
-    mode !== 'edit' && total ? rulesSection(cls, refresh) : null,
-    mode === 'select' ? selectBar(setMode, refresh) : null,
-  );
+  return h('section', { class: `names-panel${selecting ? ' is-selecting' : ''}`, 'aria-label': 'Namen' },
+    h('div', { class: 'panel-head' },
+      h('h2', { class: 'panel-title' }, 'Namen'),
+      total ? h('span', { class: 'count-pill', 'aria-live': 'polite' }, `${present} von ${total} da`) : null,
+      h('span', { class: 'toolbar-spacer' }),
+      !selecting && total && present < total
+        ? button('Alle da', { icon: 'reset', variant: 'quiet', onClick: () => { update((s, c) => clearAbsent(c), { dataChange: false }); refresh(); }, 'data-key': 'all-present', title: 'Alle als anwesend markieren' })
+        : null),
+    selecting ? h('p', { class: 'panel-hint' }, 'Personen antippen, die immer zusammen sein oder möglichst getrennt werden sollen – dann oben „Zusammen“ oder „Getrennt“.') : null,
+    total ? nameList(cls, selecting, refresh) : addWays(refresh));
 }
 
-// ---------- Werkzeugleiste ----------
-function toolbar(mode, present, total, setMode, refresh) {
-  if (mode === 'edit') {
-    return h('div', { class: 'toolbar' },
-      button('Namen hinzufügen', { icon: 'plus', onClick: () => openAddNames('type', refresh) }),
-      h('span', { class: 'toolbar-spacer' }),
-      button('Fertig', { icon: 'check', variant: 'primary', onClick: () => setMode('present'), 'data-key': 'edit-done' }));
-  }
-  if (mode === 'select') {
-    return h('div', { class: 'toolbar' },
-      button('Alle abwählen', { icon: 'close', disabled: !session.selected.size, onClick: () => { session.selected.clear(); refresh(); } }),
-      h('span', { class: 'toolbar-spacer' }),
-      button('Fertig', { icon: 'check', variant: 'quiet', onClick: () => setMode('present') }));
-  }
-  return h('div', { class: 'toolbar' },
-    button('Namen', { icon: 'plus', onClick: () => openAddNames('type', refresh), title: 'Namen hinzufügen' }),
-    button('Regel', { icon: 'select', onClick: () => setMode('select'), title: 'Personen auswählen, die zusammen oder getrennt sein sollen' }),
-    button('Bearbeiten', { icon: 'edit', onClick: () => setMode('edit'), title: 'Namen, Niveau und Geschlecht bearbeiten' }),
-    h('span', { class: 'toolbar-spacer' }),
-    present < total ? button('Alle da', { icon: 'reset', variant: 'quiet', onClick: () => { update((s, c) => clearAbsent(c), { dataChange: false }); refresh(); }, 'data-key': 'all-present' }) : null,
-  );
-}
-
-// ---------- Namensraster ----------
-function nameGrid(cls, mode, refresh) {
+// ---------- Liste ----------
+function nameList(cls, selecting, refresh) {
   const absent = absentIds(cls);
-  const letters = new Map(cls.groups.map((g, i) => [g.id, groupLetter(i)]));
-  const { showLevel, showGender } = getState().settings;
-  const players = [...cls.players].sort((a, b) => byName(a.name, b.name));
-
-  return h('ul', { class: 'name-grid', 'aria-label': 'Namen' }, players.map((p) => {
+  return h('ul', { class: `name-list${selecting ? ' is-selecting' : ''}`, 'aria-label': 'Namen' }, sortedPlayers(cls).map((p) => {
     const isAbsent = absent.has(p.id);
-    const selected = session.selected.has(p.id);
-    const chips = groupsOf(cls, p.id).map((g) => h('span', {
-      class: `rule-chip rule-${g.type}${g.enabled === false ? ' is-off' : ''}`,
-      title: `${g.type === 'together' ? 'Zusammen' : 'Getrennt'}: ${g.name}`,
-    }, icon(g.type, { size: 14 }), letters.get(g.id)));
-
-    const props = mode === 'select'
-      ? { role: 'checkbox', 'aria-checked': String(selected), onClick: () => { if (selected) session.selected.delete(p.id); else session.selected.add(p.id); refresh(); } }
-      : { 'aria-pressed': String(!isAbsent), 'aria-label': `${p.name}, ${isAbsent ? 'fehlt heute' : 'ist da'}`, onClick: () => { update((s, c) => setAbsent(c, p.id, !isAbsent), { dataChange: false }); refresh(); } };
-
-    return h('li', {},
-      h('button', { type: 'button', class: `name-tile${isAbsent ? ' is-absent' : ''}${selected ? ' is-selected' : ''}`, 'data-key': `p-${p.id}`, ...props },
-        mode === 'select' ? h('span', { class: 'tile-check', 'aria-hidden': 'true' }, icon('check', { size: 16 })) : null,
-        h('span', { class: 'tile-name' }, p.name),
-        h('span', { class: 'tile-meta' },
-          isAbsent && mode !== 'select' ? h('span', { class: 'absent-label' }, 'fehlt') : null,
-          showLevel ? h('span', { class: `meta-badge level-badge${p.level > 0 ? ' is-plus' : p.level < 0 ? ' is-minus' : ''}`, title: `Niveau ${formatLevel(p.level)}` }, formatLevel(p.level)) : null,
-          showGender && p.gender ? h('span', { class: 'meta-badge', title: GENDER_LABEL[p.gender] }, p.gender) : null,
-          chips)));
+    if (selecting) {
+      const sel = session.selected.has(p.id);
+      return h('li', { class: `name-row${isAbsent ? ' is-absent' : ''}${sel ? ' is-selected' : ''}` },
+        h('button', {
+          type: 'button', class: 'nr-pick', role: 'checkbox', 'aria-checked': String(sel), 'data-key': `p-${p.id}`,
+          onClick: () => { if (sel) session.selected.delete(p.id); else session.selected.add(p.id); refresh(); },
+        },
+        h('span', { class: 'nr-check', 'aria-hidden': 'true' }, icon('check', { size: 16 })),
+        h('span', { class: 'nr-name' }, p.name)));
+    }
+    return h('li', { class: `name-row${isAbsent ? ' is-absent' : ''}` },
+      h('button', { type: 'button', class: 'nr-open', 'data-key': `o-${p.id}`, 'aria-label': `${p.name}${isAbsent ? ' (fehlt heute)' : ''}: Details`, onClick: () => openPerson(p.id, refresh) },
+        h('span', { class: 'nr-name' }, p.name), icon('next', { size: 20 })),
+      h('button', {
+        type: 'button', class: 'nr-absent', 'aria-pressed': String(isAbsent), 'aria-label': `${p.name} fehlt heute`, 'data-key': `a-${p.id}`,
+        title: isAbsent ? 'Fehlt heute – antippen, wenn doch da' : 'Antippen, wenn heute nicht da',
+        onClick: () => { update((s, c) => setAbsent(c, p.id, !isAbsent), { dataChange: false }); refresh(); },
+      }, icon('absent', { size: 24 })));
   }));
 }
 
-// ---------- Auswahl → Regel ----------
-function selectBar(setMode, refresh) {
-  const n = session.selected.size;
-  const make = (type) => {
-    const ids = [...session.selected];
-    const group = update((s, c) => addGroup(c, type, ids));
-    setMode('present');
-    if (group) toast(`Regel „${group.name}“ angelegt: ${type === 'together' ? 'immer zusammen' : 'möglichst getrennt'}.`);
-  };
-  return h('div', { class: 'select-bar', role: 'region', 'aria-label': 'Regel anlegen' },
-    h('span', { class: 'select-count', 'aria-live': 'polite' }, n === 1 ? '1 ausgewählt' : `${n} ausgewählt`),
-    h('div', { class: 'select-actions' },
-      button('Abbrechen', { variant: 'quiet', onClick: () => setMode('present') }),
-      button('Getrennt', { icon: 'apart', disabled: n < 2, onClick: () => make('apart'), title: 'Möglichst auf verschiedene Teams verteilen' }),
-      button('Zusammen', { icon: 'together', variant: 'primary', disabled: n < 2, onClick: () => make('together'), title: 'Immer ins selbe Team' })));
+/** Auswahlmodus starten (aus „Regeln“ oder aus den Details einer Person). */
+export function startSelecting(firstId = null) {
+  session.namesMode = 'select';
+  session.selected.clear();
+  if (firstId) session.selected.add(firstId);
+  session.tab = 'names';
 }
 
-// ---------- Regeln ----------
-function rulesSection(cls, refresh) {
-  const groups = cls.groups;
-  return h('section', { class: 'rules', 'aria-labelledby': 'rules-title' },
-    h('div', { class: 'section-head' },
-      h('h3', { id: 'rules-title' }, 'Regeln'),
-      groups.length ? toggle('Beim Losen beachten', cls.options.rulesEnabled, (v) => { update((s, c) => { c.options.rulesEnabled = v; }); refresh(); }, { id: 'rules-enabled' }) : null),
-    groups.length
-      ? h('ul', { class: `rule-list${cls.options.rulesEnabled ? '' : ' is-off'}` }, groups.map((g, i) => ruleRow(cls, g, i, refresh)))
-      : h('p', { class: 'muted small' }, 'Noch keine Regeln. Mit „Regel“ wählst du Personen aus, die immer zusammen sein oder möglichst getrennt werden sollen.'));
+/** Aus der Auswahl eine Regel machen. */
+export function makeRule(type) {
+  const ids = [...session.selected];
+  const group = update((s, c) => addGroup(c, type, ids));
+  session.namesMode = 'present';
+  session.selected.clear();
+  if (group) toast(`Regel „${group.name}“ angelegt: ${type === 'together' ? 'immer zusammen' : 'möglichst getrennt'}.`);
+}
+
+// ---------- Details einer Person (Blatt mit Vorherige/Nächste) ----------
+export function openPerson(startId, refresh) {
+  let id = startId;
+  const body = h('div', { class: 'person-sheet' });
+  const prev = button(null, { icon: 'back', class: 'btn btn-icon', onClick: () => step(-1), 'data-key': 'ps-prev', 'aria-label': 'Vorherige Person', title: 'Vorherige Person' });
+  const next = button(null, { icon: 'next', class: 'btn btn-icon', onClick: () => step(1), 'data-key': 'ps-next', 'aria-label': 'Nächste Person', title: 'Nächste Person' });
+  const remove = button('Entfernen', { icon: 'trash', variant: 'danger', onClick: () => removePerson() });
+  const dlg = openDialog({
+    title: '', body, onClose: refresh, className: 'person-dialog',
+    footer: [remove, h('span', { class: 'toolbar-spacer' }), prev, next, button('Fertig', { icon: 'check', variant: 'primary', onClick: () => dlg.close() })],
+  });
+  const titleEl = dlg.dialog.querySelector('.modal-head h2');
+
+  function step(dir) {
+    const list = sortedPlayers(activeClass());
+    const i = list.findIndex((p) => p.id === id);
+    const target = list[i + dir];
+    if (!target) return;
+    id = target.id;
+    paint();
+    (dir < 0 ? prev : next).focus({ preventScroll: true });
+  }
+
+  function removePerson() {
+    const cls = activeClass();
+    const p = cls.players.find((x) => x.id === id);
+    if (!p) return;
+    const before = structuredClone(getState());
+    update((s, c) => removePlayers(c, [p.id]));
+    dlg.close();
+    toast(`${p.name} entfernt.`, { action: { label: 'Rückgängig', onClick: () => { replaceState(before); refresh(); } } });
+  }
+
+  function paint() {
+    const cls = activeClass();
+    const list = sortedPlayers(cls);
+    const idx = list.findIndex((p) => p.id === id);
+    if (idx < 0) { dlg.close(); return; }
+    const p = list[idx];
+    titleEl.textContent = p.name;
+    prev.disabled = idx === 0;
+    next.disabled = idx === list.length - 1;
+    const isAbsent = absentIds(cls).has(p.id);
+    const others = (g) => g.playerIds.filter((x) => x !== p.id).map((x) => cls.players.find((q) => q.id === x)?.name).filter(Boolean).sort(byName);
+    const letters = new Map(cls.groups.map((g, i) => [g.id, groupLetter(i)]));
+
+    const out = h('output', { class: `level-out${p.level > 0 ? ' is-plus' : p.level < 0 ? ' is-minus' : ''}` }, formatLevel(p.level));
+    const slider = h('input', {
+      type: 'range', class: 'level-slider', min: LEVEL_MIN, max: LEVEL_MAX, step: 1, value: p.level, id: 'ps-level',
+      'aria-valuetext': formatLevel(p.level), 'data-key': 'ps-level',
+      onInput: (e) => {
+        const v = Number(e.target.value);
+        out.textContent = formatLevel(v);
+        out.className = `level-out${v > 0 ? ' is-plus' : v < 0 ? ' is-minus' : ''}`;
+        e.target.setAttribute('aria-valuetext', formatLevel(v));
+      },
+      onChange: (e) => { update((s, c) => { c.players.find((x) => x.id === p.id).level = Number(e.target.value); }); },
+    });
+
+    body.replaceChildren(
+      h('label', { class: 'field' }, h('span', { class: 'field-label' }, 'Name'),
+        h('input', {
+          class: 'input', type: 'text', name: 'person-name', autocomplete: 'off', spellcheck: 'false', value: p.name, maxlength: 60, 'data-key': 'ps-name',
+          onChange: (e) => {
+            const res = update((s, c) => renamePlayer(c, p.id, e.target.value));
+            if (!res.ok) { toast(res.reason, { tone: 'error' }); e.target.value = p.name; } else titleEl.textContent = activeClass().players.find((x) => x.id === p.id).name;
+          },
+        })),
+      toggle('Fehlt heute', isAbsent, (v) => { update((s, c) => setAbsent(c, p.id, v), { dataChange: false }); paint(); }, { id: 'ps-absent', hint: 'Gilt nur für heute – morgen sind wieder alle da.' }),
+      h('div', { class: 'field' },
+        h('label', { class: 'field-label', for: 'ps-level' }, 'Niveau'),
+        h('div', { class: 'level-field' }, h('span', { class: 'level-end', 'aria-hidden': 'true' }, '−5'), slider, h('span', { class: 'level-end', 'aria-hidden': 'true' }, '+5'), out),
+        h('p', { class: 'field-hint' }, 'Nur für „Gleich stark“, „Gemischt“ und „Gleiches Niveau“. Erscheint nie in der Klassenansicht.')),
+      h('div', { class: 'field' },
+        h('span', { class: 'field-label' }, 'Geschlecht'),
+        segmented('ps-gender', [{ value: '', label: 'keine Angabe' }, ...Object.entries(GENDER_LABEL).map(([value, label]) => ({ value, label }))], p.gender || '',
+          (v) => { update((s, c) => { c.players.find((x) => x.id === p.id).gender = v || null; }); }, { label: 'Geschlecht' })),
+      h('div', { class: 'field' },
+        h('span', { class: 'field-label' }, 'Regeln'),
+        groupsOf(cls, p.id).length
+          ? h('ul', { class: 'ps-rules' }, groupsOf(cls, p.id).map((g) => h('li', { class: `ps-rule${g.enabled === false ? ' is-off' : ''}` },
+            h('span', { class: `rule-chip rule-${g.type}` }, icon(g.type, { size: 14 }), letters.get(g.id)),
+            h('span', { class: 'rule-text' },
+              h('span', { class: 'rule-name' }, g.name),
+              h('span', { class: 'rule-members' }, `${g.type === 'together' ? 'Immer zusammen mit' : 'Möglichst getrennt von'} ${others(g).join(', ')}`)),
+            iconButton('close', `${p.name} aus Regel ${g.name} nehmen`, { onClick: () => {
+              update((s, c) => {
+                const grp = c.groups.find((x) => x.id === g.id);
+                grp.playerIds = grp.playerIds.filter((x) => x !== p.id);
+                if (grp.playerIds.length < 2) c.groups = c.groups.filter((x) => x.id !== g.id);
+              });
+              paint();
+            } }))))
+          : h('p', { class: 'field-hint' }, 'Keine Regel.'),
+        h('div', {}, button(`Neue Regel mit ${p.name}`, { icon: 'select', onClick: () => { startSelecting(p.id); dlg.close(); } }))),
+    );
+  }
+
+  paint();
+}
+
+// ---------- Regeln (Blatt) ----------
+export function openRules(refresh) {
+  const body = h('div', { class: 'rules-sheet' });
+  const paintAll = () => { paint(); refresh(); };
+  const dlg = openDialog({
+    title: 'Regeln', body, size: 'wide', onClose: refresh,
+    footer: [h('span', { class: 'toolbar-spacer' }), button('Neue Regel', { icon: 'plus', variant: 'primary', onClick: () => { startSelecting(); dlg.close(); } })],
+  });
+
+  function paint() {
+    const cls = activeClass();
+    const groups = cls.groups;
+    body.replaceChildren(
+      h('p', { class: 'muted' }, '„Zusammen“ kommt immer ins selbe Team, „Getrennt“ möglichst in verschiedene Teams. Regeln gelten für jede Einteilung dieser Klasse.'),
+      groups.length ? toggle('Beim Losen beachten', cls.options.rulesEnabled, (v) => { update((s, c) => { c.options.rulesEnabled = v; }); paintAll(); }, { id: 'rules-enabled' }) : null,
+      groups.length
+        ? h('ul', { class: `rule-list${cls.options.rulesEnabled ? '' : ' is-off'}` }, groups.map((g, i) => ruleRow(cls, g, i, paintAll)))
+        : h('p', { class: 'empty-note' }, 'Noch keine Regeln. Mit „Neue Regel“ wählst du in der Namensliste Personen aus.'),
+    );
+  }
+  paint();
 }
 
 function ruleRow(cls, g, i, refresh) {
@@ -143,48 +223,6 @@ function ruleRow(cls, g, i, refresh) {
         refresh();
         toast(`Regel „${g.name}“ gelöscht.`, { action: { label: 'Rückgängig', onClick: () => { replaceState(before); refresh(); } } });
       } })));
-}
-
-// ---------- Bearbeiten ----------
-function editList(cls, refresh) {
-  const players = [...cls.players].sort((a, b) => byName(a.name, b.name));
-  return h('ul', { class: 'edit-list', 'aria-label': 'Namen bearbeiten' }, players.map((p) => editRow(p, refresh)));
-}
-
-function editRow(p, refresh) {
-  const out = h('output', { class: `level-out${p.level > 0 ? ' is-plus' : p.level < 0 ? ' is-minus' : ''}` }, formatLevel(p.level));
-  const slider = h('input', {
-    type: 'range', class: 'level-slider', min: LEVEL_MIN, max: LEVEL_MAX, step: 1, value: p.level,
-    'aria-label': `Niveau von ${p.name}`, 'aria-valuetext': formatLevel(p.level), 'data-key': `l-${p.id}`,
-    onInput: (e) => {
-      const v = Number(e.target.value);
-      out.textContent = formatLevel(v);
-      out.className = `level-out${v > 0 ? ' is-plus' : v < 0 ? ' is-minus' : ''}`;
-      e.target.setAttribute('aria-valuetext', formatLevel(v));
-    },
-    onChange: (e) => { update((s, c) => { c.players.find((x) => x.id === p.id).level = Number(e.target.value); }); },
-  });
-  return h('li', { class: 'edit-row' },
-    h('input', {
-      class: 'input edit-name', type: 'text', name: `name-${p.id}`, autocomplete: 'off', spellcheck: 'false', value: p.name, 'aria-label': `Name von ${p.name}`, 'data-key': `n-${p.id}`, maxlength: 60,
-      onChange: (e) => {
-        const res = update((s, c) => renamePlayer(c, p.id, e.target.value));
-        if (!res.ok) { toast(res.reason, { tone: 'error' }); e.target.value = p.name; }
-      },
-    }),
-    h('div', { class: 'level-field' }, h('span', { class: 'level-end', 'aria-hidden': 'true' }, '−5'), slider, h('span', { class: 'level-end', 'aria-hidden': 'true' }, '+5'), out),
-    h('select', {
-      class: 'input gender-pick', 'aria-label': `Geschlecht von ${p.name}`, 'data-key': `g-${p.id}`,
-      onChange: (e) => { update((s, c) => { c.players.find((x) => x.id === p.id).gender = e.target.value || null; }); },
-    },
-    h('option', { value: '', selected: !p.gender }, 'Geschlecht –'),
-    Object.entries(GENDER_LABEL).map(([v, label]) => h('option', { value: v, selected: p.gender === v }, label))),
-    iconButton('trash', `${p.name} entfernen`, { onClick: () => {
-      const before = structuredClone(getState());
-      update((s, c) => removePlayers(c, [p.id]));
-      refresh();
-      toast(`${p.name} entfernt.`, { action: { label: 'Rückgängig', onClick: () => { replaceState(before); refresh(); } } });
-    } }));
 }
 
 // ---------- Namen hinzufügen ----------
@@ -264,7 +302,7 @@ export function openAddNames(startTab = 'type', refresh = () => {}) {
       if (!entries.length) { preview.replaceChildren(h('p', { class: 'field-error' }, 'In der Datei wurden keine Namen gefunden.')); return; }
       preview.replaceChildren(
         h('p', {}, `${entries.length} Namen erkannt. Gelesene Spalten: ${columns.join(', ')}.`),
-        h('ul', { class: 'file-sample' }, entries.slice(0, 6).map((e) => h('li', {}, e.name, e.level != null ? ` · Niveau ${formatLevel(e.level)}` : '', e.gender ? ` · ${GENDER_LABEL[e.gender]}` : ''))),
+        h('ul', { class: 'file-sample' }, entries.slice(0, 6).map((e) => h('li', {}, e.name, e.level != null ? `, Niveau ${formatLevel(e.level)}` : '', e.gender ? `, ${GENDER_LABEL[e.gender]}` : ''))),
         entries.length > 6 ? h('p', { class: 'muted' }, `… und ${entries.length - 6} weitere`) : null,
         h('div', { class: 'panel-foot' }, h('span'), button(`${entries.length} Namen hinzufügen`, { variant: 'primary', icon: 'plus', onClick: () => {
           reportAdd(update((s, cls) => addPlayers(cls, entries)));

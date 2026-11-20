@@ -219,3 +219,17 @@ Ziel: modern und funktional, ansprechend für 10- bis 18-Jährige, asymmetrisch,
 - **Rest-Regel** (`teamSizes` in `js/teams/sizes.js`): Algorithmus arbeitet mit festen Zielgrößen je Team; die lokale Suche darf Größen nur zwischen zwei Teams tauschen, die geplante Aufteilung bleibt exakt.
 - Kontraste getestet: weiße Schrift auf allen Teamfarben ≥ 4,5 : 1; Heft-Zettel (22 % Teamfarbe auf Weiß) mit Namen ≥ 7 : 1.
 - Prüfung nach Web Interface Guidelines: `planung/04-pruefung-1.2.md`.
+
+---
+
+## 15. Version 1.3 (20.11.2026)
+
+Anlass: Screenshot von Team Shake (iPad) – Schüler-Einstellungen sollen versteckt sein, die Anordnung aller Tasten überdacht und vereinheitlicht werden. 8 Antworten in Rückfragen (`planung/05-runde-1.3-zwischenstand.md`), die restlichen Punkte nach „Mache alles fertig“ selbst entschieden (E46–E54).
+
+- **Namensliste wie im Original** (`js/ui/names-panel.js`): eine Zeile pro Person, nur der Name, Schalter ⊘ für „fehlt heute“, › öffnet das **Personenblatt** (Name, Fehlt heute, Niveau, Geschlecht, Regeln, Entfernen, Vorherige/Nächste).
+- **Eine Leiste oben** (`js/ui/main.js`): Namen + · Regeln │ − Zahl + · Optionen │ Zufallsperson · Mehr │ Losen. Darunter eine Statuszeile mit Aufteilung, Art und aktiven Optionen.
+- **Blätter** statt Panels: „Optionen“ (`openOptions` in `js/ui/options-panel.js`), „Regeln“ (`openRules`), „Mehr“ (`menuDialog` in `js/ui/dialogs.js`, auch für das Klassen-Menü der Startseite).
+- **Regeln anlegen** über den Auswahlmodus der Namensliste; die Leiste wird dann zu Abbrechen · Anzahl · Getrennt · Zusammen.
+- Tastenkürzel neu: `O` Optionen. Einstellungen „Niveau/Geschlecht in der Namensliste zeigen“ entfallen (Daten bleiben unverändert).
+- Alle vier Designs haben eigene Listen- und Leistenformen (Poster: Tintenlinien und harter Schatten; Heft: Heftseite mit rotem Rand, Rotstift-Durchstreichung, Textmarker; Akzent: große Ecke, dicke Unterkante, Akzentbalken).
+- Behoben nebenbei: rote Bestätigen-Taste in Dialogen war im Heft-Design weiß auf weiß.

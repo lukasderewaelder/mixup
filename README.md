@@ -4,23 +4,23 @@ Teams per Zufall für den Unterricht: Klasse wählen, abhaken wer fehlt, „Team
 Läuft als PWA auf iPad und PC, komplett offline, komplett auf Deutsch, ohne Konten und ohne Cloud. Alle Namen bleiben auf dem Gerät.
 
 **App:** https://lukasderewaelder.github.io/mixup/
-**Stand:** Version 1.2.0 – vier umschaltbare Designs (Klar, Poster, Heft, Akzent), Rest-Regel für nicht aufgehende Teams; Prüfung nach Web Interface Guidelines. Offen: Test auf einem echten iPad.
+**Stand:** Version 1.3.0 – Namensliste wie im Original (nur Namen, Details per ›), alle Bedienelemente einheitlich in einer Leiste oben; vier Designs, Rest-Regel. Offen: Test auf einem echten iPad.
 
 ## Was Mixup kann
 
 - **Klassen** anlegen, umbenennen, duplizieren, löschen (mit Rückgängig); Beispielklasse zum Ausprobieren
-- **Ein Hauptbildschirm** je Klasse: links die Namen, rechts Optionen, „Teams losen“ und die Teams (schmale Bildschirme: Umschalter „Namen | Teams“)
+- **Ein Hauptbildschirm** je Klasse: oben eine Leiste (Namen + · Regeln │ − Zahl + · Optionen │ Zufallsperson · Mehr │ Losen), darunter links die Namensliste, rechts die Teams (schmale Bildschirme: Umschalter „Namen | Teams“)
 - **Namen** eintippen, als Liste einfügen (Nummern/Aufzählungszeichen werden entfernt) oder aus CSV/Text laden (Vorname/Nachname, Niveau, Geschlecht werden erkannt); doppelte Namen werden gemeldet
-- **Niveau −5 bis +5** per Schieberegler (Standard 0); **Wer fehlt heute?** – Antippen setzt abwesend, gilt nur für den Tag
-- **Regeln**: Personen markieren → „Zusammen“ (immer im selben Team) oder „Getrennt“ (möglichst verschiedene Teams); einzeln oder gesamt abschaltbar
-- **Arten**: Zufällig · **Gleich stark** (gleiche Niveau-Summe – wenn Teams gegeneinander antreten) · **Gemischt** (gleicher Durchschnitt – Gruppenarbeit) · Gleiches Niveau; dazu eingeklappt: Geschlechter mischen, Regeln beachten, Wiederholungen vermeiden
+- **Namensliste wie im Original**: nur Namen; Schalter ⊘ für „fehlt heute“ (gilt nur für den Tag); › öffnet die Details mit **Niveau −5 bis +5** (Schieberegler), Geschlecht, Regeln und Entfernen – mit Vorherige/Nächste zum schnellen Durchgehen
+- **Regeln**: „Regeln → Neue Regel“, Personen antippen → „Zusammen“ (immer im selben Team) oder „Getrennt“ (möglichst verschiedene Teams); einzeln oder gesamt abschaltbar
+- **Arten**: Zufällig · **Gleich stark** (gleiche Niveau-Summe – wenn Teams gegeneinander antreten) · **Gemischt** (gleicher Durchschnitt – Gruppenarbeit) · Gleiches Niveau; alles im Blatt „Optionen“ samt Geschlechter mischen, Regeln beachten, Wiederholungen vermeiden; eine Statuszeile zeigt, was gilt
 - **Gruppen gestalten** je Klasse: Team, Gruppe, Tisch, Station, Mannschaft oder eigenes Wort; Zählung 1 2 3, A B C oder Farbnamen; Name und Farbe direkt auf der Karte antippen
 - **Vier Designs** (Einstellungen → Design): Klar, Poster (dicke Linien, harte Schatten, Sticker), Heft (Karopapier, Klebezettel, Textmarker), Akzent (kräftige Farbköpfe) – jeweils mit eigener Schrift und asymmetrischen Tasten
 - **Rest-Regel** bei „Personen pro Team“: automatisch, eine Person mehr, Rest als eigenes Team oder eine Person weniger
 - **Klassenansicht** nach dem Losen: nur die Teams, Schrift automatisch so groß wie möglich, Neu losen, Zufallsperson, Reihenfolge, Tauschen per Antippen – Niveau, Regeln und Optionen sind ausgeblendet
 - **Verlauf** der letzten 10 Einteilungen, **Drucken/PDF**, **Zufallsperson** (jede Person einmal oder immer aus allen), **Reihenfolge** auslosen, **Schnellstart** „Wie letztes Mal losen“
 - **Sicherung** als JSON-Datei (ersetzen oder zusammenführen) mit dezenter Erinnerung
-- Tastenkürzel: `Leertaste` losen, `K` Klassenansicht an/aus, `Z` Zufallsperson, `R` Reihenfolge, `V` Verlauf, `Esc`
+- Tastenkürzel: `Leertaste` losen, `K` Klassenansicht an/aus, `O` Optionen, `Z` Zufallsperson, `R` Reihenfolge, `V` Verlauf, `Esc`
 
 Getestet in Chromium (Desktop-, iPad-hochkant- und Handybreite). Benötigt einen aktuellen Browser (Safari/iPadOS ab 16.4, Chrome/Edge ab 111).
 

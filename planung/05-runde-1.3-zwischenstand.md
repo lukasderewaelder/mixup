@@ -1,6 +1,6 @@
 # Version 1.3 – Zwischenstand der Rückfragen (20.11.2026)
 
-Anlass: Screenshot von Team Shake (iPad) – Schüler-Einstellungen sollen versteckt sein, die Anordnung aller Tasten überdacht und vereinheitlicht werden. **Noch nicht umgesetzt, noch kein Plan.**
+Anlass: Screenshot von Team Shake (iPad) – Schüler-Einstellungen sollen versteckt sein, die Anordnung aller Tasten überdacht und vereinheitlicht werden. **Umgesetzt in Version 1.3.0** (siehe Spezifikation Abschnitt 15, Entscheidungen E46–E54).
 
 ## Bereits entschieden (8 Antworten)
 | Thema | Entscheidung |
@@ -14,10 +14,9 @@ Anlass: Screenshot von Team Shake (iPad) – Schüler-Einstellungen sollen verst
 | Art, Gruppen gestalten, Rest-Regel, weitere Schalter | In ein Blatt **„Optionen“** |
 | Teams nach dem Losen | **Ganzer Bildschirm** (Klassenansicht wie bisher) |
 
-## Noch zu klären (nächste Runde)
-- Widerspruch auflösen: „Optionen“ war als Taste unten links gedacht, Bedienelemente sollen aber alle oben sitzen → Optionen-Taste in die obere Leiste?
-- Genaue Reihenfolge der oberen Leiste (Klassen, Klassenname, Namen +, Regel, Optionen, Zufallsperson, Reihenfolge, Verlauf, Drucken, Losen) und was in ein „Mehr“-Menü wandert
-- Wo sitzt „− Zahl +“ (obere Leiste oder im Optionen-Blatt)?
-- Wie werden Regeln für mehrere Personen angelegt, wenn die Liste keine Kacheln mehr hat (Auswahlmodus über „Regel“-Taste?)
-- Einheitliche Tastenregeln: Symbol + Text überall? Gleiche Größe/Reihenfolge in Liste, Klassenansicht und Dialogen
-- Danach: Plan schreiben, freigeben lassen, umsetzen (alle vier Designs prüfen)
+## Nach „Mache alles fertig“ selbst entschieden
+- Optionen-Taste sitzt **oben** in der Leiste (alles oben hat Vorrang)
+- Leiste: Namen + · Regeln │ − Zahl + · Optionen │ Zufallsperson · Mehr │ Losen ganz rechts; „Mehr“ = Klassenansicht, Reihenfolge, Verlauf, Drucken
+- „− Zahl +“ bleibt in der Leiste; „Anzahl Teams / Personen pro Team“ im Optionen-Blatt
+- Regeln für mehrere Personen: Auswahlmodus über „Regeln → Neue Regel“ oder „Neue Regel mit …“ im Personenblatt
+- Tastenregeln: Symbol + Wort, eine Haupttaste je Ansicht immer rechts, Zurück/Abbrechen links, auf schmalen Bildschirmen nur Symbole

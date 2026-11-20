@@ -1,7 +1,7 @@
 // Mixup – Service Worker: App-Hülle vorab cachen, danach offline lauffähig.
 // Der Block zwischen den Marken wird von tools/precache.mjs geschrieben – nicht von Hand ändern.
 // >>> precache
-const VERSION = '56c0406118';
+const VERSION = '176e271ea9';
 const ASSETS = [
   './',
   './css/base.css',

@@ -65,6 +65,12 @@ function applyTheme() {
 applyTheme();
 subscribe(applyTheme);
 
+// Höhe der Kopfzeile für die klebende Werkzeugleiste darunter (je Design verschieden)
+const topbar = document.querySelector('.topbar');
+if (topbar && 'ResizeObserver' in window) {
+  new ResizeObserver(() => document.documentElement.style.setProperty('--topbar-h', `${topbar.offsetHeight}px`)).observe(topbar);
+}
+
 // ---------- Speicherprobleme melden (einmal) ----------
 let warned = false;
 subscribe(() => {

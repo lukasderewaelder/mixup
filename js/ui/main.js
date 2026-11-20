@@ -1,13 +1,19 @@
-// Hauptbildschirm einer Klasse – wie im Original: Namen, Optionen, Losen und Teams auf einer Seite.
-// Nach dem Losen erscheint die Klassenansicht: nur die Teams, groß, ohne Niveau und Einstellungen.
+// Hauptbildschirm einer Klasse – wie im Original: alle Bedienelemente oben in einer Leiste,
+// darunter die Namensliste (nur Namen) und die Teams. Nach dem Losen erscheint die Klassenansicht.
+//
+// Einheitliche Tastenregeln (E46 ff.):
+// – Reihenfolge links → rechts wie der Ablauf: Namen → Teams einstellen → Extras → Losen.
+// – Genau eine Haupttaste je Ansicht, immer ganz rechts (Losen; im Auswahlmodus „Zusammen“).
+// – Jede Taste: Symbol + Wort. Auf schmalen Bildschirmen nur das Symbol, die Haupttaste behält ihr Wort.
+// – Zurück/Abbrechen steht immer links.
 import { h, button, iconButton, replaceKeepFocus } from './dom.js';
-import { promptDialog, toast } from './dialogs.js';
+import { promptDialog, toast, menuDialog } from './dialogs.js';
 import { activeClass, getState, update, replaceState } from '../store.js';
 import { currentResult, presentCount } from '../model.js';
 import { drawTeams } from '../actions.js';
 import { session } from './session.js';
-import { namesPanel, openAddNames } from './names-panel.js';
-import { optionsPanel } from './options-panel.js';
+import { namesPanel, openAddNames, openRules, makeRule } from './names-panel.js';
+import { sizeStepper, statusLine, openOptions } from './options-panel.js';
 import { resultsPanel, openHistory, playShuffle } from './results-panel.js';
 import { openDraw, openOrder } from './draw.js';
 import { fitGrid } from './fit.js';
@@ -41,10 +47,12 @@ export function onKey(e) {
     if (session.namesMode !== 'present') { session.namesMode = 'present'; session.selected.clear(); paint(); return true; }
     return false;
   }
+  if (session.namesMode === 'select') return false;
   if (k === ' ') { e.preventDefault(); go(); return true; }
   if (k === 'k' && hasResult) { setView(session.view === 'class' ? 'edit' : 'class'); return true; }
   if (k === 'z') { openDraw(); return true; }
   if (k === 'r') { openOrder(); return true; }
+  if (k === 'o' && session.view === 'edit') { openOptions(paint); return true; }
   if (k === 'v' && session.view === 'edit') { openHistory(paint); return true; }
   return false;
 }
@@ -67,12 +75,12 @@ function paint({ fresh = false } = {}) {
   if (classView) {
     replaceKeepFocus(root, h('div', { class: 'class-view' },
       h('div', { class: 'cv-bar' },
+        button('Bearbeiten', { icon: 'back', onClick: () => setView('edit'), 'data-key': 'cv-edit', title: 'Namen und Optionen zeigen (K oder Esc)' }),
         h('h1', { class: 'cv-title', tabindex: '-1' }, cls.name),
         h('div', { class: 'cv-actions' },
-          button('Neu losen', { icon: 'shuffle', variant: 'primary', onClick: go, 'data-key': 'cv-go', title: 'Neu losen (Leertaste)' }),
           button('Zufallsperson', { icon: 'dice', onClick: () => openDraw(), title: 'Zufallsperson (Z)' }),
           button('Reihenfolge', { icon: 'order', onClick: openOrder, title: 'Reihenfolge (R)' }),
-          button('Einstellungen einblenden', { icon: 'gear', variant: 'quiet', onClick: () => setView('edit'), 'data-key': 'cv-edit', title: 'Namen, Niveau und Optionen zeigen (K oder Esc)' }))),
+          button('Neu losen', { icon: 'shuffle', variant: 'primary', onClick: go, 'data-key': 'cv-go', title: 'Neu losen (Leertaste)' }))),
       resultsPanel(paint, { classView: true, fresh })));
     afterPaint(fresh, entry.teams.length, true);
     return;
@@ -80,29 +88,57 @@ function paint({ fresh = false } = {}) {
 
   const total = cls.players.length;
   const present = presentCount(cls);
+  const selecting = session.namesMode === 'select';
   replaceKeepFocus(root, [
     h('div', { class: 'main-head' },
       h('div', { class: 'main-title' },
         h('h1', { tabindex: '-1' }, cls.name),
-        iconButton('edit', 'Klasse umbenennen', { onClick: renameClass })),
-      h('div', { class: 'main-actions' },
-        button('Zufallsperson', { icon: 'dice', variant: 'quiet', onClick: () => openDraw(), disabled: !present, title: 'Zufallsperson (Z)' }),
-        button('Reihenfolge', { icon: 'order', variant: 'quiet', onClick: openOrder, disabled: !present, title: 'Reihenfolge (R)' }),
-        entry ? button('Verlauf', { icon: 'history', variant: 'quiet', onClick: () => openHistory(paint), title: 'Frühere Einteilungen (V)' }) : null,
-        entry ? button('Drucken', { icon: 'print', variant: 'quiet', onClick: () => window.print(), title: 'Drucken oder als PDF sichern' }) : null,
-        entry ? button('Klassenansicht', { icon: 'screen', onClick: () => setView('class'), title: 'Nur die Teams zeigen (K)' }) : null)),
+        iconButton('edit', 'Klasse umbenennen', { onClick: renameClass }))),
+    selecting ? selectBar() : toolbar(entry, present),
+    !selecting && total ? statusLine(cls) : null,
     h('div', { class: 'view-tabs', role: 'tablist', 'aria-label': 'Ansicht' },
       tabButton('names', total ? `Namen ${present}/${total}` : 'Namen'),
       tabButton('teams', 'Teams')),
     h('div', { class: `main-grid show-${session.tab}` },
-      h('div', { class: 'col-names' },
-        namesPanel(paint),
-        total ? h('div', { class: 'names-footer' }, button(entry ? 'Neu losen' : 'Teams losen', { icon: 'shuffle', variant: 'primary', onClick: go, disabled: !present, class: 'btn btn-primary btn-draw' })) : null),
-      h('div', { class: 'col-teams' },
-        optionsPanel(paint, go),
-        resultsPanel(paint, { fresh }))),
+      h('div', { class: 'col-names' }, namesPanel(paint)),
+      h('div', { class: 'col-teams' }, resultsPanel(paint, { fresh }))),
   ]);
   afterPaint(fresh, entry?.teams.length || 0, false);
+}
+
+// ---------- Obere Leiste ----------
+function toolbar(entry, present) {
+  return h('div', { class: 'main-toolbar', 'aria-label': 'Werkzeuge' },
+    h('div', { class: 'tb-group' },
+      button('Namen', { icon: 'plus', onClick: () => openAddNames('type', paint), title: 'Namen hinzufügen', 'aria-label': 'Namen hinzufügen', 'data-key': 'tb-names' }),
+      button('Regeln', { icon: 'together', onClick: () => openRules(paint), title: 'Wer zusammen oder getrennt sein soll', 'data-key': 'tb-rules' })),
+    h('div', { class: 'tb-group' },
+      sizeStepper(paint),
+      button('Optionen', { icon: 'sliders', onClick: () => openOptions(paint), title: 'Art der Teams, Gruppen, weitere Optionen (O)', 'data-key': 'tb-options' })),
+    h('div', { class: 'tb-group tb-extras' },
+      button('Zufallsperson', { icon: 'dice', onClick: () => openDraw(), disabled: !present, title: 'Zufallsperson (Z)', 'data-key': 'tb-draw' }),
+      button('Mehr', { icon: 'more', onClick: () => openMore(entry, present), title: 'Klassenansicht, Reihenfolge, Verlauf, Drucken', 'data-key': 'tb-more' })),
+    button(entry ? 'Neu losen' : 'Teams losen', { icon: 'shuffle', variant: 'primary', class: 'btn btn-primary tb-go', onClick: go, disabled: !present, title: 'Losen (Leertaste)', 'data-key': 'go' }));
+}
+
+function selectBar() {
+  const n = session.selected.size;
+  const done = (type) => { makeRule(type); paint(); };
+  return h('div', { class: 'main-toolbar is-select', 'aria-label': 'Regel anlegen' },
+    button('Abbrechen', { icon: 'close', onClick: () => { session.namesMode = 'present'; session.selected.clear(); paint(); }, 'data-key': 'sel-cancel' }),
+    h('span', { class: 'select-count', 'aria-live': 'polite' }, n === 1 ? '1 ausgewählt' : `${n} ausgewählt`),
+    h('span', { class: 'toolbar-spacer' }),
+    button('Getrennt', { icon: 'apart', disabled: n < 2, onClick: () => done('apart'), title: 'Möglichst auf verschiedene Teams verteilen', 'data-key': 'sel-apart' }),
+    button('Zusammen', { icon: 'together', variant: 'primary', disabled: n < 2, onClick: () => done('together'), title: 'Immer ins selbe Team', 'data-key': 'sel-together' }));
+}
+
+function openMore(entry, present) {
+  menuDialog('Mehr', [
+    entry ? ['screen', 'Klassenansicht', () => setView('class'), '', 'K'] : null,
+    ['order', 'Reihenfolge', () => { if (present) openOrder(); }, '', 'R'],
+    entry ? ['history', 'Verlauf', () => openHistory(paint), '', 'V'] : null,
+    entry ? ['print', 'Drucken oder als PDF', () => window.print()] : null,
+  ]);
 }
 
 function tabButton(id, label) {
