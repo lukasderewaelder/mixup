@@ -110,7 +110,7 @@ function nameGrid(cls, mode) {
 
     const props = mode === 'select'
       ? { role: 'checkbox', 'aria-checked': String(selected), onClick: () => toggleSelect(p.id) }
-      : { 'aria-pressed': String(!isAbsent), onClick: () => togglePresent(p.id, !isAbsent) };
+      : { 'aria-pressed': String(!isAbsent), 'aria-label': `${p.name}, ${isAbsent ? 'fehlt heute' : 'ist da'}`, onClick: () => togglePresent(p.id, !isAbsent) };
 
     return h('li', {},
       h('button', {

@@ -7,6 +7,7 @@ let storageOk = true;
 const listeners = new Set();
 
 function load() {
+  if (typeof localStorage === 'undefined') return createState(); // z. B. in Node-Tests
   try {
     const raw = localStorage.getItem(KEY);
     if (raw) return validateState(JSON.parse(raw));

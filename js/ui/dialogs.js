@@ -13,7 +13,9 @@ import { icon } from './icons.js';
  * @param {'normal'|'wide'|'full'} [o.size]
  */
 export function openDialog({ title, body, actions = [], onClose, size = 'normal', className = '' }) {
-  const dialog = h('dialog', { class: `modal modal-${size} ${className}`.trim(), 'aria-labelledby': 'dlg-title' });
+  const titleId = `dlg-${Math.random().toString(36).slice(2, 8)}`;
+  const dialog = h('dialog', { class: `modal modal-${size} ${className}`.trim(), 'aria-labelledby': titleId });
+  const opener = document.activeElement;
   let closed = false;
   const close = () => {
     if (closed) return;
@@ -21,6 +23,10 @@ export function openDialog({ title, body, actions = [], onClose, size = 'normal'
     dialog.close();
     dialog.remove();
     onClose?.();
+    // Fokus zurück zum Auslöser, sofern er noch da ist und nichts anderes ihn übernommen hat
+    if (opener instanceof HTMLElement && opener.isConnected && (document.activeElement === document.body || !document.activeElement)) {
+      opener.focus({ preventScroll: true });
+    }
   };
 
   const footer = actions.length
@@ -32,7 +38,7 @@ export function openDialog({ title, body, actions = [], onClose, size = 'normal'
 
   dialog.append(
     h('header', { class: 'modal-head' },
-      h('h2', { id: 'dlg-title' }, title),
+      h('h2', { id: titleId }, title),
       h('button', { type: 'button', class: 'icon-btn', 'aria-label': 'Schließen', onClick: close }, icon('close', { size: 22 }))),
     h('div', { class: 'modal-body' }, body),
   );

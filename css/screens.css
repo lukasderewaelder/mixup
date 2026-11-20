@@ -41,7 +41,7 @@
 .class-card:hover { border-color: var(--line-strong); }
 .class-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s2); }
 .class-card h2 { font-size: var(--fs-lg); padding-top: var(--s2); overflow-wrap: anywhere; }
-.class-link { color: inherit; text-decoration: none; }
+.class-link { display: inline-block; padding: var(--s2) 0; margin: calc(-1 * var(--s2)) 0; color: inherit; text-decoration: none; }
 .class-link:hover { text-decoration: underline; text-underline-offset: 3px; }
 .class-meta { color: var(--ink-soft); font-size: var(--fs-sm); }
 .class-last { color: var(--muted); font-size: var(--fs-sm); }
