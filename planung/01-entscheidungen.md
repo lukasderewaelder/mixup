@@ -23,6 +23,10 @@ Wird nach jeder Fragenrunde fortgeschrieben.
 | 17 | Sicherung | **Backup-Datei** (alle Listen, Regeln, Verlauf) sichern/laden + **dezente Erinnerung** nach Änderungen, spätestens alle 4 Wochen | 5 |
 | 18 | Layout | **Schritt für Schritt** (eigene Bildschirme statt Zwei-Spalten-Ansicht) | 5 |
 | 19 | Regeln anlegen | **Personen markieren → „Zusammen“/„Getrennt“**; Regeln als farbige Chips am Namen, Gesamtübersicht in den Einstellungen | 5 |
+| 20 | Schritte | **3 Schritte + Schnellstart**: ① Klasse & „Wer fehlt heute?“ → ② Teams einstellen → ③ Ergebnis; „Wie letztes Mal losen“ springt direkt zu ③ | 6 |
+| 21 | Verlauf | **Letzte 10 Einteilungen je Klasse** (davon zählen 3 für „Wiederholungen vermeiden“) | 6 |
+| 22 | Schrift | **Klar & sachlich**: moderne Grotesk (Inter, mitgeliefert, OFL-Lizenz), dezente Rundungen | 6 |
+| 23 | Weiteres Vorgehen | Fragenrunden beendet → überarbeitete Spezifikation + Meilensteinplan in `02-spezifikation-mixup.md` | 6 |
 
 ## Folgen
 
