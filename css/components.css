@@ -1,0 +1,145 @@
+/* ---------- Kopfzeile ---------- */
+.skip-link {
+  position: absolute; left: var(--s4); top: -100px;
+  background: var(--ink); color: var(--paper);
+  padding: var(--s2) var(--s4); border-radius: var(--r-btn); z-index: 10;
+}
+.skip-link:focus { top: var(--s2); }
+
+.topbar {
+  position: sticky; top: 0; z-index: 5;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--s4);
+  padding: calc(var(--s3) + env(safe-area-inset-top)) max(var(--s5), env(safe-area-inset-right)) var(--s3) max(var(--s5), env(safe-area-inset-left));
+  background: rgb(255 255 255 / .92);
+  backdrop-filter: saturate(1.4) blur(12px);
+  -webkit-backdrop-filter: saturate(1.4) blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+
+.brand {
+  display: inline-flex; align-items: center; gap: var(--s2);
+  min-height: var(--tap);
+  color: var(--ink); text-decoration: none;
+}
+.brand-mark { width: 30px; height: 30px; }
+.brand-mark circle:last-child { transition: transform 400ms var(--ease); transform-origin: 25px 25px; }
+.brand:hover .brand-mark circle:last-child { transform: translate(-2px, -2px); }
+.brand-word { font-size: var(--fs-lg); font-weight: 800; letter-spacing: -0.045em; }
+
+.topbar-actions { display: flex; gap: var(--s2); }
+
+/* ---------- Tasten ---------- */
+.icon-btn {
+  display: inline-grid; place-items: center;
+  width: var(--tap); height: var(--tap);
+  border: 0; border-radius: var(--r-btn);
+  background: transparent; color: var(--ink-soft);
+  transition: background var(--dur) var(--ease);
+}
+.icon-btn:hover { background: var(--mist); }
+.icon-btn svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--s2);
+  min-height: var(--tap);
+  padding: 0 var(--s5);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-btn);
+  background: var(--paper); color: var(--ink);
+  font-size: var(--fs-md); font-weight: 600;
+  text-decoration: none; white-space: nowrap;
+  transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+.btn:hover { background: var(--mist); }
+.btn:active { transform: scale(.98); }
+.btn[disabled], .btn[aria-disabled='true'] { opacity: .45; pointer-events: none; }
+
+.btn-primary { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.btn-primary:hover { background: var(--ink-soft); border-color: var(--ink-soft); }
+
+.btn-quiet { border-color: transparent; background: transparent; color: var(--ink-soft); }
+.btn-quiet:hover { background: var(--mist); }
+
+/* Die eine große Taste der App */
+.btn-draw {
+  min-height: 72px;
+  padding: 0 var(--s7);
+  border-radius: calc(var(--r-btn) + 6px);
+  font-size: var(--fs-lg); font-weight: 700; letter-spacing: -0.01em;
+}
+
+/* ---------- Schritte ---------- */
+.stepper {
+  padding: var(--s4) max(var(--s5), env(safe-area-inset-left)) 0;
+}
+.stepper ol {
+  display: flex; gap: var(--s2);
+  max-width: var(--page-max); margin: 0 auto; padding: 0;
+  list-style: none;
+}
+.stepper li { flex: 1; min-width: 0; }
+.stepper a {
+  display: flex; align-items: center; gap: var(--s3);
+  min-height: var(--tap);
+  padding: var(--s2) var(--s3) var(--s3);
+  border-bottom: 3px solid var(--line);
+  color: var(--muted); text-decoration: none;
+  font-weight: 600;
+  transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+.stepper a:hover { color: var(--ink); }
+.step-num {
+  display: inline-grid; place-items: center; flex: none;
+  width: 28px; height: 28px; border-radius: var(--r-pill);
+  border: 1.5px solid currentColor;
+  font-size: var(--fs-sm); font-variant-numeric: tabular-nums;
+}
+.step-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stepper a[aria-current='step'] { color: var(--ink); border-bottom-color: var(--ink); }
+.stepper a[aria-current='step'] .step-num { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.stepper a.is-done .step-num { background: var(--mist); border-color: var(--line-strong); color: var(--ink); }
+
+@media (max-width: 560px) {
+  .stepper a:not([aria-current='step']) .step-label { display: none; }
+  .stepper li:has(a[aria-current='step']) { flex: 3; }
+}
+
+/* ---------- Teamkarte ---------- */
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+  gap: var(--s4);
+}
+.team-card {
+  --c: var(--team-1); --c-tint: var(--team-1-tint); --c-ink: var(--team-1-ink);
+  position: relative;
+  padding: var(--s4) var(--s5) var(--s5);
+  border-radius: var(--r-card);
+  background: var(--c-tint); color: var(--c-ink);
+  border: 1.5px solid color-mix(in srgb, var(--c) 22%, transparent);
+}
+.team-head {
+  display: flex; align-items: baseline; justify-content: space-between; gap: var(--s3);
+  margin-bottom: var(--s3);
+}
+.team-name { display: flex; align-items: baseline; gap: var(--s2); color: var(--c); font-weight: 700; font-size: var(--fs-md); }
+.team-num { font-size: var(--fs-2xl); font-weight: 800; line-height: 1; letter-spacing: -0.05em; font-variant-numeric: tabular-nums; }
+.team-count { color: color-mix(in srgb, var(--c-ink) 70%, transparent); font-size: var(--fs-sm); font-variant-numeric: tabular-nums; }
+.team-members { margin: 0; padding: 0; list-style: none; display: grid; gap: 2px; }
+.team-members li { font-size: var(--fs-lg); font-weight: 520; line-height: 1.35; }
+
+/* ---------- Leerer Zustand ---------- */
+.empty {
+  display: grid; justify-items: start; gap: var(--s4);
+  padding: var(--s7) 0;
+}
+.empty p { color: var(--muted); }
+
+.dev-note {
+  display: inline-block;
+  padding: var(--s1) var(--s3);
+  border-radius: var(--r-pill);
+  background: var(--mist); color: var(--muted);
+  font-size: var(--fs-sm);
+}

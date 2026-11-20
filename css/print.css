@@ -1,0 +1,14 @@
+/* Druckansicht – Grundgerüst, Ausbau in M4 */
+@page { size: A4; margin: 14mm; }
+
+.topbar, .stepper, .step-actions, .skip-link, .no-print { display: none !important; }
+body { font-size: 11pt; }
+.page { padding: 0; max-width: none; }
+.team-grid { grid-template-columns: repeat(3, 1fr); gap: 6mm; }
+.team-card {
+  background: #fff !important;
+  border: 1.5pt solid var(--c) !important;
+  break-inside: avoid;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.team-members li { font-size: 12pt; }

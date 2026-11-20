@@ -1,0 +1,50 @@
+.page {
+  max-width: calc(var(--page-max) + 2 * var(--s5));
+  margin: 0 auto;
+  padding: var(--s6) max(var(--s5), env(safe-area-inset-right)) calc(var(--s8) + env(safe-area-inset-bottom)) max(var(--s5), env(safe-area-inset-left));
+  outline: none;
+}
+
+.screen-head {
+  display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between;
+  gap: var(--s4);
+  margin-bottom: var(--s6);
+}
+.screen-head .lead { margin-top: var(--s2); color: var(--muted); font-size: var(--fs-lg); }
+
+/* Untere Aktionsleiste der Schritte */
+.step-actions {
+  position: sticky; bottom: 0;
+  display: flex; justify-content: space-between; align-items: center; gap: var(--s3);
+  margin-top: var(--s7);
+  padding: var(--s4) 0 calc(var(--s4) + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, var(--paper) 70%, rgb(255 255 255 / 0));
+}
+
+/* Schritt 2: Platz um die Los-Taste */
+.draw-stage {
+  display: grid; justify-items: center; gap: var(--s4);
+  padding: var(--s8) var(--s5);
+  border-radius: var(--r-card);
+  background: var(--mist);
+  text-align: center;
+}
+.draw-stage .preview-line { color: var(--muted); font-size: var(--fs-lg); font-variant-numeric: tabular-nums; }
+
+/* Kleiner Auftritt der Teamkarten nach dem Losen (Grundform; volle Animation in M3) */
+@media (prefers-reduced-motion: no-preference) {
+  .team-grid.is-fresh .team-card {
+    animation: card-in 420ms var(--ease) both;
+    animation-delay: calc(var(--i, 0) * 45ms);
+  }
+}
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(8px) scale(.98); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (max-width: 560px) {
+  :root { --fs-2xl: 2rem; }
+  .page { padding-top: var(--s5); }
+  .btn-draw { width: 100%; }
+}
