@@ -1,6 +1,6 @@
-// Teams einstellen: „− Zahl +“ für die obere Leiste, Statuszeile und das Blatt „Optionen“
-// (Aufteilen nach, Art, Gruppen gestalten, Rest-Regel, weitere Schalter).
-import { h, button, segmented, toggle } from './dom.js';
+// Teams einstellen: „− Zahl +“ (mit Umschalter Teams / pro Team) für die obere Leiste, Statuszeile
+// und das Blatt „Optionen“ mit den Reitern „Teams“ (Art, Rest-Regel, Gruppen, Schalter) und „Regeln“.
+import { h, button, segmented, toggle, replaceKeepFocus } from './dom.js';
 import { icon } from './icons.js';
 import { openDialog } from './dialogs.js';
 import { activeClass, update } from '../store.js';
@@ -9,6 +9,7 @@ import { teamSizes, previewText, sizesShort, REMAINDERS } from '../teams/sizes.j
 import { buildBlocks } from '../teams/blocks.js';
 import { MAX_TEAMS } from '../teams/colors.js';
 import { openGroupStyle, styleSummary } from './group-style.js';
+import { rulesContent, startSelecting } from './names-panel.js';
 
 export const MODES = [
   { value: 'random', label: 'Zufällig', hint: 'Reines Losglück. Regeln und Gedächtnis gelten trotzdem.' },
@@ -37,7 +38,7 @@ function info(cls) {
 
 const setOptions = (patch) => update((s, c) => { Object.assign(c.options, patch); });
 
-/** „− Zahl +“ für die obere Leiste. Darunter steht, was gezählt wird (Teams / pro Team). */
+/** „− Zahl +“ für die obere Leiste. Antippen der Zahl schaltet um: Anzahl Teams ⇄ Personen pro Team. */
 export function sizeStepper(refresh) {
   const cls = activeClass();
   const o = cls.options;
@@ -46,11 +47,21 @@ export function sizeStepper(refresh) {
   const value = Math.min(Math.max(1, o.value), max);
   const unit = o.by === 'count' ? (value === 1 ? 'Team' : 'Teams') : 'pro Team';
   const set = (v) => { setOptions({ value: v }); refresh(); };
+  const switchBy = () => {
+    const by = o.by === 'count' ? 'size' : 'count';
+    const remember = by === 'count' ? { sizeValue: o.value } : { countValue: o.value };
+    setOptions({ ...remember, by, value: by === 'count' ? (o.countValue || 4) : (o.sizeValue || 4) });
+    refresh();
+  };
   return h('div', { class: 'tb-stepper', role: 'group', 'aria-label': o.by === 'count' ? 'Anzahl Teams' : 'Personen pro Team' },
     h('button', { type: 'button', class: 'step-btn', 'aria-label': 'Weniger', disabled: value <= 1, 'data-key': 'minus', onClick: () => set(value - 1) }, '−'),
-    h('span', { class: 'tb-count' },
-      h('output', { class: 'step-number', 'aria-live': 'polite', 'aria-label': `${value} ${o.by === 'count' ? 'Teams' : 'Personen pro Team'}` }, value),
-      h('span', { class: 'tb-unit', 'aria-hidden': 'true' }, unit)),
+    h('button', {
+      type: 'button', class: 'tb-count', 'data-key': 'by-switch', onClick: switchBy,
+      'aria-label': `${value} ${o.by === 'count' ? 'Teams' : 'Personen pro Team'} – umschalten auf ${o.by === 'count' ? 'Personen pro Team' : 'Anzahl Teams'}`,
+      title: o.by === 'count' ? 'Umschalten auf Personen pro Team' : 'Umschalten auf Anzahl Teams',
+    },
+    h('output', { class: 'step-number', 'aria-live': 'polite' }, value),
+    h('span', { class: 'tb-unit' }, unit, icon('swap', { size: 13 }))),
     h('button', { type: 'button', class: 'step-btn', 'aria-label': 'Mehr', disabled: value >= max, 'data-key': 'plus', onClick: () => set(value + 1) }, '+'));
 }
 
@@ -84,55 +95,65 @@ function preWarnings(cls, n, sizes) {
   return warnings.length ? h('div', { class: 'notices' }, warnings.map((w) => notice('alert', w.message))) : null;
 }
 
-// ---------- Blatt „Optionen“ ----------
-export function openOptions(refresh) {
+// ---------- Blatt „Optionen“ mit zwei Reitern: Teams | Regeln ----------
+export function openOptions(refresh, startTab = 'teams') {
+  let tab = startTab;
   const body = h('div', { class: 'options-sheet' });
+  const tabs = h('div', { class: 'tabs sheet-tabs', role: 'tablist', 'aria-label': 'Optionen' });
+  const panel = h('div', { class: 'sheet-panel', role: 'tabpanel' });
+  body.append(tabs, panel);
   const set = (patch) => { setOptions(patch); paint(); refresh(); };
+  const newRule = button('Neue Regel', { icon: 'plus', onClick: () => { startSelecting(); dlg.close(); }, title: 'Personen in der Namensliste antippen' });
 
   function paint() {
     const cls = activeClass();
-    const { o, n, sizes, genders, rules } = info(cls);
-    const levelsSet = cls.players.some((p) => p.level !== 0);
-    const mode = MODES.find((m) => m.value === o.mode) || MODES[0];
-    const rest = remainderInfo(n, o);
-    const scroll = body.closest('.modal-body')?.scrollTop;
-
-    body.replaceChildren(
-      section('Aufteilen nach',
-        segmented('by', [{ value: 'count', label: 'Anzahl Teams' }, { value: 'size', label: 'Personen pro Team' }], o.by, (by) => {
-          const remember = by === 'count' ? { sizeValue: o.value } : { countValue: o.value };
-          set({ ...remember, by, value: by === 'count' ? (o.countValue || 4) : (o.sizeValue || 4) });
-        }, { label: 'Aufteilen nach' }),
-        h('p', { class: 'field-hint' }, `${previewText(n, sizes)}. Die Zahl stellst du oben mit − und + ein.`)),
-      rest ? section('Wenn es nicht aufgeht', remainderField(o, rest, set)) : null,
-      section('Art der Teams',
-        segmented('mode', MODES, o.mode, (v) => set({ mode: v }), { label: 'Art der Teams' }),
-        h('p', { class: 'field-hint' }, mode.hint),
-        o.mode !== 'random' && !levelsSet ? notice('info', 'Noch keine Niveaus eingestellt – alle zählen als 0. Tippe in der Namensliste auf einen Namen, um das Niveau zu setzen.') : null),
-      section('Gruppen',
-        h('div', { class: 'opt-inline' },
-          button('Gruppen gestalten', { icon: 'edit', onClick: () => openGroupStyle(sizes.length, () => { paint(); refresh(); }), title: 'Bezeichnung, Zählung und Farben der Gruppen' }),
-          h('span', { class: 'style-summary' }, styleSummary(cls.groupStyle, sizes.length)))),
-      section('Beim Losen',
-        h('div', { class: 'toggles' },
-          toggle('Geschlechter mischen', o.mixGender && genders.size > 1, (v) => set({ mixGender: v }), {
-            id: 'opt-gender', disabled: genders.size < 2,
-            hint: genders.size < 2 ? 'Dafür in der Namensliste beim Namen das Geschlecht eintragen.' : 'Verteilt die Geschlechter möglichst gleichmäßig.',
-          }),
-          toggle('Regeln beachten', o.rulesEnabled && rules.length > 0, (v) => set({ rulesEnabled: v }), {
-            id: 'opt-rules', disabled: !cls.groups.length,
-            hint: cls.groups.length ? `${rules.length === 1 ? '1 Regel' : `${rules.length} Regeln`} für zusammen oder getrennt.` : 'Noch keine Regeln angelegt (Taste „Regeln“).',
-          }),
-          toggle('Wiederholungen vermeiden', o.avoidRepeats, (v) => set({ avoidRepeats: v }), {
-            id: 'opt-repeats', hint: 'Wer in den letzten drei Einteilungen zusammen war, kommt möglichst nicht wieder zusammen.',
-          }))),
-    );
-    const mb = body.closest('.modal-body');
-    if (mb && scroll != null) mb.scrollTop = scroll;
+    const ruleCount = cls.groups.length;
+    tabs.replaceChildren(...[['teams', 'sliders', 'Teams'], ['rules', 'together', ruleCount ? `Regeln (${ruleCount})` : 'Regeln']].map(([id, ic, label]) => h('button', {
+      type: 'button', role: 'tab', class: 'tab', 'aria-selected': String(id === tab), 'data-key': `opt-tab-${id}`,
+      onClick: () => { tab = id; paint(); },
+    }, icon(ic, { size: 18 }), h('span', {}, label))));
+    newRule.hidden = tab !== 'rules';
+    replaceKeepFocus(panel, tab === 'rules' ? rulesContent(() => { paint(); refresh(); }) : teamsContent(cls, set));
   }
 
+  const dlg = openDialog({
+    title: 'Optionen', body, size: 'wide', onClose: refresh, className: 'options-dialog',
+    footer: [newRule, h('span', { class: 'toolbar-spacer' }), button('Fertig', { icon: 'check', variant: 'primary', onClick: () => dlg.close() })],
+  });
   paint();
-  openDialog({ title: 'Optionen', body, size: 'wide', onClose: refresh, actions: [{ label: 'Fertig', icon: 'check', variant: 'primary' }] });
+  return dlg;
+}
+
+function teamsContent(cls, set) {
+  const { o, n, sizes, genders } = info(cls);
+  const levelsSet = cls.players.some((p) => p.level !== 0);
+  const mode = MODES.find((m) => m.value === o.mode) || MODES[0];
+  const rest = remainderInfo(n, o);
+  return [
+    h('p', { class: 'sheet-lead' }, h('strong', {}, `${previewText(n, sizes)}.`), ' ',
+      h('span', { class: 'muted' }, 'Die Zahl und „Teams“ oder „pro Team“ stellst du oben in der Leiste ein.')),
+    h('div', { class: 'sheet-cols' },
+      h('div', { class: 'sheet-col' },
+        section('Art der Teams',
+          segmented('mode', MODES, o.mode, (v) => set({ mode: v }), { label: 'Art der Teams' }),
+          h('p', { class: 'field-hint' }, mode.hint),
+          o.mode !== 'random' && !levelsSet ? notice('info', 'Noch keine Niveaus eingestellt – alle zählen als 0. Tippe in der Namensliste auf einen Namen, um das Niveau zu setzen.') : null),
+        rest ? section('Wenn es nicht aufgeht', remainderField(o, rest, set)) : null),
+      h('div', { class: 'sheet-col' },
+        section('Gruppen',
+          h('div', { class: 'opt-inline' },
+            button('Gruppen gestalten', { icon: 'edit', onClick: () => openGroupStyle(sizes.length, () => set({})), title: 'Bezeichnung, Zählung und Farben der Gruppen' }),
+            h('span', { class: 'style-summary' }, styleSummary(cls.groupStyle, sizes.length)))),
+        section('Beim Losen',
+          h('div', { class: 'toggles' },
+            toggle('Geschlechter mischen', o.mixGender && genders.size > 1, (v) => set({ mixGender: v }), {
+              id: 'opt-gender', disabled: genders.size < 2,
+              hint: genders.size < 2 ? 'Dafür in der Namensliste beim Namen das Geschlecht eintragen.' : 'Verteilt die Geschlechter möglichst gleichmäßig.',
+            }),
+            toggle('Wiederholungen vermeiden', o.avoidRepeats, (v) => set({ avoidRepeats: v }), {
+              id: 'opt-repeats', hint: 'Wer in den letzten drei Einteilungen zusammen war, kommt möglichst nicht wieder zusammen.',
+            }))))),
+  ];
 }
 
 function section(title, ...content) {

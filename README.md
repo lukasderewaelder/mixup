@@ -4,23 +4,25 @@ Teams per Zufall für den Unterricht: Klasse wählen, abhaken wer fehlt, „Team
 Läuft als PWA auf iPad und PC, komplett offline, komplett auf Deutsch, ohne Konten und ohne Cloud. Alle Namen bleiben auf dem Gerät.
 
 **App:** https://lukasderewaelder.github.io/mixup/
-**Stand:** Version 1.3.0 – Namensliste wie im Original (nur Namen, Details per ›), alle Bedienelemente einheitlich in einer Leiste oben; vier Designs, Rest-Regel. Offen: Test auf einem echten iPad.
+**Stand:** Version 1.4.0 – auf iPad und PC passt alles ohne Scrollen auf einen Bildschirm; Namen per Drag-and-Drop verschieben, neue Animation „Mischen und Austeilen“, Regeln in den Optionen. Offen: weiterer Test auf dem echten iPad.
 
 ## Was Mixup kann
 
 - **Klassen** anlegen, umbenennen, duplizieren, löschen (mit Rückgängig); Beispielklasse zum Ausprobieren
-- **Ein Hauptbildschirm** je Klasse: oben eine Leiste (Namen + · Regeln │ − Zahl + · Optionen │ Zufallsperson · Mehr │ Losen), darunter links die Namensliste, rechts die Teams (schmale Bildschirme: Umschalter „Namen | Teams“)
+- **Ein Hauptbildschirm** je Klasse: oben eine Leiste (Namen + │ − Zahl + · Optionen │ Zufallsperson · Mehr │ Losen), darunter links die Namensliste, rechts die Teams; auf iPad und PC passt alles ohne Scrollen auf einen Bildschirm (Namensliste in Spalten, Teamkarten mit passender Schrift); iPad hochkant und Telefon: Umschalter „Namen | Teams“
 - **Namen** eintippen, als Liste einfügen (Nummern/Aufzählungszeichen werden entfernt) oder aus CSV/Text laden (Vorname/Nachname, Niveau, Geschlecht werden erkannt); doppelte Namen werden gemeldet
 - **Namensliste wie im Original**: nur Namen; Schalter ⊘ für „fehlt heute“ (gilt nur für den Tag); › öffnet die Details mit **Niveau −5 bis +5** (Schieberegler), Geschlecht, Regeln und Entfernen – mit Vorherige/Nächste zum schnellen Durchgehen
-- **Regeln**: „Regeln → Neue Regel“, Personen antippen → „Zusammen“ (immer im selben Team) oder „Getrennt“ (möglichst verschiedene Teams); einzeln oder gesamt abschaltbar
-- **Arten**: Zufällig · **Gleich stark** (gleiche Niveau-Summe – wenn Teams gegeneinander antreten) · **Gemischt** (gleicher Durchschnitt – Gruppenarbeit) · Gleiches Niveau; alles im Blatt „Optionen“ samt Geschlechter mischen, Regeln beachten, Wiederholungen vermeiden; eine Statuszeile zeigt, was gilt
+- **Regeln** (Optionen → Reiter „Regeln“ → Neue Regel): Personen antippen → „Zusammen“ (immer im selben Team) oder „Getrennt“ (möglichst verschiedene Teams); einzeln oder gesamt abschaltbar
+- **Arten**: Zufällig · **Gleich stark** (gleiche Niveau-Summe – wenn Teams gegeneinander antreten) · **Gemischt** (gleicher Durchschnitt – Gruppenarbeit) · Gleiches Niveau; alles im Blatt „Optionen“ samt Geschlechter mischen und Wiederholungen vermeiden; eine Statuszeile zeigt, was gilt
+- **Teams oder pro Team**: Zahl in der Leiste antippen schaltet zwischen „Anzahl Teams“ und „Personen pro Team“ um
 - **Gruppen gestalten** je Klasse: Team, Gruppe, Tisch, Station, Mannschaft oder eigenes Wort; Zählung 1 2 3, A B C oder Farbnamen; Name und Farbe direkt auf der Karte antippen
 - **Vier Designs** (Einstellungen → Design): Klar, Poster (dicke Linien, harte Schatten, Sticker), Heft (Karopapier, Klebezettel, Textmarker), Akzent (kräftige Farbköpfe) – jeweils mit eigener Schrift und asymmetrischen Tasten
 - **Rest-Regel** bei „Personen pro Team“: automatisch, eine Person mehr, Rest als eigenes Team oder eine Person weniger
-- **Klassenansicht** nach dem Losen: nur die Teams, Schrift automatisch so groß wie möglich, Neu losen, Zufallsperson, Reihenfolge, Tauschen per Antippen – Niveau, Regeln und Optionen sind ausgeblendet
-- **Verlauf** der letzten 10 Einteilungen, **Drucken/PDF**, **Zufallsperson** (jede Person einmal oder immer aus allen), **Reihenfolge** auslosen, **Schnellstart** „Wie letztes Mal losen“
+- **Klassenansicht** nach dem Losen: nur die Teams, Schrift automatisch so groß wie möglich, Neu losen, Zufallsperson, Namen per **Drag-and-Drop** oder Antippen tauschen und verschieben – Niveau, Regeln und Optionen sind ausgeblendet
+- **Animation „Mischen und Austeilen“**: die Namen sammeln sich als Stapel, werden gemischt und reihum an die Teams ausgeteilt (antippen überspringt)
+- **Verlauf** der letzten 10 Einteilungen, **Drucken/PDF**, **Zufallsperson** (jede Person einmal oder immer aus allen), **Schnellstart** „Wie letztes Mal losen“
 - **Sicherung** als JSON-Datei (ersetzen oder zusammenführen) mit dezenter Erinnerung
-- Tastenkürzel: `Leertaste` losen, `K` Klassenansicht an/aus, `O` Optionen, `Z` Zufallsperson, `R` Reihenfolge, `V` Verlauf, `Esc`
+- Tastenkürzel: `Leertaste` losen, `K` Klassenansicht an/aus, `O` Optionen, `Z` Zufallsperson, `V` Verlauf, `Esc`
 
 Getestet in Chromium (Desktop-, iPad-hochkant- und Handybreite). Benötigt einen aktuellen Browser (Safari/iPadOS ab 16.4, Chrome/Edge ab 111).
 
@@ -43,7 +45,7 @@ js/model.js Datenmodell (rein, getestet) · js/import.js Namen-Import · js/stor
 js/backup.js Sicherung · js/actions.js Losen, Beispielklasse · js/app.js Router, Kürzel, Service Worker
 js/labels.js Gruppen-Bezeichnung und -Farbe (rein, getestet)
 js/ui/      Bildschirme: start, main (Hauptbildschirm mit names-panel, options-panel, results-panel), settings;
-            group-style, fit (Schriftanpassung), draw (Zufallsperson/Reihenfolge), team-card, dialogs, banners, dom, icons
+            group-style, fit (ohne Scrollen: Schrift und Spalten), drag (Drag-and-Drop), draw (Zufallsperson), team-card, dialogs, banners, dom, icons
 css/        tokens (Farben, Teamfarben, Schrift), base, components, screens, print
 ```
 

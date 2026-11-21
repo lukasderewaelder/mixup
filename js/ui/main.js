@@ -2,7 +2,7 @@
 // darunter die Namensliste (nur Namen) und die Teams. Nach dem Losen erscheint die Klassenansicht.
 //
 // Einheitliche Tastenregeln (E46 ff.):
-// – Reihenfolge links → rechts wie der Ablauf: Namen → Teams einstellen → Extras → Losen.
+// – Anordnung links → rechts wie der Ablauf: Namen → Teams einstellen (Zahl, Optionen mit Regeln) → Extras → Losen.
 // – Genau eine Haupttaste je Ansicht, immer ganz rechts (Losen; im Auswahlmodus „Zusammen“).
 // – Jede Taste: Symbol + Wort. Auf schmalen Bildschirmen nur das Symbol, die Haupttaste behält ihr Wort.
 // – Zurück/Abbrechen steht immer links.
@@ -12,11 +12,11 @@ import { activeClass, getState, update, replaceState } from '../store.js';
 import { currentResult, presentCount } from '../model.js';
 import { drawTeams } from '../actions.js';
 import { session } from './session.js';
-import { namesPanel, openAddNames, openRules, makeRule } from './names-panel.js';
+import { namesPanel, openAddNames, makeRule } from './names-panel.js';
 import { sizeStepper, statusLine, openOptions } from './options-panel.js';
 import { resultsPanel, openHistory, playShuffle } from './results-panel.js';
-import { openDraw, openOrder } from './draw.js';
-import { fitGrid } from './fit.js';
+import { openDraw } from './draw.js';
+import { fitGrid, fitNames, isFitLayout, onFitChange } from './fit.js';
 
 export const title = 'Klasse';
 export const needsClass = true;
@@ -26,6 +26,8 @@ let root;
 
 export function render() {
   root = h('div', { class: 'main-screen' });
+  sizeWatch?.disconnect();
+  sizeWatch?.observe(root);
   paint({ fresh: true });
   if (session.openAddNames) {
     session.openAddNames = false;
@@ -51,7 +53,6 @@ export function onKey(e) {
   if (k === ' ') { e.preventDefault(); go(); return true; }
   if (k === 'k' && hasResult) { setView(session.view === 'class' ? 'edit' : 'class'); return true; }
   if (k === 'z') { openDraw(); return true; }
-  if (k === 'r') { openOrder(); return true; }
   if (k === 'o' && session.view === 'edit') { openOptions(paint); return true; }
   if (k === 'v' && session.view === 'edit') { openHistory(paint); return true; }
   return false;
@@ -79,7 +80,6 @@ function paint({ fresh = false } = {}) {
         h('h1', { class: 'cv-title', tabindex: '-1' }, cls.name),
         h('div', { class: 'cv-actions' },
           button('Zufallsperson', { icon: 'dice', onClick: () => openDraw(), title: 'Zufallsperson (Z)' }),
-          button('Reihenfolge', { icon: 'order', onClick: openOrder, title: 'Reihenfolge (R)' }),
           button('Neu losen', { icon: 'shuffle', variant: 'primary', onClick: go, 'data-key': 'cv-go', title: 'Neu losen (Leertaste)' }))),
       resultsPanel(paint, { classView: true, fresh })));
     afterPaint(fresh, entry.teams.length, true);
@@ -89,6 +89,7 @@ function paint({ fresh = false } = {}) {
   const total = cls.players.length;
   const present = presentCount(cls);
   const selecting = session.namesMode === 'select';
+  root.classList.toggle('is-fit', isFitLayout());
   replaceKeepFocus(root, [
     h('div', { class: 'main-head' },
       h('div', { class: 'main-title' },
@@ -110,14 +111,13 @@ function paint({ fresh = false } = {}) {
 function toolbar(entry, present) {
   return h('div', { class: 'main-toolbar', 'aria-label': 'Werkzeuge' },
     h('div', { class: 'tb-group' },
-      button('Namen', { icon: 'plus', onClick: () => openAddNames('type', paint), title: 'Namen hinzufügen', 'aria-label': 'Namen hinzufügen', 'data-key': 'tb-names' }),
-      button('Regeln', { icon: 'together', onClick: () => openRules(paint), title: 'Wer zusammen oder getrennt sein soll', 'data-key': 'tb-rules' })),
+      button('Namen', { icon: 'plus', onClick: () => openAddNames('type', paint), title: 'Namen hinzufügen', 'aria-label': 'Namen hinzufügen', 'data-key': 'tb-names' })),
     h('div', { class: 'tb-group' },
       sizeStepper(paint),
-      button('Optionen', { icon: 'sliders', onClick: () => openOptions(paint), title: 'Art der Teams, Gruppen, weitere Optionen (O)', 'data-key': 'tb-options' })),
+      button('Optionen', { icon: 'sliders', onClick: () => openOptions(paint), title: 'Art der Teams, Gruppen, Regeln (O)', 'data-key': 'tb-options' })),
     h('div', { class: 'tb-group tb-extras' },
       button('Zufallsperson', { icon: 'dice', onClick: () => openDraw(), disabled: !present, title: 'Zufallsperson (Z)', 'data-key': 'tb-draw' }),
-      button('Mehr', { icon: 'more', onClick: () => openMore(entry, present), title: 'Klassenansicht, Reihenfolge, Verlauf, Drucken', 'data-key': 'tb-more' })),
+      button('Mehr', { icon: 'more', onClick: () => openMore(entry), disabled: !entry, title: 'Klassenansicht, Verlauf, Drucken', 'data-key': 'tb-more' })),
     button(entry ? 'Neu losen' : 'Teams losen', { icon: 'shuffle', variant: 'primary', class: 'btn btn-primary tb-go', onClick: go, disabled: !present, title: 'Losen (Leertaste)', 'data-key': 'go' }));
 }
 
@@ -132,10 +132,9 @@ function selectBar() {
     button('Zusammen', { icon: 'together', variant: 'primary', disabled: n < 2, onClick: () => done('together'), title: 'Immer ins selbe Team', 'data-key': 'sel-together' }));
 }
 
-function openMore(entry, present) {
+function openMore(entry) {
   menuDialog('Mehr', [
     entry ? ['screen', 'Klassenansicht', () => setView('class'), '', 'K'] : null,
-    ['order', 'Reihenfolge', () => { if (present) openOrder(); }, '', 'R'],
     entry ? ['history', 'Verlauf', () => openHistory(paint), '', 'V'] : null,
     entry ? ['print', 'Drucken oder als PDF', () => window.print()] : null,
   ]);
@@ -149,21 +148,39 @@ function tabButton(id, label) {
 }
 
 function afterPaint(fresh, k, classView) {
-  const grid = root.querySelector('.team-grid');
   const animate = fresh && session.playAnimation;
   if (animate) session.playAnimation = false;
+  if (classView) root.classList.remove('is-fit');
+  fitAll(k, classView);
   requestAnimationFrame(() => {
-    if (classView) fitGrid(grid, k);
-    if (animate) playShuffle(grid);
+    fitAll(k, classView); // nach dem Laden der Schriften noch einmal
+    if (animate) playShuffle(root.querySelector('.team-grid'));
   });
 }
 
-addEventListener('resize', () => {
-  if (root?.isConnected && session.view === 'class') {
+/** Klassenansicht: Teams so groß wie möglich. iPad/PC: Namen in Spalten, Teams passend – nie scrollen. */
+function fitAll(k, classView) {
+  if (!root?.isConnected) return;
+  if (classView) { fitGrid(root.querySelector('.team-grid'), k); return; }
+  if (!root.classList.contains('is-fit')) return;
+  fitNames(root.querySelector('.name-list'));
+  fitGrid(root.querySelector('.team-grid.cv-grid'), k, { max: 40 });
+}
+
+// Neu einpassen, sobald sich die Größe ändert (Fenster, Drehen, Kopfzeile ein/aus, Schriften geladen)
+let fitFrame = 0;
+const refit = () => {
+  cancelAnimationFrame(fitFrame);
+  fitFrame = requestAnimationFrame(() => {
+    if (!root?.isConnected) return;
     const entry = currentResult(activeClass());
-    if (entry) fitGrid(root.querySelector('.cv-grid'), entry.teams.length);
-  }
-});
+    fitAll(entry?.teams.length || 0, session.view === 'class' && Boolean(entry));
+  });
+};
+const sizeWatch = 'ResizeObserver' in window ? new ResizeObserver(refit) : null;
+addEventListener('resize', refit);
+// Wechsel zwischen Telefon-Aufbau und Ein-Bildschirm-Aufbau (z. B. iPad drehen, Fenster ändern)
+onFitChange(() => { if (root?.isConnected) paint(); });
 
 /** Losen: innerhalb von 10 Minuten nach dem letzten, unveränderten Ergebnis zählt es als „neuer Versuch“. */
 function go() {

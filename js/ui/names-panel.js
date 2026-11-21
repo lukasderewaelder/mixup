@@ -1,6 +1,7 @@
 // Namensliste im Hauptbildschirm – wie im Original: eine Zeile pro Person, nur der Name.
 // Rechts der Schalter „fehlt heute“ und › für die Details (Name, Niveau, Geschlecht, Regeln, Entfernen).
 // Regeln entstehen im Auswahlmodus: Personen antippen, dann oben „Zusammen“ oder „Getrennt“.
+// Die Liste der Regeln steht im Blatt „Optionen“, Reiter „Regeln“ (rulesContent).
 import { h, button, iconButton, toggle, segmented } from './dom.js';
 import { icon } from './icons.js';
 import { openDialog, promptDialog, toast } from './dialogs.js';
@@ -179,27 +180,18 @@ export function openPerson(startId, refresh) {
   paint();
 }
 
-// ---------- Regeln (Blatt) ----------
-export function openRules(refresh) {
-  const body = h('div', { class: 'rules-sheet' });
-  const paintAll = () => { paint(); refresh(); };
-  const dlg = openDialog({
-    title: 'Regeln', body, size: 'wide', onClose: refresh,
-    footer: [h('span', { class: 'toolbar-spacer' }), button('Neue Regel', { icon: 'plus', variant: 'primary', onClick: () => { startSelecting(); dlg.close(); } })],
-  });
-
-  function paint() {
-    const cls = activeClass();
-    const groups = cls.groups;
-    body.replaceChildren(
-      h('p', { class: 'muted' }, '„Zusammen“ kommt immer ins selbe Team, „Getrennt“ möglichst in verschiedene Teams. Regeln gelten für jede Einteilung dieser Klasse.'),
-      groups.length ? toggle('Beim Losen beachten', cls.options.rulesEnabled, (v) => { update((s, c) => { c.options.rulesEnabled = v; }); paintAll(); }, { id: 'rules-enabled' }) : null,
-      groups.length
-        ? h('ul', { class: `rule-list${cls.options.rulesEnabled ? '' : ' is-off'}` }, groups.map((g, i) => ruleRow(cls, g, i, paintAll)))
-        : h('p', { class: 'empty-note' }, 'Noch keine Regeln. Mit „Neue Regel“ wählst du in der Namensliste Personen aus.'),
-    );
-  }
-  paint();
+// ---------- Regeln (Reiter im Blatt „Optionen“) ----------
+/** Inhalt des Reiters „Regeln“. refresh zeichnet Blatt und Hauptbildschirm neu. */
+export function rulesContent(refresh) {
+  const cls = activeClass();
+  const groups = cls.groups;
+  return [
+    h('p', { class: 'muted' }, '„Zusammen“ kommt immer ins selbe Team, „Getrennt“ möglichst in verschiedene Teams. Regeln gelten für jede Einteilung dieser Klasse.'),
+    groups.length ? toggle('Beim Losen beachten', cls.options.rulesEnabled, (v) => { update((s, c) => { c.options.rulesEnabled = v; }); refresh(); }, { id: 'rules-enabled' }) : null,
+    groups.length
+      ? h('ul', { class: `rule-list${cls.options.rulesEnabled ? '' : ' is-off'}` }, groups.map((g, i) => ruleRow(cls, g, i, refresh)))
+      : h('p', { class: 'empty-note' }, 'Noch keine Regeln. Mit „Neue Regel“ wählst du in der Namensliste Personen aus.'),
+  ];
 }
 
 function ruleRow(cls, g, i, refresh) {

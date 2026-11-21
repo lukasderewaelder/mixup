@@ -58,6 +58,13 @@ Wird nach jeder Fragenrunde fortgeschrieben.
 | 52 | Regeln anlegen | Taste **„Regeln“** öffnet die Regelliste; „Neue Regel“ (oder „Neue Regel mit …“ im Personenblatt) schaltet die Namensliste in den Auswahlmodus, die Leiste zeigt dann Abbrechen · Anzahl · Getrennt · **Zusammen** | 10 |
 | 53 | Tastenregeln | Jede Taste Symbol + Wort; genau **eine Haupttaste je Ansicht, immer rechts**; Zurück/Abbrechen immer links; iPad quer: Zufallsperson/Mehr nur Symbol, iPad hochkant/Telefon: alle Nebentasten nur Symbol (Wort als Tooltip/Screenreader-Text); Telefon: zwei Zeilen | 10 |
 | 54 | Klassenansicht-Leiste | **Bearbeiten** (links) · Klassenname · Zufallsperson · Reihenfolge · **Neu losen** (rechts) | 10 |
+| 55 | Pop-up-Fenster | Größer (normal 640 px, breit 940 px, bis 94 % der Höhe); Fehler behoben, durch den Safari das „Mehr“-Fenster auf Kopfhöhe zusammenschob | 11 |
+| 56 | Nie scrollen (iPad) | Ab 700 × 600 px passt der Hauptbildschirm auf einen Bildschirm: Namensliste in so vielen Spalten wie nötig (Zeilen ≥ 48 px), Teamkarten mit automatisch passender Schrift; iPad hochkant über die Reiter „Namen | Teams“; Telefone scrollen weiter | 11 |
+| 57 | Regeln | Keine eigene Taste mehr: Blatt „Optionen“ hat die Reiter **Teams | Regeln**; Neue Regel unten im Reiter Regeln | 11 |
+| 58 | Reihenfolge | Entfällt komplett (Taste, Menü, Kürzel R) | 11 |
+| 59 | Teams / pro Team | Antippen von Zahl + Einheit in der Leiste schaltet um (Symbol ⇄ an der Einheit); „Aufteilen nach“ fällt aus dem Optionen-Blatt | 11 |
+| 60 | Animation | „Mischen und Austeilen“: Namen sammeln sich als Stapel, der Stapel wird gemischt, die Namen werden reihum wie Karten an die Teams ausgeteilt; Karte hüpft beim Landen; ca. 2 s, Antippen/Taste überspringt; bei „Bewegung reduzieren“ aus | 11 |
+| 61 | Drag-and-Drop | Namen in Ergebnis und Klassenansicht ziehen: der Name hebt sich in Teamfarbe ab und wandert mit, sein Platz bleibt gestrichelt; auf einen Namen = tauschen, auf eine Karte = verschieben (mit Rückgängig); Antippen bleibt zusätzlich; iPad/PC sofort, Telefon nach kurzem Halten | 11 |
 
 ## Folgen
 

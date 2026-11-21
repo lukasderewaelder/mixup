@@ -233,3 +233,15 @@ Anlass: Screenshot von Team Shake (iPad) – Schüler-Einstellungen sollen verst
 - Tastenkürzel neu: `O` Optionen. Einstellungen „Niveau/Geschlecht in der Namensliste zeigen“ entfallen (Daten bleiben unverändert).
 - Alle vier Designs haben eigene Listen- und Leistenformen (Poster: Tintenlinien und harter Schatten; Heft: Heftseite mit rotem Rand, Rotstift-Durchstreichung, Textmarker; Akzent: große Ecke, dicke Unterkante, Akzentbalken).
 - Behoben nebenbei: rote Bestätigen-Taste in Dialogen war im Heft-Design weiß auf weiß.
+
+## 16. Version 1.4 (21.11.2026)
+
+Anlass: erster Test auf dem iPad Pro (Screenshot: „Mehr“-Fenster abgeschnitten) und eine Sammelliste des Nutzers. Offene Detailfragen nach „behebe das“ selbst entschieden (E55–E61).
+
+- **Dialoge** größer; `.modal-body` mit `flex: 1 1 auto; min-height: 0` statt `flex: 1` (Safari ließ den Inhalt sonst auf 0 schrumpfen).
+- **Nie scrollen** (`js/ui/fit.js`): `isFitLayout()` ab 700 × 600 px; `fitNames()` legt die Namensliste in Spalten, `fitGrid()` passt die Teamkarten auch in der Bearbeiten-Ansicht ein (größte Schrift 40 px). Neu eingepasst wird bei jeder Größenänderung (ResizeObserver).
+- **Optionen** mit Reitern **Teams | Regeln**; Taste „Regeln“ entfällt. Teams-Reiter zweispaltig: Art der Teams und Rest-Regel links, Gruppen und Schalter rechts.
+- **Reihenfolge** entfernt (`openOrder`, Kürzel R).
+- **Umschalter** Teams ⇄ pro Team an der Zahl in der Leiste.
+- **Animation „Mischen und Austeilen“** (`playShuffle` in `js/ui/results-panel.js`).
+- **Drag-and-Drop** (`js/ui/drag.js`, Zeigerereignisse für Maus, Stift und Finger).

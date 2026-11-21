@@ -1,7 +1,7 @@
 // Mixup – Service Worker: App-Hülle vorab cachen, danach offline lauffähig.
 // Der Block zwischen den Marken wird von tools/precache.mjs geschrieben – nicht von Hand ändern.
 // >>> precache
-const VERSION = '176e271ea9';
+const VERSION = '798809889b';
 const ASSETS = [
   './',
   './css/base.css',
@@ -42,6 +42,7 @@ const ASSETS = [
   './js/ui/banners.js',
   './js/ui/dialogs.js',
   './js/ui/dom.js',
+  './js/ui/drag.js',
   './js/ui/draw.js',
   './js/ui/fit.js',
   './js/ui/group-style.js',

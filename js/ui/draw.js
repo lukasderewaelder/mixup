@@ -1,11 +1,11 @@
-// Zufallsperson ziehen und Reihenfolge auslosen (Overlays, Teams bleiben unberührt).
+// Zufallsperson ziehen (Overlay, Teams bleiben unberührt).
 import { h, button, segmented } from './dom.js';
 import { icon } from './icons.js';
 import { openDialog } from './dialogs.js';
 import { activeClass, update, getState } from '../store.js';
-import { absentIds, currentResult, drawPerson, remainingInDraw, byName } from '../model.js';
+import { absentIds, currentResult, drawPerson, remainingInDraw } from '../model.js';
 import { shuffle } from '../teams/random.js';
-import { groupLabel, groupColor } from '../labels.js';
+import { groupLabel } from '../labels.js';
 
 const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches || !getState().settings.animation;
 
@@ -95,41 +95,4 @@ export function openDraw({ team = null } = {}) {
   });
   drawBtn.focus();
   refresh();
-}
-
-/** Reihenfolge auslosen: Teams (falls vorhanden) oder alle Anwesenden. */
-export function openOrder() {
-  const cls = activeClass();
-  if (!cls) return;
-  const settings = getState().settings;
-  const teams = currentTeams(cls);
-  let kind = teams.length ? 'teams' : 'people';
-  const list = h('ol', { class: 'order-list' });
-
-  function roll() {
-    if (kind === 'teams') {
-      const order = shuffle(teams.map((_, i) => i));
-      list.replaceChildren(...order.map((t) => h('li', { class: 'order-item', '--c': `var(--team-${groupColor(t, cls.groupStyle) + 1})` },
-        h('span', { class: 'order-dot' }), h('span', { class: 'order-team' }, groupLabel(t, cls.groupStyle)),
-        h('span', { class: 'order-members' }, teams[t].map((id) => cls.players.find((p) => p.id === id)?.name).sort(byName).join(', ')))));
-    } else {
-      const ids = shuffle(presentIdsFor(cls));
-      list.replaceChildren(...ids.map((id) => h('li', { class: 'order-item' }, h('span', { class: 'order-team' }, cls.players.find((p) => p.id === id).name))));
-    }
-    if (!reducedMotion()) {
-      list.querySelectorAll('li').forEach((li, i) => li.animate(
-        [{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }],
-        { duration: 260, delay: Math.min(i * 30, 600), easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' }));
-    }
-  }
-
-  const head = teams.length ? segmented('order-kind', [{ value: 'teams', label: 'Teams' }, { value: 'people', label: 'Alle Personen' }], kind, (v) => { kind = v; roll(); }, { label: 'Was auslosen?' }) : null;
-  openDialog({
-    title: 'Reihenfolge',
-    size: 'wide',
-    className: 'order-dialog',
-    body: [head, list],
-    actions: [{ label: 'Neu auslosen', icon: 'shuffle', variant: 'primary', onClick: () => { roll(); return false; } }],
-  });
-  roll();
 }

@@ -256,8 +256,8 @@ button.member.is-picked { background: var(--c); color: #fff; }
 
 /* ---------- Dialoge ---------- */
 .modal {
-  width: min(560px, calc(100vw - 2 * var(--s4)));
-  max-height: min(86dvh, 900px);
+  width: min(640px, calc(100vw - 2 * var(--s4)));
+  max-height: min(94dvh, 1100px);
   padding: 0;
   border: 0; border-radius: var(--r-card);
   background: var(--paper); color: var(--ink);
@@ -265,7 +265,7 @@ button.member.is-picked { background: var(--c); color: #fff; }
   overflow: hidden;
 }
 .modal[open] { display: flex; flex-direction: column; }
-.modal-wide { width: min(760px, calc(100vw - 2 * var(--s4))); }
+.modal-wide { width: min(940px, calc(100vw - 2 * var(--s4))); }
 .modal-full { width: min(1100px, calc(100vw - 2 * var(--s4))); height: min(90dvh, 820px); max-height: none; }
 .modal::backdrop { background: rgb(22 27 38 / .38); backdrop-filter: blur(2px); }
 @media (prefers-reduced-motion: no-preference) {
@@ -274,10 +274,11 @@ button.member.is-picked { background: var(--c); color: #fff; }
 @keyframes modal-in { from { opacity: 0; transform: translateY(10px) scale(.985); } }
 .modal-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); padding: var(--s4) var(--s4) var(--s2) var(--s5); }
 .modal-head h2 { font-size: var(--fs-lg); }
-.modal-body { display: grid; gap: var(--s4); align-content: start; padding: var(--s2) var(--s5) var(--s5); overflow: auto; overscroll-behavior: contain; flex: 1; }
+.modal-body { display: grid; gap: var(--s4); align-content: start; padding: var(--s2) var(--s5) var(--s5); overflow: auto; overscroll-behavior: contain; flex: 1 1 auto; min-height: 0; } /* nicht flex: 1 – Safari lässt den Inhalt sonst auf 0 schrumpfen */
 .modal-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--s2); padding: var(--s3) var(--s5) var(--s5); border-top: 1px solid var(--line); }
 
 .menu-list { display: grid; gap: var(--s1); }
+.menu-dialog { width: min(440px, calc(100vw - 2 * var(--s4))); }
 .menu-item {
   display: flex; align-items: center; gap: var(--s3);
   min-height: 52px; padding: 0 var(--s3);
