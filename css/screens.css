@@ -50,7 +50,7 @@
 }
 .name-row:last-child { border-bottom: 0; }
 /* Ganze Zeile öffnet die Details; der Schalter „fehlt“ liegt darüber in Spalte 2 */
-.nr-open, .nr-pick {
+.nr-open {
   grid-column: 1 / -1; grid-row: 1;
   display: flex; align-items: center; gap: var(--s3);
   width: 100%; min-height: 52px;
@@ -61,8 +61,8 @@
 }
 .nr-open { justify-content: space-between; }
 .nr-open > .icon { color: var(--muted); }
-.nr-open:hover, .nr-pick:hover { background: var(--mist); }
-.nr-open:focus-visible, .nr-pick:focus-visible { outline-offset: -3px; }
+.nr-open:hover { background: var(--mist); }
+.nr-open:focus-visible { outline-offset: -3px; }
 .nr-name { min-width: 0; overflow-wrap: anywhere; }
 .nr-open .nr-name { padding-right: 52px; } /* Platz für den Schalter */
 .nr-absent {
@@ -85,9 +85,22 @@
   display: grid; place-items: center; flex: none; width: 24px; height: 24px;
   border: 1.5px solid var(--line-strong); border-radius: 7px; color: transparent;
 }
-.name-row.is-selected .nr-pick { background: color-mix(in srgb, var(--ink) 6%, var(--paper)); }
-.name-row.is-selected .nr-check { background: var(--ink); border-color: var(--ink); color: #fff; }
-.names-panel.is-selecting .name-list { border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink); }
+.pick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--s2); }
+.pick-chip {
+  display: flex; align-items: center; gap: var(--s2); min-width: 0; min-height: 46px;
+  padding: 0 var(--s3);
+  border: 1px solid var(--line); border-radius: var(--r-field);
+  background: var(--paper); color: var(--ink); font-weight: 600; text-align: left;
+  transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+.pick-chip:hover { background: var(--mist); }
+.pick-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pick-chip.is-absent .pick-name { color: var(--muted); }
+.pick-chip.is-on { border-color: var(--ink); background: color-mix(in srgb, var(--ink) 6%, var(--paper)); box-shadow: inset 0 0 0 1px var(--ink); }
+.pick-chip.is-on .nr-check { background: var(--ink); border-color: var(--ink); color: #fff; }
+.pick-count { color: var(--muted); font-size: var(--fs-sm); font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: no-preference) { .rule-row.is-fresh { animation: rule-in 1.2s var(--ease); } }
+@keyframes rule-in { 0%, 30% { background: color-mix(in srgb, var(--ink) 9%, transparent); } }
 
 .rule-chip {
   display: inline-flex; align-items: center; gap: 3px;
@@ -210,8 +223,6 @@ button.member.is-drop-swap { background: var(--c); color: #fff; }
 .tb-group + .tb-group { padding-left: var(--s3); border-left: 1px solid var(--line); }
 .main-toolbar .tb-go { margin-left: auto; min-height: 56px; padding: 0 var(--s5); font-size: var(--fs-md); font-weight: 700; }
 .main-toolbar .tb-go .icon { width: 24px; height: 24px; }
-.main-toolbar.is-select { gap: var(--s3); }
-.main-toolbar.is-select .btn-primary { min-height: 56px; padding: 0 var(--s5); }
 
 .tb-stepper { display: flex; align-items: center; gap: var(--s1); }
 .tb-stepper .step-btn { width: 44px; height: 44px; font-size: 24px; }
@@ -258,9 +269,6 @@ button.member.is-drop-swap { background: var(--c); color: #fff; }
   .main-toolbar .tb-group .btn { flex: 1 1 44px; }
   .main-toolbar .tb-stepper { order: 10; }
   .main-toolbar .tb-go { order: 11; flex: 1 1 0; min-width: 0; margin-left: 0; padding: 0 var(--s2); gap: 6px; white-space: nowrap; }
-  .main-toolbar.is-select [data-key='sel-cancel'] span { display: none; }
-  .main-toolbar.is-select .toolbar-spacer { flex-basis: 100%; }
-  .main-toolbar.is-select [data-key='sel-apart'], .main-toolbar.is-select [data-key='sel-together'] { flex: 1 1 0; }
 }
 
 .view-tabs { display: none; }
@@ -514,7 +522,7 @@ button.member.is-drop-swap { background: var(--c); color: #fff; }
 .name-list.is-cols .name-row { border-right: 1px solid var(--line); }
 .name-list.is-cols .name-row.is-col-end { border-bottom: 0; }
 .name-list.is-cols .name-row.is-last-col { border-right: 0; }
-.name-list.is-cols .nr-open, .name-list.is-cols .nr-pick { min-height: 0; height: 100%; }
+.name-list.is-cols .nr-open { min-height: 0; height: 100%; }
 .name-list.is-multi .name-row { grid-template-columns: minmax(0, 1fr) 48px; }
 .name-list.is-multi .nr-open > .icon { display: none; }
 .name-list.is-multi .nr-open .nr-name { padding-right: 44px; }
@@ -527,3 +535,12 @@ button.member.is-drop-swap { background: var(--c); color: #fff; }
 [data-theme='heft'] .name-list.is-cols .name-row.is-last-col { border-right: 0; }
 [data-theme='heft'] .name-list.is-multi { background: #fff; }
 [data-theme='heft'] .name-list.is-multi .nr-open { padding-left: var(--s4); }
+
+/* Telefon: Fußleiste beim Anlegen einer Regel – Abbrechen links, die beiden Wahlen nebeneinander */
+@media (max-width: 560px) {
+  .options-dialog [data-key='rule-cancel'] span { display: none; }
+  .options-dialog [data-key='rule-cancel'] { width: var(--tap); padding: 0; }
+  .options-dialog .pick-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+  .options-dialog .modal-actions:has([data-key='rule-cancel']:not([hidden])) .toolbar-spacer { display: none; }
+  .options-dialog [data-key='rule-apart'], .options-dialog [data-key='rule-together'] { flex: 1 1 0; min-width: 0; padding: 0 var(--s2); }
+}

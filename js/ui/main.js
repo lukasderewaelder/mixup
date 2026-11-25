@@ -3,7 +3,7 @@
 //
 // Einheitliche Tastenregeln (E46 ff.):
 // – Anordnung links → rechts wie der Ablauf: Namen → Teams einstellen (Zahl, Optionen mit Regeln) → Extras → Losen.
-// – Genau eine Haupttaste je Ansicht, immer ganz rechts (Losen; im Auswahlmodus „Zusammen“).
+// – Genau eine Haupttaste je Ansicht, immer ganz rechts (Losen).
 // – Jede Taste: Symbol + Wort. Auf schmalen Bildschirmen nur das Symbol, die Haupttaste behält ihr Wort.
 // – Zurück/Abbrechen steht immer links.
 import { h, button, iconButton, replaceKeepFocus } from './dom.js';
@@ -12,7 +12,7 @@ import { activeClass, getState, update, replaceState } from '../store.js';
 import { currentResult, presentCount } from '../model.js';
 import { drawTeams } from '../actions.js';
 import { session } from './session.js';
-import { namesPanel, openAddNames, makeRule } from './names-panel.js';
+import { namesPanel, openAddNames } from './names-panel.js';
 import { sizeStepper, statusLine, openOptions } from './options-panel.js';
 import { resultsPanel, openHistory, playShuffle } from './results-panel.js';
 import { openDraw } from './draw.js';
@@ -46,10 +46,8 @@ export function onKey(e) {
   if (k === 'escape') {
     if (session.pickedPlayer) { session.pickedPlayer = null; paint(); return true; }
     if (session.view === 'class') { setView('edit'); return true; }
-    if (session.namesMode !== 'present') { session.namesMode = 'present'; session.selected.clear(); paint(); return true; }
     return false;
   }
-  if (session.namesMode === 'select') return false;
   if (k === ' ') { e.preventDefault(); go(); return true; }
   if (k === 'k' && hasResult) { setView(session.view === 'class' ? 'edit' : 'class'); return true; }
   if (k === 'z') { openDraw(); return true; }
@@ -88,15 +86,14 @@ function paint({ fresh = false } = {}) {
 
   const total = cls.players.length;
   const present = presentCount(cls);
-  const selecting = session.namesMode === 'select';
   root.classList.toggle('is-fit', isFitLayout());
   replaceKeepFocus(root, [
     h('div', { class: 'main-head' },
       h('div', { class: 'main-title' },
         h('h1', { tabindex: '-1' }, cls.name),
         iconButton('edit', 'Klasse umbenennen', { onClick: renameClass }))),
-    selecting ? selectBar() : toolbar(entry, present),
-    !selecting && total ? statusLine(cls) : null,
+    toolbar(entry, present),
+    total ? statusLine(cls) : null,
     h('div', { class: 'view-tabs', role: 'tablist', 'aria-label': 'Ansicht' },
       tabButton('names', total ? `Namen ${present}/${total}` : 'Namen'),
       tabButton('teams', 'Teams')),
@@ -119,17 +116,6 @@ function toolbar(entry, present) {
       button('Zufallsperson', { icon: 'dice', onClick: () => openDraw(), disabled: !present, title: 'Zufallsperson (Z)', 'data-key': 'tb-draw' }),
       button('Mehr', { icon: 'more', onClick: () => openMore(entry), disabled: !entry, title: 'Klassenansicht, Verlauf, Drucken', 'data-key': 'tb-more' })),
     button(entry ? 'Neu losen' : 'Teams losen', { icon: 'shuffle', variant: 'primary', class: 'btn btn-primary tb-go', onClick: go, disabled: !present, title: 'Losen (Leertaste)', 'data-key': 'go' }));
-}
-
-function selectBar() {
-  const n = session.selected.size;
-  const done = (type) => { makeRule(type); paint(); };
-  return h('div', { class: 'main-toolbar is-select', 'aria-label': 'Regel anlegen' },
-    button('Abbrechen', { icon: 'close', onClick: () => { session.namesMode = 'present'; session.selected.clear(); paint(); }, 'data-key': 'sel-cancel' }),
-    h('span', { class: 'select-count', 'aria-live': 'polite' }, n === 1 ? '1 ausgewählt' : `${n} ausgewählt`),
-    h('span', { class: 'toolbar-spacer' }),
-    button('Getrennt', { icon: 'apart', disabled: n < 2, onClick: () => done('apart'), title: 'Möglichst auf verschiedene Teams verteilen', 'data-key': 'sel-apart' }),
-    button('Zusammen', { icon: 'together', variant: 'primary', disabled: n < 2, onClick: () => done('together'), title: 'Immer ins selbe Team', 'data-key': 'sel-together' }));
 }
 
 function openMore(entry) {

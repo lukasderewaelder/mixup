@@ -250,3 +250,7 @@ Anlass: erster Test auf dem iPad Pro (Screenshot: „Mehr“-Fenster abgeschnitt
 
 - **Eigene Teamnamen zurücksetzen** (E62): `resetOwn('names' | 'colors')` in `js/ui/group-style.js`, sichtbar in Optionen → Gruppen und in „Gruppen gestalten“; Rückgängig über die Meldung.
 - Meldungen erscheinen bei offenem Dialog im obersten Dialog (ein modaler Dialog sperrt alles außerhalb, „Rückgängig“ war dort nicht antippbar) und wandern beim Schließen zurück.
+
+### 1.4.2 (25.11.2026)
+
+- Rückmeldung: Nach dem Festlegen einer Regel schloss sich das Fenster jedes Mal. **Regeln entstehen jetzt im Blatt selbst** (E63): `openOptions(refresh, 'rules', [id])` mit Auswahl `pickContent` in `js/ui/options-panel.js`; Fußleiste beim Auswählen Abbrechen · Getrennt · Zusammen. Auswahlmodus der Namensliste (`startSelecting`, `makeRule`, `selectBar`, `session.namesMode`) entfernt.

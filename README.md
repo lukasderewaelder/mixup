@@ -4,7 +4,7 @@ Teams per Zufall für den Unterricht: Klasse wählen, abhaken wer fehlt, „Team
 Läuft als PWA auf iPad und PC, komplett offline, komplett auf Deutsch, ohne Konten und ohne Cloud. Alle Namen bleiben auf dem Gerät.
 
 **App:** https://lukasderewaelder.github.io/mixup/
-**Stand:** Version 1.4.1 – auf iPad und PC passt alles ohne Scrollen auf einen Bildschirm; Namen per Drag-and-Drop verschieben, neue Animation „Mischen und Austeilen“, Regeln in den Optionen. Offen: weiterer Test auf dem echten iPad.
+**Stand:** Version 1.4.2 – auf iPad und PC passt alles ohne Scrollen auf einen Bildschirm; Namen per Drag-and-Drop verschieben, neue Animation „Mischen und Austeilen“, Regeln in den Optionen. Offen: weiterer Test auf dem echten iPad.
 
 ## Was Mixup kann
 
@@ -12,7 +12,7 @@ Läuft als PWA auf iPad und PC, komplett offline, komplett auf Deutsch, ohne Kon
 - **Ein Hauptbildschirm** je Klasse: oben eine Leiste (Namen + │ − Zahl + · Optionen │ Zufallsperson · Mehr │ Losen), darunter links die Namensliste, rechts die Teams; auf iPad und PC passt alles ohne Scrollen auf einen Bildschirm (Namensliste in Spalten, Teamkarten mit passender Schrift); iPad hochkant und Telefon: Umschalter „Namen | Teams“
 - **Namen** eintippen, als Liste einfügen (Nummern/Aufzählungszeichen werden entfernt) oder aus CSV/Text laden (Vorname/Nachname, Niveau, Geschlecht werden erkannt); doppelte Namen werden gemeldet
 - **Namensliste wie im Original**: nur Namen; Schalter ⊘ für „fehlt heute“ (gilt nur für den Tag); › öffnet die Details mit **Niveau −5 bis +5** (Schieberegler), Geschlecht, Regeln und Entfernen – mit Vorherige/Nächste zum schnellen Durchgehen
-- **Regeln** (Optionen → Reiter „Regeln“ → Neue Regel): Personen antippen → „Zusammen“ (immer im selben Team) oder „Getrennt“ (möglichst verschiedene Teams); einzeln oder gesamt abschaltbar
+- **Regeln** (Optionen → Reiter „Regeln“ → Neue Regel): im Blatt Personen antippen → „Zusammen“ (immer im selben Team) oder „Getrennt“ (möglichst verschiedene Teams); einzeln oder gesamt abschaltbar; das Blatt bleibt offen für weitere Regeln
 - **Arten**: Zufällig · **Gleich stark** (gleiche Niveau-Summe – wenn Teams gegeneinander antreten) · **Gemischt** (gleicher Durchschnitt – Gruppenarbeit) · Gleiches Niveau; alles im Blatt „Optionen“ samt Geschlechter mischen und Wiederholungen vermeiden; eine Statuszeile zeigt, was gilt
 - **Teams oder pro Team**: Zahl in der Leiste antippen schaltet zwischen „Anzahl Teams“ und „Personen pro Team“ um
 - **Gruppen gestalten** je Klasse: Team, Gruppe, Tisch, Station, Mannschaft oder eigenes Wort; Zählung 1 2 3, A B C oder Farbnamen; Name und Farbe direkt auf der Karte antippen; eigene Teamnamen mit einem Tipp zurücksetzen (Optionen → Gruppen)

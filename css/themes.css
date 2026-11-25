@@ -93,13 +93,13 @@
 /* Namensliste */
 [data-theme='poster'] .name-row { border-bottom: 2px solid var(--ink); }
 [data-theme='poster'] .name-row:last-child { border-bottom: 0; }
-[data-theme='poster'] .nr-open:hover, [data-theme='poster'] .nr-pick:hover { background: var(--mist); }
+[data-theme='poster'] .nr-open:hover { background: var(--mist); }
 [data-theme='poster'] .nr-absent { color: #b9b2a3; }
 [data-theme='poster'] .nr-absent[aria-pressed='true'] { color: #fff; background: #8a1f28; border-radius: 4px 12px 4px 4px; }
 [data-theme='poster'] .name-row.is-absent .nr-name { text-decoration-color: #8a1f28; text-decoration-thickness: 3px; }
-[data-theme='poster'] .name-row.is-selected .nr-pick { background: var(--sticker); }
+[data-theme='poster'] .pick-chip { border: 2px solid var(--ink); border-radius: 4px 12px 4px 4px; }
+[data-theme='poster'] .pick-chip.is-on { background: var(--sticker); box-shadow: 2px 2px 0 var(--ink); }
 [data-theme='poster'] .nr-check { border: 2px solid var(--ink); border-radius: 3px 8px 3px 3px; }
-[data-theme='poster'] .names-panel.is-selecting .name-list { box-shadow: 5px 5px 0 var(--hit); }
 
 /* Teamkarten: weiße Fläche, Tintenrand, Schatten in Teamfarbe, schräger Sticker */
 [data-theme='poster'] .team-card {
@@ -172,14 +172,14 @@
   box-shadow: 0 1px 0 var(--line), 0 10px 22px rgb(22 27 38 / .06);
 }
 [data-theme='heft'] .name-row { border-bottom: 1px solid #c9d8ee; }
-[data-theme='heft'] .nr-open, [data-theme='heft'] .nr-pick { padding-left: 48px; }
-[data-theme='heft'] .nr-pick { padding-left: 8px; gap: 22px; }
-[data-theme='heft'] .nr-open:hover, [data-theme='heft'] .nr-pick:hover { background: rgb(255 227 110 / .35); }
+[data-theme='heft'] .nr-open { padding-left: 48px; }
+[data-theme='heft'] .nr-open:hover { background: rgb(255 227 110 / .35); }
 [data-theme='heft'] .name-row.is-absent .nr-name { text-decoration-color: #d23c3c; text-decoration-thickness: 2.5px; }
 [data-theme='heft'] .nr-absent { border-radius: 4px 14px 4px 14px; }
 [data-theme='heft'] .nr-absent[aria-pressed='true'] { color: #d23c3c; background: #fde8e8; }
-[data-theme='heft'] .name-row.is-selected .nr-pick { background: transparent; }
-[data-theme='heft'] .name-row.is-selected .nr-name { background: linear-gradient(transparent 50%, var(--marker) 50%, var(--marker) 92%, transparent 92%); }
+[data-theme='heft'] .pick-chip { border-radius: 2px 12px 2px 12px; }
+[data-theme='heft'] .pick-chip.is-on { background: #fff; box-shadow: none; }
+[data-theme='heft'] .pick-chip.is-on .pick-name { background: linear-gradient(transparent 50%, var(--marker) 50%, var(--marker) 92%, transparent 92%); }
 [data-theme='heft'] .nr-check { border-radius: 2px 8px 2px 8px; }
 [data-theme='heft'] .tb-group + .tb-group { border-left: 1.5px dashed var(--line-strong); }
 [data-theme='heft'] .main-toolbar .tb-go { border-radius: 6px 24px 6px 24px; }
@@ -243,11 +243,11 @@
 [data-theme='akzent'] .main-toolbar .tb-go { border-radius: 6px 26px 6px 6px; border-bottom-width: 5px; }
 [data-theme='akzent'] .name-list { border-bottom: 4px solid var(--line-strong); }
 [data-theme='akzent'] .name-row { position: relative; }
-[data-theme='akzent'] .name-row.is-selected .nr-pick { background: color-mix(in srgb, var(--accent) 9%, #fff); box-shadow: inset 5px 0 0 var(--accent); }
+[data-theme='akzent'] .pick-chip { border-radius: 4px 14px 4px 4px; }
+[data-theme='akzent'] .pick-chip.is-on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 9%, #fff); box-shadow: inset 5px 0 0 var(--accent); }
 [data-theme='akzent'] .nr-check { border-radius: 3px 10px 3px 3px; }
-[data-theme='akzent'] .name-row.is-selected .nr-check { background: var(--accent); border-color: var(--accent); }
+[data-theme='akzent'] .pick-chip.is-on .nr-check { background: var(--accent); border-color: var(--accent); }
 [data-theme='akzent'] .nr-absent { border-radius: 4px 16px 4px 4px; }
-[data-theme='akzent'] .names-panel.is-selecting .name-list { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
 
 /* Teamkarten: vollfarbiger Kopf mit weißer Schrift, helle Fläche */
 [data-theme='akzent'] .team-card {

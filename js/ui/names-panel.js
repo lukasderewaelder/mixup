@@ -1,17 +1,16 @@
 // Namensliste im Hauptbildschirm – wie im Original: eine Zeile pro Person, nur der Name.
 // Rechts der Schalter „fehlt heute“ und › für die Details (Name, Niveau, Geschlecht, Regeln, Entfernen).
-// Regeln entstehen im Auswahlmodus: Personen antippen, dann oben „Zusammen“ oder „Getrennt“.
-// Die Liste der Regeln steht im Blatt „Optionen“, Reiter „Regeln“ (rulesContent).
+// Regeln stehen im Blatt „Optionen“, Reiter „Regeln“ (rulesContent); dort werden sie auch angelegt.
 import { h, button, iconButton, toggle, segmented } from './dom.js';
 import { icon } from './icons.js';
 import { openDialog, promptDialog, toast } from './dialogs.js';
 import { activeClass, getState, update, replaceState } from '../store.js';
 import {
   addPlayers, renamePlayer, removePlayers, absentIds, setAbsent, clearAbsent, presentCount,
-  addGroup, groupsOf, byName, formatLevel, LEVEL_MIN, LEVEL_MAX, GENDER_LABEL,
+  groupsOf, byName, formatLevel, LEVEL_MIN, LEVEL_MAX, GENDER_LABEL,
 } from '../model.js';
 import { parseNameList, parseCsv } from '../import.js';
-import { session } from './session.js';
+import { openOptions } from './options-panel.js';
 
 export const groupLetter = (i) => (i < 26 ? String.fromCharCode(65 + i) : `${String.fromCharCode(65 + Math.floor(i / 26) - 1)}${String.fromCharCode(65 + (i % 26))}`);
 
@@ -22,35 +21,23 @@ export function namesPanel(refresh) {
   const cls = activeClass();
   const total = cls.players.length;
   const present = presentCount(cls);
-  const selecting = session.namesMode === 'select';
 
-  return h('section', { class: `names-panel${selecting ? ' is-selecting' : ''}`, 'aria-label': 'Namen' },
+  return h('section', { class: 'names-panel', 'aria-label': 'Namen' },
     h('div', { class: 'panel-head' },
       h('h2', { class: 'panel-title' }, 'Namen'),
       total ? h('span', { class: 'count-pill', 'aria-live': 'polite' }, `${present} von ${total} da`) : null,
       h('span', { class: 'toolbar-spacer' }),
-      !selecting && total && present < total
+      total && present < total
         ? button('Alle da', { icon: 'reset', variant: 'quiet', onClick: () => { update((s, c) => clearAbsent(c), { dataChange: false }); refresh(); }, 'data-key': 'all-present', title: 'Alle als anwesend markieren' })
         : null),
-    selecting ? h('p', { class: 'panel-hint' }, 'Personen antippen, die immer zusammen sein oder möglichst getrennt werden sollen – dann oben „Zusammen“ oder „Getrennt“.') : null,
-    total ? nameList(cls, selecting, refresh) : addWays(refresh));
+    total ? nameList(cls, refresh) : addWays(refresh));
 }
 
 // ---------- Liste ----------
-function nameList(cls, selecting, refresh) {
+function nameList(cls, refresh) {
   const absent = absentIds(cls);
-  return h('ul', { class: `name-list${selecting ? ' is-selecting' : ''}`, 'aria-label': 'Namen' }, sortedPlayers(cls).map((p) => {
+  return h('ul', { class: 'name-list', 'aria-label': 'Namen' }, sortedPlayers(cls).map((p) => {
     const isAbsent = absent.has(p.id);
-    if (selecting) {
-      const sel = session.selected.has(p.id);
-      return h('li', { class: `name-row${isAbsent ? ' is-absent' : ''}${sel ? ' is-selected' : ''}` },
-        h('button', {
-          type: 'button', class: 'nr-pick', role: 'checkbox', 'aria-checked': String(sel), 'data-key': `p-${p.id}`,
-          onClick: () => { if (sel) session.selected.delete(p.id); else session.selected.add(p.id); refresh(); },
-        },
-        h('span', { class: 'nr-check', 'aria-hidden': 'true' }, icon('check', { size: 16 })),
-        h('span', { class: 'nr-name' }, p.name)));
-    }
     return h('li', { class: `name-row${isAbsent ? ' is-absent' : ''}` },
       h('button', { type: 'button', class: 'nr-open', 'data-key': `o-${p.id}`, 'aria-label': `${p.name}${isAbsent ? ' (fehlt heute)' : ''}: Details`, onClick: () => openPerson(p.id, refresh) },
         h('span', { class: 'nr-name' }, p.name), icon('next', { size: 20 })),
@@ -60,23 +47,6 @@ function nameList(cls, selecting, refresh) {
         onClick: () => { update((s, c) => setAbsent(c, p.id, !isAbsent), { dataChange: false }); refresh(); },
       }, icon('absent', { size: 24 })));
   }));
-}
-
-/** Auswahlmodus starten (aus „Regeln“ oder aus den Details einer Person). */
-export function startSelecting(firstId = null) {
-  session.namesMode = 'select';
-  session.selected.clear();
-  if (firstId) session.selected.add(firstId);
-  session.tab = 'names';
-}
-
-/** Aus der Auswahl eine Regel machen. */
-export function makeRule(type) {
-  const ids = [...session.selected];
-  const group = update((s, c) => addGroup(c, type, ids));
-  session.namesMode = 'present';
-  session.selected.clear();
-  if (group) toast(`Regel „${group.name}“ angelegt: ${type === 'together' ? 'immer zusammen' : 'möglichst getrennt'}.`);
 }
 
 // ---------- Details einer Person (Blatt mit Vorherige/Nächste) ----------
@@ -173,7 +143,7 @@ export function openPerson(startId, refresh) {
               paint();
             } }))))
           : h('p', { class: 'field-hint' }, 'Keine Regel.'),
-        h('div', {}, button(`Neue Regel mit ${p.name}`, { icon: 'select', onClick: () => { startSelecting(p.id); dlg.close(); } }))),
+        h('div', {}, button(`Neue Regel mit ${p.name}`, { icon: 'select', onClick: () => openOptions(() => { paint(); refresh(); }, 'rules', [p.id]) }))),
     );
   }
 
@@ -182,21 +152,21 @@ export function openPerson(startId, refresh) {
 
 // ---------- Regeln (Reiter im Blatt „Optionen“) ----------
 /** Inhalt des Reiters „Regeln“. refresh zeichnet Blatt und Hauptbildschirm neu. */
-export function rulesContent(refresh) {
+export function rulesContent(refresh, freshId = null) {
   const cls = activeClass();
   const groups = cls.groups;
   return [
     h('p', { class: 'muted' }, '„Zusammen“ kommt immer ins selbe Team, „Getrennt“ möglichst in verschiedene Teams. Regeln gelten für jede Einteilung dieser Klasse.'),
     groups.length ? toggle('Beim Losen beachten', cls.options.rulesEnabled, (v) => { update((s, c) => { c.options.rulesEnabled = v; }); refresh(); }, { id: 'rules-enabled' }) : null,
     groups.length
-      ? h('ul', { class: `rule-list${cls.options.rulesEnabled ? '' : ' is-off'}` }, groups.map((g, i) => ruleRow(cls, g, i, refresh)))
-      : h('p', { class: 'empty-note' }, 'Noch keine Regeln. Mit „Neue Regel“ wählst du in der Namensliste Personen aus.'),
+      ? h('ul', { class: `rule-list${cls.options.rulesEnabled ? '' : ' is-off'}` }, groups.map((g, i) => ruleRow(cls, g, i, refresh, g.id === freshId)))
+      : h('p', { class: 'empty-note' }, 'Noch keine Regeln. Mit „Neue Regel“ unten wählst du Personen aus.'),
   ];
 }
 
-function ruleRow(cls, g, i, refresh) {
+function ruleRow(cls, g, i, refresh, isFresh = false) {
   const names = g.playerIds.map((id) => cls.players.find((p) => p.id === id)?.name).filter(Boolean).sort(byName);
-  return h('li', { class: `rule-row${g.enabled === false ? ' is-off' : ''}` },
+  return h('li', { class: `rule-row${g.enabled === false ? ' is-off' : ''}${isFresh ? ' is-fresh' : ''}` },
     h('span', { class: `rule-chip rule-${g.type}` }, icon(g.type, { size: 14 }), groupLetter(i)),
     h('div', { class: 'rule-text' },
       h('span', { class: 'rule-name' }, g.name),

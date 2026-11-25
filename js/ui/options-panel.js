@@ -2,14 +2,14 @@
 // und das Blatt „Optionen“ mit den Reitern „Teams“ (Art, Rest-Regel, Gruppen, Schalter) und „Regeln“.
 import { h, button, segmented, toggle, replaceKeepFocus } from './dom.js';
 import { icon } from './icons.js';
-import { openDialog } from './dialogs.js';
+import { openDialog, toast } from './dialogs.js';
 import { activeClass, update } from '../store.js';
-import { presentCount, playersForToday } from '../model.js';
+import { presentCount, playersForToday, addGroup, absentIds, byName } from '../model.js';
 import { teamSizes, previewText, sizesShort, REMAINDERS } from '../teams/sizes.js';
 import { buildBlocks } from '../teams/blocks.js';
 import { MAX_TEAMS } from '../teams/colors.js';
 import { openGroupStyle, styleSummary, ownNameCount, resetOwn } from './group-style.js';
-import { rulesContent, startSelecting } from './names-panel.js';
+import { rulesContent } from './names-panel.js';
 
 export const MODES = [
   { value: 'random', label: 'Zufällig', hint: 'Reines Losglück. Regeln und Gedächtnis gelten trotzdem.' },
@@ -96,32 +96,85 @@ function preWarnings(cls, n, sizes) {
 }
 
 // ---------- Blatt „Optionen“ mit zwei Reitern: Teams | Regeln ----------
-export function openOptions(refresh, startTab = 'teams') {
+// Neue Regeln entstehen direkt im Reiter „Regeln“: Personen antippen, dann „Zusammen“ oder „Getrennt“.
+// Das Blatt bleibt danach offen, damit man gleich weitere Regeln anlegen kann.
+/**
+ * @param {() => void} refresh
+ * @param {'teams'|'rules'} [startTab]
+ * @param {string[]} [pickFirst]  sofort eine neue Regel mit diesen Personen beginnen (aus dem Personenblatt)
+ */
+export function openOptions(refresh, startTab = 'teams', pickFirst = null) {
   let tab = startTab;
+  let picking = pickFirst ? new Set(pickFirst) : null; // Auswahl für eine neue Regel
+  let fresh = null;                                     // zuletzt angelegte Regel (kurz hervorheben)
   const body = h('div', { class: 'options-sheet' });
   const tabs = h('div', { class: 'tabs sheet-tabs', role: 'tablist', 'aria-label': 'Optionen' });
   const panel = h('div', { class: 'sheet-panel', role: 'tabpanel' });
   body.append(tabs, panel);
   const set = (patch) => { setOptions(patch); paint(); refresh(); };
-  const newRule = button('Neue Regel', { icon: 'plus', onClick: () => { startSelecting(); dlg.close(); }, title: 'Personen in der Namensliste antippen' });
+
+  const newRule = button('Neue Regel', { icon: 'plus', onClick: () => { picking = new Set(); paint(); }, 'data-key': 'rule-new' });
+  const cancel = button('Abbrechen', { icon: 'close', onClick: () => { picking = null; paint(); }, 'data-key': 'rule-cancel' });
+  const apart = button('Getrennt', { icon: 'apart', onClick: () => create('apart'), title: 'Möglichst auf verschiedene Teams verteilen', 'data-key': 'rule-apart' });
+  const together = button('Zusammen', { icon: 'together', variant: 'primary', onClick: () => create('together'), title: 'Immer ins selbe Team', 'data-key': 'rule-together' });
+  const done = button('Fertig', { icon: 'check', variant: 'primary', onClick: () => dlg.close(), 'data-key': 'opt-done' });
+
+  function create(type) {
+    if (!picking || picking.size < 2) return;
+    const group = update((s, c) => addGroup(c, type, [...picking]));
+    picking = null;
+    fresh = group?.id || null;
+    paint();
+    refresh();
+    if (group) toast(`Regel „${group.name}“ angelegt: ${type === 'together' ? 'immer zusammen' : 'möglichst getrennt'}.`);
+    done.focus({ preventScroll: true });
+  }
 
   function paint() {
     const cls = activeClass();
     const ruleCount = cls.groups.length;
     tabs.replaceChildren(...[['teams', 'sliders', 'Teams'], ['rules', 'together', ruleCount ? `Regeln (${ruleCount})` : 'Regeln']].map(([id, ic, label]) => h('button', {
       type: 'button', role: 'tab', class: 'tab', 'aria-selected': String(id === tab), 'data-key': `opt-tab-${id}`,
-      onClick: () => { tab = id; paint(); },
+      onClick: () => { tab = id; picking = null; paint(); },
     }, icon(ic, { size: 18 }), h('span', {}, label))));
-    newRule.hidden = tab !== 'rules';
-    replaceKeepFocus(panel, tab === 'rules' ? rulesContent(() => { paint(); refresh(); }) : teamsContent(cls, set));
+    const isPicking = tab === 'rules' && picking;
+    newRule.hidden = tab !== 'rules' || Boolean(picking);
+    cancel.hidden = apart.hidden = together.hidden = !isPicking;
+    done.hidden = Boolean(isPicking);
+    apart.disabled = together.disabled = !picking || picking.size < 2;
+    let content;
+    if (tab === 'teams') content = teamsContent(cls, set);
+    else if (picking) content = pickContent(cls, picking, paint);
+    else content = rulesContent(() => { paint(); refresh(); }, fresh);
+    fresh = null;
+    replaceKeepFocus(panel, content);
   }
 
   const dlg = openDialog({
     title: 'Optionen', body, size: 'wide', onClose: refresh, className: 'options-dialog',
-    footer: [newRule, h('span', { class: 'toolbar-spacer' }), button('Fertig', { icon: 'check', variant: 'primary', onClick: () => dlg.close() })],
+    footer: [newRule, cancel, h('span', { class: 'toolbar-spacer' }), apart, together, done],
   });
   paint();
   return dlg;
+}
+
+/** Personen für eine neue Regel antippen (mehrspaltig, damit auch 30 Namen ohne Scrollen passen). */
+function pickContent(cls, picking, repaint) {
+  const absent = absentIds(cls);
+  const n = picking.size;
+  return [
+    h('p', { class: 'sheet-lead' }, h('strong', {}, 'Neue Regel: '),
+      h('span', { class: 'muted' }, 'Personen antippen, die immer zusammen sein oder möglichst getrennt werden sollen – dann unten „Zusammen“ oder „Getrennt“.')),
+    h('div', { class: 'pick-grid', role: 'group', 'aria-label': 'Personen für die Regel' },
+      [...cls.players].sort((a, b) => byName(a.name, b.name)).map((p) => {
+        const on = picking.has(p.id);
+        return h('button', {
+          type: 'button', class: `pick-chip${on ? ' is-on' : ''}${absent.has(p.id) ? ' is-absent' : ''}`, role: 'checkbox', 'aria-checked': String(on), 'data-key': `pk-${p.id}`,
+          onClick: () => { if (on) picking.delete(p.id); else picking.add(p.id); repaint(); },
+        }, h('span', { class: 'nr-check', 'aria-hidden': 'true' }, icon('check', { size: 16 })), h('span', { class: 'pick-name' }, p.name));
+      })),
+    h('p', { class: 'pick-count', 'aria-live': 'polite' }, n === 0 ? 'Noch niemand ausgewählt.' : n === 1 ? '1 ausgewählt – mindestens eine weitere Person antippen.' : `${n} ausgewählt.`),
+  ];
 }
 
 function teamsContent(cls, set) {
