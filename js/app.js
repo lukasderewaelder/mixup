@@ -4,6 +4,7 @@ import * as main from './ui/main.js';
 import * as settings from './ui/settings.js';
 import { activeClass, subscribe, isStorageOk, getState } from './store.js';
 import { toast } from './ui/dialogs.js';
+import { openHelp } from './ui/help.js';
 
 const ROUTES = {
   '/': start,
@@ -51,8 +52,10 @@ document.addEventListener('keydown', (e) => {
   const t = e.target;
   if (t instanceof HTMLElement && (t.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(t.tagName))) return;
   if ((e.key === ' ' || e.key === 'Enter') && t instanceof HTMLElement && ['BUTTON', 'A', 'SUMMARY'].includes(t.tagName)) return; // Taste gehört der fokussierten Schaltfläche
+  if (e.key === '?') { openHelp(); return; }
   currentScreen?.onKey?.(e);
 });
+document.getElementById('help-btn')?.addEventListener('click', openHelp);
 
 // ---------- Design (gilt für das ganze Gerät) ----------
 const THEME_BG = { klar: '#ffffff', poster: '#fbf6ec', heft: '#ffffff', akzent: '#ffffff' };

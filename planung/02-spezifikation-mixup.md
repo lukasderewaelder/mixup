@@ -254,3 +254,7 @@ Anlass: erster Test auf dem iPad Pro (Screenshot: „Mehr“-Fenster abgeschnitt
 ### 1.4.2 (25.11.2026)
 
 - Rückmeldung: Nach dem Festlegen einer Regel schloss sich das Fenster jedes Mal. **Regeln entstehen jetzt im Blatt selbst** (E63): `openOptions(refresh, 'rules', [id])` mit Auswahl `pickContent` in `js/ui/options-panel.js`; Fußleiste beim Auswählen Abbrechen · Getrennt · Zusammen. Auswahlmodus der Namensliste (`startSelecting`, `makeRule`, `selectBar`, `session.namesMode`) entfernt.
+
+### 1.4.3 (25.11.2026)
+
+- **Kurzanleitung** (E64, `js/ui/help.js`): fünf Schritte (Namen, Wer fehlt, Größe, Losen, Anpassen) und die Wirkung jeder Option; ? in der Kopfzeile, Eintrag in „Mehr“, Taste ?. Zweispaltig, passt auf dem iPad ohne Scrollen.

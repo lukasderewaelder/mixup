@@ -4,7 +4,7 @@ Teams per Zufall für den Unterricht: Klasse wählen, abhaken wer fehlt, „Team
 Läuft als PWA auf iPad und PC, komplett offline, komplett auf Deutsch, ohne Konten und ohne Cloud. Alle Namen bleiben auf dem Gerät.
 
 **App:** https://lukasderewaelder.github.io/mixup/
-**Stand:** Version 1.4.2 – auf iPad und PC passt alles ohne Scrollen auf einen Bildschirm; Namen per Drag-and-Drop verschieben, neue Animation „Mischen und Austeilen“, Regeln in den Optionen. Offen: weiterer Test auf dem echten iPad.
+**Stand:** Version 1.4.3 – auf iPad und PC passt alles ohne Scrollen auf einen Bildschirm; Namen per Drag-and-Drop verschieben, neue Animation „Mischen und Austeilen“, Regeln in den Optionen. Offen: weiterer Test auf dem echten iPad.
 
 ## Was Mixup kann
 
@@ -21,8 +21,9 @@ Läuft als PWA auf iPad und PC, komplett offline, komplett auf Deutsch, ohne Kon
 - **Klassenansicht** nach dem Losen: nur die Teams, Schrift automatisch so groß wie möglich, Neu losen, Zufallsperson, Namen per **Drag-and-Drop** oder Antippen tauschen und verschieben – Niveau, Regeln und Optionen sind ausgeblendet
 - **Animation „Mischen und Austeilen“**: die Namen sammeln sich als Stapel, werden gemischt und reihum an die Teams ausgeteilt (antippen überspringt)
 - **Verlauf** der letzten 10 Einteilungen, **Drucken/PDF**, **Zufallsperson** (jede Person einmal oder immer aus allen), **Schnellstart** „Wie letztes Mal losen“
+- **Kurzanleitung** (? oben rechts): fünf Schritte und was jede Option bewirkt – in unter einer Minute gelesen
 - **Sicherung** als JSON-Datei (ersetzen oder zusammenführen) mit dezenter Erinnerung
-- Tastenkürzel: `Leertaste` losen, `K` Klassenansicht an/aus, `O` Optionen, `Z` Zufallsperson, `V` Verlauf, `Esc`
+- Tastenkürzel: `Leertaste` losen, `K` Klassenansicht an/aus, `O` Optionen, `Z` Zufallsperson, `V` Verlauf, `?` Kurzanleitung, `Esc`
 
 Getestet in Chromium (Desktop-, iPad-hochkant- und Handybreite). Benötigt einen aktuellen Browser (Safari/iPadOS ab 16.4, Chrome/Edge ab 111).
 

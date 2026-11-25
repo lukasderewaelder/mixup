@@ -67,6 +67,7 @@ Wird nach jeder Fragenrunde fortgeschrieben.
 | 61 | Drag-and-Drop | Namen in Ergebnis und Klassenansicht ziehen: der Name hebt sich in Teamfarbe ab und wandert mit, sein Platz bleibt gestrichelt; auf einen Namen = tauschen, auf eine Karte = verschieben (mit Rückgängig); Antippen bleibt zusätzlich; iPad/PC sofort, Telefon nach kurzem Halten | 11 |
 | 62 | Teamnamen zurücksetzen | Sobald eigene Teamnamen vergeben sind: Taste „Eigene Teamnamen zurücksetzen“ im Blatt Optionen (Abschnitt Gruppen) und in „Gruppen gestalten“ (dort getrennt von den Farben); mit Rückgängig | 12 |
 | 63 | Regel anlegen | Direkt im Reiter „Regeln“ des Optionen-Blatts: Neue Regel → Personen antippen (mehrspaltig) → Getrennt / **Zusammen**; das Blatt bleibt offen, die neue Regel leuchtet kurz auf. „Neue Regel mit …“ im Personenblatt öffnet das Blatt darüber, mit der Person vorausgewählt. Der Auswahlmodus der Namensliste entfällt (ersetzt E52) | 13 |
+| 64 | Kurzanleitung | Fenster „Kurzanleitung“ (≈ 190 Wörter, unter 1 Minute): links fünf Schritte, rechts was die Optionen bewirken; erreichbar über ? oben rechts, „Mehr“ und die Taste ? | 14 |
 
 ## Folgen
 

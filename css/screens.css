@@ -544,3 +544,13 @@ button.member.is-drop-swap { background: var(--c); color: #fff; }
   .options-dialog .modal-actions:has([data-key='rule-cancel']:not([hidden])) .toolbar-spacer { display: none; }
   .options-dialog [data-key='rule-apart'], .options-dialog [data-key='rule-together'] { flex: 1 1 0; min-width: 0; padding: 0 var(--s2); }
 }
+
+/* ---------- Kurzanleitung (zweispaltig, ohne Scrollen) ---------- */
+.help { display: grid; gap: var(--s5); }
+@media (min-width: 760px) { .help { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: var(--s6); } }
+.help-col { display: grid; gap: var(--s3); align-content: start; }
+.help-steps { margin: 0; padding-left: 1.4em; display: grid; gap: var(--s3); }
+.help-steps li { padding-left: var(--s1); line-height: 1.45; }
+.help-steps li::marker { font-weight: 800; }
+.help-effects { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--s2); line-height: 1.45; color: var(--ink-soft); }
+.help-effects strong { color: var(--ink); }

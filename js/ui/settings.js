@@ -64,7 +64,7 @@ function paint() {
     section('Tastenkürzel', 'keys',
       h('dl', { class: 'keys' }, [
         ['Leertaste', 'Teams losen bzw. neu losen'], ['K', 'Klassenansicht an/aus'], ['O', 'Optionen'],
-        ['Z', 'Zufallsperson'], ['V', 'Verlauf'], ['Strg + P', 'Drucken'], ['Esc', 'Schließen, Auswahl aufheben, Klassenansicht verlassen'],
+        ['Z', 'Zufallsperson'], ['?', 'Kurzanleitung'], ['V', 'Verlauf'], ['Strg + P', 'Drucken'], ['Esc', 'Schließen, Auswahl aufheben, Klassenansicht verlassen'],
       ].map(([k, v]) => [h('dt', {}, h('kbd', {}, k)), h('dd', {}, v)])),
     ),
 

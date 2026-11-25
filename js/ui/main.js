@@ -17,6 +17,7 @@ import { sizeStepper, statusLine, openOptions } from './options-panel.js';
 import { resultsPanel, openHistory, playShuffle } from './results-panel.js';
 import { openDraw } from './draw.js';
 import { fitGrid, fitNames, isFitLayout, onFitChange } from './fit.js';
+import { openHelp } from './help.js';
 
 export const title = 'Klasse';
 export const needsClass = true;
@@ -114,7 +115,7 @@ function toolbar(entry, present) {
       button('Optionen', { icon: 'sliders', onClick: () => openOptions(paint), title: 'Art der Teams, Gruppen, Regeln (O)', 'data-key': 'tb-options' })),
     h('div', { class: 'tb-group tb-extras' },
       button('Zufallsperson', { icon: 'dice', onClick: () => openDraw(), disabled: !present, title: 'Zufallsperson (Z)', 'data-key': 'tb-draw' }),
-      button('Mehr', { icon: 'more', onClick: () => openMore(entry), disabled: !entry, title: 'Klassenansicht, Verlauf, Drucken', 'data-key': 'tb-more' })),
+      button('Mehr', { icon: 'more', onClick: () => openMore(entry), title: 'Klassenansicht, Verlauf, Drucken, Kurzanleitung', 'data-key': 'tb-more' })),
     button(entry ? 'Neu losen' : 'Teams losen', { icon: 'shuffle', variant: 'primary', class: 'btn btn-primary tb-go', onClick: go, disabled: !present, title: 'Losen (Leertaste)', 'data-key': 'go' }));
 }
 
@@ -123,6 +124,7 @@ function openMore(entry) {
     entry ? ['screen', 'Klassenansicht', () => setView('class'), '', 'K'] : null,
     entry ? ['history', 'Verlauf', () => openHistory(paint), '', 'V'] : null,
     entry ? ['print', 'Drucken oder als PDF', () => window.print()] : null,
+    ['info', 'Kurzanleitung', openHelp, '', '?'],
   ]);
 }
 
