@@ -8,7 +8,7 @@ import { presentCount, playersForToday } from '../model.js';
 import { teamSizes, previewText, sizesShort, REMAINDERS } from '../teams/sizes.js';
 import { buildBlocks } from '../teams/blocks.js';
 import { MAX_TEAMS } from '../teams/colors.js';
-import { openGroupStyle, styleSummary } from './group-style.js';
+import { openGroupStyle, styleSummary, ownNameCount, resetOwn } from './group-style.js';
 import { rulesContent, startSelecting } from './names-panel.js';
 
 export const MODES = [
@@ -143,7 +143,10 @@ function teamsContent(cls, set) {
         section('Gruppen',
           h('div', { class: 'opt-inline' },
             button('Gruppen gestalten', { icon: 'edit', onClick: () => openGroupStyle(sizes.length, () => set({})), title: 'Bezeichnung, Zählung und Farben der Gruppen' }),
-            h('span', { class: 'style-summary' }, styleSummary(cls.groupStyle, sizes.length)))),
+            h('span', { class: 'style-summary' }, styleSummary(cls.groupStyle, sizes.length))),
+          ownNameCount(cls.groupStyle) ? h('div', { class: 'opt-inline' },
+            button('Eigene Teamnamen zurücksetzen', { icon: 'reset', variant: 'quiet', onClick: () => resetOwn('names', () => set({})), 'data-key': 'reset-names' }),
+            h('span', { class: 'style-summary' }, ownNameCount(cls.groupStyle) === 1 ? '1 Team hat einen eigenen Namen.' : `${ownNameCount(cls.groupStyle)} Teams haben eigene Namen.`)) : null),
         section('Beim Losen',
           h('div', { class: 'toggles' },
             toggle('Geschlechter mischen', o.mixGender && genders.size > 1, (v) => set({ mixGender: v }), {

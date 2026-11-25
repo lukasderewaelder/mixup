@@ -245,3 +245,8 @@ Anlass: erster Test auf dem iPad Pro (Screenshot: „Mehr“-Fenster abgeschnitt
 - **Umschalter** Teams ⇄ pro Team an der Zahl in der Leiste.
 - **Animation „Mischen und Austeilen“** (`playShuffle` in `js/ui/results-panel.js`).
 - **Drag-and-Drop** (`js/ui/drag.js`, Zeigerereignisse für Maus, Stift und Finger).
+
+### 1.4.1 (25.11.2026)
+
+- **Eigene Teamnamen zurücksetzen** (E62): `resetOwn('names' | 'colors')` in `js/ui/group-style.js`, sichtbar in Optionen → Gruppen und in „Gruppen gestalten“; Rückgängig über die Meldung.
+- Meldungen erscheinen bei offenem Dialog im obersten Dialog (ein modaler Dialog sperrt alles außerhalb, „Rückgängig“ war dort nicht antippbar) und wandern beim Schließen zurück.

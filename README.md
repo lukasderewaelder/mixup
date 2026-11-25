@@ -4,7 +4,7 @@ Teams per Zufall für den Unterricht: Klasse wählen, abhaken wer fehlt, „Team
 Läuft als PWA auf iPad und PC, komplett offline, komplett auf Deutsch, ohne Konten und ohne Cloud. Alle Namen bleiben auf dem Gerät.
 
 **App:** https://lukasderewaelder.github.io/mixup/
-**Stand:** Version 1.4.0 – auf iPad und PC passt alles ohne Scrollen auf einen Bildschirm; Namen per Drag-and-Drop verschieben, neue Animation „Mischen und Austeilen“, Regeln in den Optionen. Offen: weiterer Test auf dem echten iPad.
+**Stand:** Version 1.4.1 – auf iPad und PC passt alles ohne Scrollen auf einen Bildschirm; Namen per Drag-and-Drop verschieben, neue Animation „Mischen und Austeilen“, Regeln in den Optionen. Offen: weiterer Test auf dem echten iPad.
 
 ## Was Mixup kann
 
@@ -15,7 +15,7 @@ Läuft als PWA auf iPad und PC, komplett offline, komplett auf Deutsch, ohne Kon
 - **Regeln** (Optionen → Reiter „Regeln“ → Neue Regel): Personen antippen → „Zusammen“ (immer im selben Team) oder „Getrennt“ (möglichst verschiedene Teams); einzeln oder gesamt abschaltbar
 - **Arten**: Zufällig · **Gleich stark** (gleiche Niveau-Summe – wenn Teams gegeneinander antreten) · **Gemischt** (gleicher Durchschnitt – Gruppenarbeit) · Gleiches Niveau; alles im Blatt „Optionen“ samt Geschlechter mischen und Wiederholungen vermeiden; eine Statuszeile zeigt, was gilt
 - **Teams oder pro Team**: Zahl in der Leiste antippen schaltet zwischen „Anzahl Teams“ und „Personen pro Team“ um
-- **Gruppen gestalten** je Klasse: Team, Gruppe, Tisch, Station, Mannschaft oder eigenes Wort; Zählung 1 2 3, A B C oder Farbnamen; Name und Farbe direkt auf der Karte antippen
+- **Gruppen gestalten** je Klasse: Team, Gruppe, Tisch, Station, Mannschaft oder eigenes Wort; Zählung 1 2 3, A B C oder Farbnamen; Name und Farbe direkt auf der Karte antippen; eigene Teamnamen mit einem Tipp zurücksetzen (Optionen → Gruppen)
 - **Vier Designs** (Einstellungen → Design): Klar, Poster (dicke Linien, harte Schatten, Sticker), Heft (Karopapier, Klebezettel, Textmarker), Akzent (kräftige Farbköpfe) – jeweils mit eigener Schrift und asymmetrischen Tasten
 - **Rest-Regel** bei „Personen pro Team“: automatisch, eine Person mehr, Rest als eigenes Team oder eine Person weniger
 - **Klassenansicht** nach dem Losen: nur die Teams, Schrift automatisch so groß wie möglich, Neu losen, Zufallsperson, Namen per **Drag-and-Drop** oder Antippen tauschen und verschieben – Niveau, Regeln und Optionen sind ausgeblendet

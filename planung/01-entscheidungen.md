@@ -65,6 +65,7 @@ Wird nach jeder Fragenrunde fortgeschrieben.
 | 59 | Teams / pro Team | Antippen von Zahl + Einheit in der Leiste schaltet um (Symbol ⇄ an der Einheit); „Aufteilen nach“ fällt aus dem Optionen-Blatt | 11 |
 | 60 | Animation | „Mischen und Austeilen“: Namen sammeln sich als Stapel, der Stapel wird gemischt, die Namen werden reihum wie Karten an die Teams ausgeteilt; Karte hüpft beim Landen; ca. 2 s, Antippen/Taste überspringt; bei „Bewegung reduzieren“ aus | 11 |
 | 61 | Drag-and-Drop | Namen in Ergebnis und Klassenansicht ziehen: der Name hebt sich in Teamfarbe ab und wandert mit, sein Platz bleibt gestrichelt; auf einen Namen = tauschen, auf eine Karte = verschieben (mit Rückgängig); Antippen bleibt zusätzlich; iPad/PC sofort, Telefon nach kurzem Halten | 11 |
+| 62 | Teamnamen zurücksetzen | Sobald eigene Teamnamen vergeben sind: Taste „Eigene Teamnamen zurücksetzen“ im Blatt Optionen (Abschnitt Gruppen) und in „Gruppen gestalten“ (dort getrennt von den Farben); mit Rückgängig | 12 |
 
 ## Folgen
 

@@ -21,6 +21,7 @@ export function openDialog({ title, body, actions = [], footer: customFooter, on
   const close = () => {
     if (closed) return;
     closed = true;
+    placeToastHost(dialog); // Meldungen nicht mit dem Dialog verschwinden lassen
     dialog.close();
     dialog.remove();
     onClose?.();
@@ -108,12 +109,17 @@ export function promptDialog({ title, label, value = '', confirmLabel = 'Speiche
 // ---------- Meldungen ----------
 let toastHost = null;
 
+/** Ein offener Dialog sperrt alles außerhalb – Meldungen (mit „Rückgängig“) gehören dann in den obersten Dialog. */
+function placeToastHost(except = null) {
+  if (!toastHost) return;
+  const top = [...document.querySelectorAll('dialog[open]')].filter((d) => d !== except).at(-1) || document.body;
+  if (toastHost.parentNode !== top) top.append(toastHost);
+}
+
 /** Kurze Meldung unten; optional mit Aktion (z. B. „Rückgängig“). */
 export function toast(message, { action, duration = 5000, tone = '' } = {}) {
-  if (!toastHost) {
-    toastHost = h('div', { class: 'toast-host', role: 'status', 'aria-live': 'polite' });
-    document.body.append(toastHost);
-  }
+  if (!toastHost) toastHost = h('div', { class: 'toast-host', role: 'status', 'aria-live': 'polite' });
+  placeToastHost();
   const el = h('div', { class: `toast ${tone ? `toast-${tone}` : ''}`.trim() },
     h('span', { class: 'toast-text' }, message),
     action ? h('button', { type: 'button', class: 'toast-action', onClick: () => { action.onClick(); remove(); } }, action.label) : null,

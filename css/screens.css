@@ -474,7 +474,7 @@ button.member.is-drop-swap { background: var(--c); color: #fff; }
 
 /* ---------- Blatt „Optionen“: Reiter Teams | Regeln, auf breiten Bildschirmen zweispaltig ---------- */
 .options-sheet { gap: var(--s4); }
-.sheet-tabs { margin-top: calc(-1 * var(--s1)); }
+.sheet-tabs { margin-top: calc(-1 * var(--s1)); overflow: visible; }
 .sheet-panel { display: grid; gap: var(--s4); align-content: start; }
 .sheet-lead { max-width: none; font-variant-numeric: tabular-nums; }
 .sheet-cols, .sheet-col { display: grid; gap: var(--s5); align-content: start; }

@@ -1,7 +1,7 @@
 // Gruppen gestalten (je Klasse): Vorlage im Dialog, Name und Farbe einzeln auf der Karte.
 import { h, button, segmented } from './dom.js';
-import { openDialog, promptDialog } from './dialogs.js';
-import { activeClass, update } from '../store.js';
+import { openDialog, promptDialog, toast } from './dialogs.js';
+import { activeClass, update, getState, replaceState } from '../store.js';
 import { GROUP_WORDS, normalizeName } from '../model.js';
 import { COLOR_NAMES, groupLabel, groupCode, groupColor, templateLabel } from '../labels.js';
 import { colorVars } from './team-card.js';
@@ -27,7 +27,8 @@ export function openGroupStyle(k, onDone) {
       onInput: (e) => { update((s, cls) => { cls.groupStyle.customWord = normalizeName(e.target.value); }); preview.replaceWith(preview = previewRow()); onDone?.(); },
     });
     let preview = previewRow();
-    const hasOwn = Object.keys(style.names).length || Object.keys(style.colors).length;
+    const ownNames = Object.keys(style.names).length;
+    const ownColors = Object.keys(style.colors).length;
     body.replaceChildren(
       h('div', { class: 'field' }, h('span', { class: 'field-label' }, 'Bezeichnung'),
         segmented('gs-word', [...GROUP_WORDS.map((w) => ({ value: w, label: w })), { value: 'custom', label: 'Eigenes' }], style.word, (v) => set({ word: v }), { label: 'Bezeichnung' }),
@@ -36,7 +37,9 @@ export function openGroupStyle(k, onDone) {
         segmented('gs-num', [{ value: 'number', label: '1, 2, 3' }, { value: 'letter', label: 'A, B, C' }, { value: 'color', label: 'Farbname' }], style.numbering, (v) => set({ numbering: v }), { label: 'Zählung' })),
       h('div', { class: 'field' }, h('span', { class: 'field-label' }, 'Vorschau'), preview),
       h('p', { class: 'muted' }, 'Einzelne Namen und Farben änderst du direkt auf der Teamkarte: Namen oder großes Zeichen antippen.'),
-      hasOwn ? button('Eigene Namen und Farben zurücksetzen', { icon: 'reset', variant: 'quiet', onClick: () => set({ names: {}, colors: {} }) }) : null,
+      ownNames || ownColors ? h('div', { class: 'opt-inline' },
+        ownNames ? button(ownNames === 1 ? 'Eigenen Teamnamen zurücksetzen' : `${ownNames} eigene Teamnamen zurücksetzen`, { icon: 'reset', onClick: () => resetOwn('names', () => { paint(); onDone?.(); }) }) : null,
+        ownColors ? button(ownColors === 1 ? 'Eigene Farbe zurücksetzen' : `${ownColors} eigene Farben zurücksetzen`, { icon: 'reset', variant: 'quiet', onClick: () => resetOwn('colors', () => { paint(); onDone?.(); }) }) : null) : null,
     );
     if (isCustom && document.activeElement === document.body) custom.focus();
   }
@@ -51,6 +54,19 @@ export function openGroupStyle(k, onDone) {
 
   paint();
   openDialog({ title: 'Gruppen gestalten', body, size: 'wide', actions: [{ label: 'Fertig', variant: 'primary' }] });
+}
+
+/** Anzahl der von Hand vergebenen Teamnamen dieser Klasse. */
+export const ownNameCount = (style) => Object.keys(style?.names || {}).length;
+
+/** Eigene Teamnamen (names) oder Farben (colors) auf die Vorlage zurücksetzen – mit Rückgängig. */
+export function resetOwn(kind, onDone) {
+  const before = structuredClone(getState());
+  update((s, cls) => { cls.groupStyle[kind] = {}; });
+  onDone?.();
+  toast(kind === 'names' ? 'Teamnamen zurückgesetzt – es gilt wieder die Vorlage.' : 'Farben zurückgesetzt.', {
+    action: { label: 'Rückgängig', onClick: () => { replaceState(before); onDone?.(); } },
+  });
 }
 
 /** Name einer Gruppe auf der Karte ändern (leer = Vorlage). */
